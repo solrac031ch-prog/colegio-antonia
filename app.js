@@ -6,6 +6,7 @@ const state = {
   streak: 0,
   questions: [],
   answered: false,
+  attempts: 0,
 };
 
 const els = {
@@ -73,7 +74,7 @@ function randomInt(min, max) {
 function shuffle(items) {
   const arr = [...items];
   for (let i = arr.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(Math.random() * (i + 1)) + 0;
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
@@ -99,6 +100,32 @@ function createQuestion(table = null) {
   };
 }
 
+function explainMultiplication(a, b) {
+  const correct = a * b;
+
+  if (b === 1) {
+    return `Mira: ${a} × 1 = ${correct}. Multiplicar por 1 deja el mismo número.`;
+  }
+
+  if (b === 2) {
+    return `Mira: ${a} × 2 es el doble de ${a}: ${a} + ${a} = ${correct}.`;
+  }
+
+  if (b <= 5) {
+    const sum = Array.from({ length: b }, () => a).join(' + ');
+    return `Mira: ${a} × ${b} significa sumar ${a}, ${b} veces: ${sum} = ${correct}.`;
+  }
+
+  if (b === 10) {
+    return `Mira: ${a} × 10 = ${correct}. Al multiplicar un número entero por 10, agregamos un cero.`;
+  }
+
+  const rest = b - 5;
+  const firstPart = a * 5;
+  const secondPart = a * rest;
+  return `Mira: ${a} × ${b} puede separarse en ${a} × 5 + ${a} × ${rest}: ${firstPart} + ${secondPart} = ${correct}.`;
+}
+
 function startSession({ mode, table = null }) {
   state.mode = mode;
   state.table = table;
@@ -106,6 +133,7 @@ function startSession({ mode, table = null }) {
   state.score = 0;
   state.streak = 0;
   state.answered = false;
+  state.attempts = 0;
   state.questions = Array.from({ length: 10 }, () => createQuestion(mode === 'table' ? table : null));
 
   els.modeLabel.textContent = mode === 'table' ? `Tabla del ${table}` : 'Desafío mezclado';
@@ -116,6 +144,7 @@ function startSession({ mode, table = null }) {
 function renderQuestion() {
   const current = state.questions[state.questionIndex];
   state.answered = false;
+  state.attempts = 0;
   els.questionCounter.textContent = `${state.questionIndex + 1} / 10`;
   els.question.textContent = `${current.a} × ${current.b}`;
   els.streak.textContent = state.streak;
@@ -132,34 +161,57 @@ function renderQuestion() {
   });
 }
 
-function answerQuestion(value, selectedButton) {
-  if (state.answered) return;
-  state.answered = true;
-
+function finishAnswer() {
   const current = state.questions[state.questionIndex];
   const buttons = [...els.answers.querySelectorAll('.answer-button')];
+
+  state.answered = true;
   buttons.forEach(button => {
     button.disabled = true;
     if (Number(button.textContent) === current.correct) button.classList.add('correct');
   });
-
-  if (value === current.correct) {
-    selectedButton.classList.add('correct');
-    state.score += 1;
-    state.streak += 1;
-    progress.stars += 1;
-    els.feedback.textContent = state.streak >= 3 ? '🔥 ¡Excelente racha, Antonia!' : '✨ ¡Muy bien!';
-  } else {
-    selectedButton.classList.add('wrong');
-    state.streak = 0;
-    els.feedback.textContent = `Casi. La respuesta es ${current.correct}.`;
-  }
 
   progress.bestStreak = Math.max(progress.bestStreak, state.streak);
   saveProgress();
   els.streak.textContent = state.streak;
   els.nextButton.textContent = state.questionIndex === 9 ? 'Ver resultado 🌟' : 'Siguiente →';
   els.nextButton.classList.remove('hidden');
+}
+
+function answerQuestion(value, selectedButton) {
+  if (state.answered || selectedButton.disabled) return;
+
+  const current = state.questions[state.questionIndex];
+
+  if (value === current.correct) {
+    selectedButton.classList.add('correct');
+    state.score += 1;
+    state.streak += 1;
+    progress.stars += 1;
+
+    if (state.attempts === 1) {
+      els.feedback.textContent = `✨ ¡Eso, Antonia! Lo corregiste. ${current.a} × ${current.b} = ${current.correct}.`;
+    } else {
+      els.feedback.textContent = state.streak >= 3 ? '🔥 ¡Excelente racha, Antonia!' : '✨ ¡Muy bien!';
+    }
+
+    finishAnswer();
+    return;
+  }
+
+  selectedButton.classList.add('wrong');
+  selectedButton.disabled = true;
+
+  if (state.attempts === 0) {
+    state.attempts = 1;
+    els.feedback.textContent = `${explainMultiplication(current.a, current.b)} Ahora busca ${current.correct} y tócala. Tienes otra oportunidad. 💪`;
+    return;
+  }
+
+  state.attempts = 2;
+  state.streak = 0;
+  els.feedback.textContent = `${explainMultiplication(current.a, current.b)} La respuesta correcta es ${current.correct}. La miramos y seguimos.`;
+  finishAnswer();
 }
 
 function nextQuestion() {
@@ -193,7 +245,7 @@ function finishSession() {
   } else {
     els.resultEmoji.textContent = '🌱';
     els.resultTitle.textContent = 'Estamos aprendiendo';
-    els.resultText.textContent = 'No importa equivocarse. Cada intento entrena tu cerebro.';
+    els.resultText.textContent = 'Equivocarse, mirar la explicación y corregir también es aprender.';
   }
 
   showView(els.resultView);
