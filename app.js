@@ -102,46 +102,13 @@ function createQuestion(table = null) {
 
 function buildLearningHint(a, b) {
   const correct = a * b;
-  const meaning = `${b} ${b === 1 ? 'grupo' : 'grupos'} de ${a}`;
+  const sequence = Array.from({ length: a }, (_, index) => b * (index + 1));
 
-  if (b === 1) {
-    return {
-      meaning,
-      work: `${a} × 1 = ${a}`,
-      tip: 'Multiplicar por 1 deja el mismo número.',
-    };
-  }
-
-  if (b === 2) {
-    return {
-      meaning,
-      work: `${a} + ${a} = ${correct}`,
-      tip: `Es el doble de ${a}.`,
-    };
-  }
-
-  if (b <= 5) {
-    const sum = Array.from({ length: b }, () => a).join(' + ');
-    return {
-      meaning,
-      work: `${sum} = ${correct}`,
-      tip: `Sumamos ${a}, ${b} veces.`,
-    };
-  }
-
-  if (b === 10) {
-    return {
-      meaning,
-      work: `${a}, ${a * 2}, ${a * 3}, ${a * 4}, ${a * 5} … ${correct}`,
-      tip: `Cuenta de ${a} en ${a} hasta llegar a ${correct}.`,
-    };
-  }
-
-  const sequence = Array.from({ length: b }, (_, index) => a * (index + 1)).join(' → ');
   return {
-    meaning,
-    work: sequence,
-    tip: `Cuenta de ${a} en ${a}. El número ${b} de la serie es ${correct}.`,
+    meaning: `${a} × ${b} es ${a} ${a === 1 ? 'vez' : 'veces'} ${b}`,
+    countLabel: `Contemos de ${b} en ${b}:`,
+    sequence: sequence.join(', '),
+    correct,
   };
 }
 
@@ -157,13 +124,13 @@ function showFeedback(kind, html, compact = false) {
 
 function learningCard(current, finalAttempt = false) {
   const hint = buildLearningHint(current.a, current.b);
-  const title = finalAttempt ? '🌷 Está bien, Antonia' : '💡 Casi, Antonia';
+  const title = finalAttempt ? '🌷 Mira, Antonia' : '💡 Vamos paso a paso';
   const subtitle = finalAttempt
-    ? 'Miremos la idea una vez más y seguimos.'
-    : 'Miremos juntas cómo funciona esta multiplicación.';
+    ? 'Miremos la respuesta y seguimos.'
+    : 'Una pista fácil:';
   const ending = finalAttempt
-    ? 'Guárdala en tu cabeza. La próxima vez la reconocerás más rápido 🌱'
-    : `Ahora toca <strong>${current.correct}</strong> en las opciones. ✨`;
+    ? 'La próxima vez seguro la recuerdas más rápido 💛'
+    : `Ahora toca <strong>${current.correct}</strong> ✨`;
 
   return `
     <div class="feedback-heading">
@@ -174,19 +141,17 @@ function learningCard(current, finalAttempt = false) {
     </div>
 
     <div class="feedback-step">
-      <span class="feedback-label">1 · ¿Qué significa?</span>
-      <strong>${current.a} × ${current.b} son ${hint.meaning}.</strong>
+      <strong>${hint.meaning}</strong>
     </div>
 
     <div class="feedback-step">
-      <span class="feedback-label">2 · Mira la pista</span>
-      <strong class="feedback-math">${hint.work}</strong>
-      <span class="feedback-tip">${hint.tip}</span>
+      <span class="feedback-label">${hint.countLabel}</span>
+      <strong class="feedback-math">${hint.sequence}</strong>
     </div>
 
     <div class="feedback-answer">
       <span>La respuesta es</span>
-      <strong>${current.correct}</strong>
+      <strong>${hint.correct}</strong>
     </div>
 
     <div class="feedback-action">${ending}</div>
@@ -262,11 +227,11 @@ function answerQuestion(value, selectedButton) {
         `<div class="feedback-heading success-heading">
           <div>
             <strong>🌟 ¡Eso, Antonia!</strong>
-            <span>Lo miraste, lo entendiste y lo corregiste.</span>
+            <span>Lo corregiste tú misma.</span>
           </div>
         </div>
         <div class="feedback-mini-equation">${current.a} × ${current.b} = <strong>${current.correct}</strong></div>
-        <div class="feedback-action">Corregir un error también es aprender 💛</div>`,
+        <div class="feedback-action">¡Muy bien! 💛</div>`,
         true
       );
     } else {
@@ -335,7 +300,7 @@ function finishSession() {
   } else {
     els.resultEmoji.textContent = '🌱';
     els.resultTitle.textContent = 'Estamos aprendiendo';
-    els.resultText.textContent = 'Equivocarse, mirar la explicación y corregir también es aprender.';
+    els.resultText.textContent = 'Equivocarse, mirar una pista y corregir también es aprender.';
   }
 
   showView(els.resultView);
