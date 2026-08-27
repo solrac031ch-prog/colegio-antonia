@@ -1,0 +1,12 @@
+{
+  "name": "Colegio de Antonia",
+  "short_name": "Antonia",
+  "description": "App educativa de Antonia para 3er grado.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff7ed",
+  "theme_color": "#fff7ed",
+  "lang": "es-CL",
+  "categories": ["education", "kids"]
+}
