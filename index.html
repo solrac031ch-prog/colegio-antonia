@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fff7ed" />
+  <meta name="description" content="Colegio de Antonia: práctica de Matemáticas de 3er grado." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Colegio de Antonia</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">🎒 Colegio de Antonia · 3er grado</p>
+        <h1>Matemáticas</h1>
+        <p class="subtitle">Practiquemos las tablas sin apuro, una pregunta a la vez.</p>
+      </div>
+      <div class="score-card" aria-label="Progreso">
+        <span>⭐ Estrellas</span>
+        <strong id="stars">0</strong>
+      </div>
+    </header>
+
+    <section id="homeView" class="view active">
+      <div class="panel">
+        <h2>¿Qué quieres practicar?</h2>
+        <p class="muted">Elige una tabla o mezcla todas.</p>
+        <div id="tableGrid" class="table-grid"></div>
+        <button id="mixedButton" class="primary-button">🎯 Desafío mezclado</button>
+      </div>
+
+      <div class="panel compact">
+        <div class="progress-row">
+          <span>Sesiones terminadas</span>
+          <strong id="sessions">0</strong>
+        </div>
+        <div class="progress-row">
+          <span>Mejor racha</span>
+          <strong id="bestStreak">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="quizView" class="view" aria-live="polite">
+      <div class="quiz-topbar">
+        <button id="backButton" class="ghost-button">← Salir</button>
+        <span id="modeLabel" class="pill">Tabla del 2</span>
+        <span id="questionCounter">1 / 10</span>
+      </div>
+
+      <div class="quiz-card">
+        <p class="prompt">¿Cuánto es?</p>
+        <div id="question" class="question">2 × 4</div>
+        <div id="answers" class="answers"></div>
+        <p id="feedback" class="feedback" role="status"></p>
+        <button id="nextButton" class="primary-button hidden">Siguiente →</button>
+      </div>
+
+      <div class="streak-box">🔥 Racha: <strong id="streak">0</strong></div>
+    </section>
+
+    <section id="resultView" class="view">
+      <div class="panel result-panel">
+        <div id="resultEmoji" class="result-emoji">🌟</div>
+        <h2 id="resultTitle">¡Muy bien!</h2>
+        <p id="resultText"></p>
+        <div class="result-score"><span id="finalScore">0</span>/10</div>
+        <button id="againButton" class="primary-button">Practicar otra vez</button>
+        <button id="homeButton" class="secondary-button">Volver al inicio</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
