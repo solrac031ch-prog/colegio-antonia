@@ -74,7 +74,7 @@ function randomInt(min, max) {
 function shuffle(items) {
   const arr = [...items];
   for (let i = arr.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1)) + 0;
+    const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
@@ -100,30 +100,97 @@ function createQuestion(table = null) {
   };
 }
 
-function explainMultiplication(a, b) {
+function buildLearningHint(a, b) {
   const correct = a * b;
+  const meaning = `${b} ${b === 1 ? 'grupo' : 'grupos'} de ${a}`;
 
   if (b === 1) {
-    return `Mira: ${a} × 1 = ${correct}. Multiplicar por 1 deja el mismo número.`;
+    return {
+      meaning,
+      work: `${a} × 1 = ${a}`,
+      tip: 'Multiplicar por 1 deja el mismo número.',
+    };
   }
 
   if (b === 2) {
-    return `Mira: ${a} × 2 es el doble de ${a}: ${a} + ${a} = ${correct}.`;
+    return {
+      meaning,
+      work: `${a} + ${a} = ${correct}`,
+      tip: `Es el doble de ${a}.`,
+    };
   }
 
   if (b <= 5) {
     const sum = Array.from({ length: b }, () => a).join(' + ');
-    return `Mira: ${a} × ${b} significa sumar ${a}, ${b} veces: ${sum} = ${correct}.`;
+    return {
+      meaning,
+      work: `${sum} = ${correct}`,
+      tip: `Sumamos ${a}, ${b} veces.`,
+    };
   }
 
   if (b === 10) {
-    return `Mira: ${a} × 10 = ${correct}. Al multiplicar un número entero por 10, agregamos un cero.`;
+    return {
+      meaning,
+      work: `${a}, ${a * 2}, ${a * 3}, ${a * 4}, ${a * 5} … ${correct}`,
+      tip: `Cuenta de ${a} en ${a} hasta llegar a ${correct}.`,
+    };
   }
 
-  const rest = b - 5;
-  const firstPart = a * 5;
-  const secondPart = a * rest;
-  return `Mira: ${a} × ${b} puede separarse en ${a} × 5 + ${a} × ${rest}: ${firstPart} + ${secondPart} = ${correct}.`;
+  const sequence = Array.from({ length: b }, (_, index) => a * (index + 1)).join(' → ');
+  return {
+    meaning,
+    work: sequence,
+    tip: `Cuenta de ${a} en ${a}. El número ${b} de la serie es ${correct}.`,
+  };
+}
+
+function resetFeedback() {
+  els.feedback.className = 'feedback';
+  els.feedback.innerHTML = '';
+}
+
+function showFeedback(kind, html, compact = false) {
+  els.feedback.className = `feedback feedback-card feedback-${kind}${compact ? ' feedback-compact' : ''}`;
+  els.feedback.innerHTML = html;
+}
+
+function learningCard(current, finalAttempt = false) {
+  const hint = buildLearningHint(current.a, current.b);
+  const title = finalAttempt ? '🌷 Está bien, Antonia' : '💡 Casi, Antonia';
+  const subtitle = finalAttempt
+    ? 'Miremos la idea una vez más y seguimos.'
+    : 'Miremos juntas cómo funciona esta multiplicación.';
+  const ending = finalAttempt
+    ? 'Guárdala en tu cabeza. La próxima vez la reconocerás más rápido 🌱'
+    : `Ahora toca <strong>${current.correct}</strong> en las opciones. ✨`;
+
+  return `
+    <div class="feedback-heading">
+      <div>
+        <strong>${title}</strong>
+        <span>${subtitle}</span>
+      </div>
+    </div>
+
+    <div class="feedback-step">
+      <span class="feedback-label">1 · ¿Qué significa?</span>
+      <strong>${current.a} × ${current.b} son ${hint.meaning}.</strong>
+    </div>
+
+    <div class="feedback-step">
+      <span class="feedback-label">2 · Mira la pista</span>
+      <strong class="feedback-math">${hint.work}</strong>
+      <span class="feedback-tip">${hint.tip}</span>
+    </div>
+
+    <div class="feedback-answer">
+      <span>La respuesta es</span>
+      <strong>${current.correct}</strong>
+    </div>
+
+    <div class="feedback-action">${ending}</div>
+  `;
 }
 
 function startSession({ mode, table = null }) {
@@ -148,7 +215,7 @@ function renderQuestion() {
   els.questionCounter.textContent = `${state.questionIndex + 1} / 10`;
   els.question.textContent = `${current.a} × ${current.b}`;
   els.streak.textContent = state.streak;
-  els.feedback.textContent = '';
+  resetFeedback();
   els.nextButton.classList.add('hidden');
   els.answers.innerHTML = '';
 
@@ -190,9 +257,32 @@ function answerQuestion(value, selectedButton) {
     progress.stars += 1;
 
     if (state.attempts === 1) {
-      els.feedback.textContent = `✨ ¡Eso, Antonia! Lo corregiste. ${current.a} × ${current.b} = ${current.correct}.`;
+      showFeedback(
+        'success',
+        `<div class="feedback-heading success-heading">
+          <div>
+            <strong>🌟 ¡Eso, Antonia!</strong>
+            <span>Lo miraste, lo entendiste y lo corregiste.</span>
+          </div>
+        </div>
+        <div class="feedback-mini-equation">${current.a} × ${current.b} = <strong>${current.correct}</strong></div>
+        <div class="feedback-action">Corregir un error también es aprender 💛</div>`,
+        true
+      );
     } else {
-      els.feedback.textContent = state.streak >= 3 ? '🔥 ¡Excelente racha, Antonia!' : '✨ ¡Muy bien!';
+      const message = state.streak >= 3
+        ? '🔥 ¡Excelente racha, Antonia!'
+        : '✨ ¡Muy bien, Antonia!';
+      showFeedback(
+        'success',
+        `<div class="feedback-heading success-heading">
+          <div>
+            <strong>${message}</strong>
+            <span>${current.a} × ${current.b} = ${current.correct}</span>
+          </div>
+        </div>`,
+        true
+      );
     }
 
     finishAnswer();
@@ -204,13 +294,13 @@ function answerQuestion(value, selectedButton) {
 
   if (state.attempts === 0) {
     state.attempts = 1;
-    els.feedback.textContent = `${explainMultiplication(current.a, current.b)} Ahora busca ${current.correct} y tócala. Tienes otra oportunidad. 💪`;
+    showFeedback('hint', learningCard(current, false));
     return;
   }
 
   state.attempts = 2;
   state.streak = 0;
-  els.feedback.textContent = `${explainMultiplication(current.a, current.b)} La respuesta correcta es ${current.correct}. La miramos y seguimos.`;
+  showFeedback('gentle', learningCard(current, true));
   finishAnswer();
 }
 
