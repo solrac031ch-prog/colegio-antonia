@@ -11,32 +11,31 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="description" content="Práctica de Matemáticas para 3° Básico." />
-  <link rel="manifest" href="manifest.webmanifest?v=18" />
-  <link rel="icon" href="logo-3basico.svg?v=18" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-3basico.svg?v=18" />
-  <link rel="stylesheet" href="styles.css?v=18" />
-  <link rel="stylesheet" href="curriculum.css?v=18" />
-  <link rel="stylesheet" href="platform.css?v=18" />
-  <link rel="stylesheet" href="adventure.css?v=18" />
+  <link rel="manifest" href="manifest.webmanifest?v=19" />
+  <link rel="icon" href="logo-3basico.svg?v=19" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=19" />
+  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="stylesheet" href="curriculum.css?v=19" />
+  <link rel="stylesheet" href="platform.css?v=19" />
+  <link rel="stylesheet" href="adventure.css?v=19" />
+  <link rel="stylesheet" href="games.css?v=19" />
   <title>Matemáticas · Aprende 3° Básico</title>
 </head>
 <body data-subject="math">
   <main class="app-shell">
     <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Volver a materias">← Materias</button></div>
     <header class="hero">
-      <div class="hero-copy">
-        <div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=18" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Modo aventura</p></div>
-        <h1>Matemáticas</h1><p class="subtitle">Avanza estación por estación y vuelve a practicar cualquier tema cuando quieras.</p>
-      </div>
+      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=19" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Modo aventura</p></div><h1>Matemáticas</h1><p class="subtitle">Avanza estación por estación y vuelve a practicar cualquier tema cuando quieras.</p></div>
       <div class="score-card" aria-label="Progreso"><span>⭐ Estrellas</span><strong id="stars">0</strong></div>
     </header>
     <nav class="subject-switcher" aria-label="Asignaturas">
       <span class="subject-link active" aria-current="page">🧮 Matemáticas</span>
-      <a class="subject-link" href="english.html?v=18">🇬🇧 Inglés</a>
-      <a class="subject-link" href="language.html?v=18">📚 Lenguaje</a>
-      <a class="subject-link" href="science.html?v=18">🔬 Ciencias</a>
-      <a class="subject-link" href="history.html?v=18">🌎 Historia</a>
+      <a class="subject-link" href="english.html?v=19">🇬🇧 Inglés</a>
+      <a class="subject-link" href="language.html?v=19">📚 Lenguaje</a>
+      <a class="subject-link" href="science.html?v=19">🔬 Ciencias</a>
+      <a class="subject-link" href="history.html?v=19">🌎 Historia</a>
     </nav>
+    <a class="quick-game-banner" href="games.html?subject=math"><span class="quick-banner-icon" aria-hidden="true">🎮</span><span><strong>Desafío rápido de Matemáticas</strong><small>5 rondas: ordena, une, completa y responde.</small></span><span aria-hidden="true">→</span></a>
     <section id="homeView" class="view active">
       <div class="panel curriculum-panel">
         <div class="section-heading"><div><p class="section-kicker">Camino de Matemáticas</p><h2>Tu ruta de aprendizaje</h2></div><span class="route-badge">11 estaciones</span></div>
@@ -61,8 +60,8 @@
     </section>
     <section id="resultView" class="view"><div class="panel result-panel"><div id="resultEmoji" class="result-emoji">🌟</div><h2 id="resultTitle">¡Muy bien!</h2><p id="resultText"></p><div class="result-score"><span id="finalScore">0</span>/10</div><button id="againButton" class="primary-button" type="button">Practicar otra vez</button><button id="homeButton" class="secondary-button" type="button">Volver al tema</button><button id="routeButton" class="text-button" type="button">Ver el camino</button></div></section>
   </main>
-  <script src="app.js?v=18"></script>
-  <script src="game-progress.js?v=18"></script>
-  <script src="progress-controls.js?v=18"></script>
+  <script src="app.js?v=19"></script>
+  <script src="game-progress.js?v=19"></script>
+  <script src="progress-controls.js?v=19"></script>
 </body>
 </html>
