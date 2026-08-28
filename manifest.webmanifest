@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Colegio de Antonia",
-  "short_name": "Antonia",
-  "description": "App educativa de 3er grado con Matemáticas, Inglés, Lenguaje, Ciencias e Historia.",
+  "name": "Aprende 3° Básico",
+  "short_name": "3° Básico",
+  "description": "App educativa de 3° Básico con Matemáticas, Inglés, Lenguaje, Ciencias e Historia y Geografía.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -15,23 +15,24 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "logo-antonia.svg",
+      "src": "logo-3basico.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "logo-antonia.svg",
+      "src": "logo-3basico.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
     }
   ],
   "shortcuts": [
-    { "name": "Matemáticas", "url": "./index.html" },
+    { "name": "Materias", "url": "./index.html" },
+    { "name": "Matemáticas", "url": "./math.html" },
     { "name": "Inglés", "url": "./english.html" },
     { "name": "Lenguaje", "url": "./language.html" },
     { "name": "Ciencias", "url": "./science.html" },
-    { "name": "Historia", "url": "./history.html" }
+    { "name": "Historia y Geografía", "url": "./history.html" }
   ]
 }
