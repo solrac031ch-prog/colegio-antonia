@@ -1,6 +1,17 @@
 'use strict';
 
 (() => {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('./sw.js');
+        registration.update().catch(() => {});
+      } catch {
+        // La app sigue funcionando online aunque el service worker no esté disponible.
+      }
+    });
+  }
+
   function getAppRootPath() {
     try {
       return new URL('./', window.location.href).pathname;
