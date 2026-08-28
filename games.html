@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#7C3AED" />
+  <meta name="color-scheme" content="light" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="3° Básico" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="description" content="Desafíos interactivos de 3° Básico." />
+  <link rel="manifest" href="manifest.webmanifest?v=19" />
+  <link rel="icon" href="logo-3basico.svg?v=19" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=19" />
+  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="stylesheet" href="platform.css?v=19" />
+  <link rel="stylesheet" href="games.css?v=19" />
+  <title>Desafío rápido · Aprende 3° Básico</title>
+</head>
+<body data-subject="games">
+  <main class="app-shell quick-shell">
+    <div class="app-back-row"><a class="app-back-button" href="index.html?v=19" aria-label="Volver a materias">← Materias</a></div>
+
+    <header class="hero quick-hero">
+      <div class="hero-copy">
+        <div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=19" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Juego rápido</p></div>
+        <h1><span data-quick-subject-icon>🧮</span> Desafío rápido</h1>
+        <p class="subtitle"><strong data-quick-subject-title>Matemáticas</strong> · 5 rondas con actividades diferentes.</p>
+      </div>
+    </header>
+
+    <div class="quick-top-stats" aria-label="Progreso">
+      <div class="quick-stat"><span>⚡ XP</span><strong data-quick-xp>0</strong></div>
+      <div class="quick-stat"><span>🔥 Racha</span><strong><span data-quick-streak>0</span> días</strong></div>
+      <div class="quick-stat"><span>🎯 Hoy</span><strong data-quick-daily>0/2</strong></div>
+    </div>
+
+    <nav class="quick-subject-tabs" data-quick-subject-tabs aria-label="Elegir materia"></nav>
+
+    <section data-quick-game>
+      <div class="quick-progress-wrap">
+        <div class="quick-progress-track" aria-label="Progreso del desafío"><i data-quick-progress></i></div>
+        <span class="quick-counter" data-quick-counter>1 / 5</span>
+      </div>
+
+      <div class="quick-card">
+        <p class="quick-prompt" data-quick-prompt>Preparando desafío…</p>
+        <div data-quick-content></div>
+        <div class="quick-feedback" data-quick-feedback role="status" aria-live="polite"></div>
+        <div class="quick-actions">
+          <button class="primary-button hidden" type="button" data-quick-check>Comprobar</button>
+          <button class="primary-button hidden" type="button" data-quick-next>Siguiente →</button>
+        </div>
+      </div>
+      <p class="dashboard-note">Si te equivocas, tienes una segunda oportunidad antes de ver la respuesta.</p>
+    </section>
+
+    <section class="panel quick-result hidden" data-quick-result aria-live="polite">
+      <div class="quick-result-emoji">🏆</div>
+      <h2>¡Desafío terminado!</h2>
+      <div class="quick-result-score" data-quick-result-score>0/5</div>
+      <div class="quick-result-xp" data-quick-result-xp>+0 XP</div>
+      <p class="quick-result-message" data-quick-result-message></p>
+      <div class="quick-result-actions">
+        <button class="primary-button" type="button" data-quick-replay>🎮 Jugar otra vez</button>
+        <a class="secondary-button" data-quick-subject-back href="math.html?v=19">Volver a la materia</a>
+        <a class="text-button" href="index.html?v=19">Ver todas las materias</a>
+      </div>
+    </section>
+  </main>
+  <script src="games.js?v=19"></script>
+  <script src="progress-controls.js?v=19"></script>
+</body>
+</html>
