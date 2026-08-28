@@ -8,11 +8,32 @@
   const DAILY_GOAL = 2;
 
   const subjects = {
-    math: { title: 'Matemáticas', icon: '🧮', href: 'math.html?v=19' },
-    english: { title: 'Inglés', icon: '🇬🇧', href: 'english.html?v=19' },
-    language: { title: 'Lenguaje', icon: '📚', href: 'language.html?v=19' },
-    science: { title: 'Ciencias Naturales', icon: '🔬', href: 'science.html?v=19' },
-    history: { title: 'Historia y Geografía', icon: '🌎', href: 'history.html?v=19' },
+    math: { title: 'Matemáticas', englishTitle: 'Mathematics', icon: '🧮', href: 'math.html?v=22' },
+    english: { title: 'Inglés', englishTitle: 'English', icon: '🇬🇧', href: 'english.html?v=22' },
+    language: { title: 'Lenguaje', englishTitle: 'Language', icon: '📚', href: 'language.html?v=22' },
+    science: { title: 'Ciencias Naturales', englishTitle: 'Science', icon: '🔬', href: 'science.html?v=22' },
+    history: { title: 'Historia y Geografía', englishTitle: 'History', icon: '🌎', href: 'history.html?v=22' },
+  };
+
+  const requestedSubject = new URLSearchParams(window.location.search).get('subject');
+  const subjectKey = subjects[requestedSubject] ? requestedSubject : 'math';
+  const subject = subjects[subjectKey];
+  const englishMode = subjectKey === 'english';
+
+  const ui = englishMode ? {
+    correct: '✨ Correct!', tryAgain: '💡 Try once more', nowKnow: '🌱 Now you know', answer: 'Answer',
+    pairs: '🧩 All pairs matched!', trueLabel: '✅ True', falseLabel: '❌ False', trueWord: 'True', falseWord: 'False',
+    inputAria: 'Type your answer', orderAria: 'Your answer', orderHint: 'Tap the pieces in the correct order',
+    listen: '🔊 Listen', audioUnavailable: 'Audio is not available in this browser.', audioError: 'Audio could not play.',
+    quickTopic: 'Quick challenge', dailyDone: '🎯 Daily goal completed!',
+    remaining: n => `${n} lesson${n === 1 ? '' : 's'} left to complete today’s goal.`,
+  } : {
+    correct: '✨ ¡Correcto!', tryAgain: '💡 Intenta una vez más', nowKnow: '🌱 Ahora lo sabemos', answer: 'Respuesta',
+    pairs: '🧩 ¡Todas las parejas!', trueLabel: '✅ Verdadero', falseLabel: '❌ Falso', trueWord: 'Verdadero', falseWord: 'Falso',
+    inputAria: 'Escribe la respuesta', orderAria: 'Tu respuesta', orderHint: 'Toca las piezas en el orden correcto',
+    listen: '🔊 Escuchar', audioUnavailable: 'Audio no disponible en este navegador.', audioError: 'No se pudo reproducir el audio.',
+    quickTopic: 'Desafío rápido', dailyDone: '🎯 ¡Meta diaria completada!',
+    remaining: n => `Te falta${n === 1 ? '' : 'n'} ${n} lección${n === 1 ? '' : 'es'} para completar la meta de hoy.`,
   };
 
   const banks = {
@@ -24,11 +45,11 @@
       { type: 'choice', visual: true, prompt: '¿Cuál figura tiene 4 lados iguales?', statement: 'Elige la figura', options: ['🟦', '🔺', '⚪', '⬟'], correct: '🟦', explanation: 'El cuadrado tiene cuatro lados iguales.' },
     ],
     english: [
-      { type: 'listen', prompt: 'Listen and choose', speak: 'apple', options: ['🍎', '🐶', '🏠', '⚽'], correct: '🍎', explanation: 'Apple significa manzana.' },
-      { type: 'order', prompt: 'Put the words in order', tokens: ['apples.', 'likes', 'She'], correct: ['She', 'likes', 'apples.'], explanation: 'Con she usamos el verbo con -s: She likes apples.' },
-      { type: 'match', prompt: 'Match the words', pairs: [['cat', 'gato'], ['book', 'libro'], ['water', 'agua']], explanation: 'Une cada palabra en inglés con su significado.' },
-      { type: 'fill', prompt: 'Complete the sentence', statement: 'He ___ football.', correct: 'likes', explanation: 'Con he, she o it agregamos -s al verbo en present simple.' },
-      { type: 'truefalse', prompt: 'Is this question correct?', statement: 'Does she have a pet?', correct: true, explanation: 'Sí. Con she usamos does y luego el verbo vuelve a su forma base: have.' },
+      { type: 'listen', prompt: 'Listen and choose', speak: 'apple', options: ['🍎', '🐶', '🏠', '⚽'], correct: '🍎', explanation: 'Apple is the word for this fruit: 🍎.' },
+      { type: 'order', prompt: 'Put the words in order', tokens: ['apples.', 'likes', 'She'], correct: ['She', 'likes', 'apples.'], explanation: 'With she in an affirmative sentence, add -s to the verb: She likes apples.' },
+      { type: 'match', prompt: 'Match each word with its picture', pairs: [['cat', '🐱'], ['book', '📘'], ['water', '💧']], explanation: 'Each English word matches the picture that shows its meaning.' },
+      { type: 'fill', prompt: 'Complete the sentence', statement: 'He ___ football.', correct: 'likes', explanation: 'With he, she or it in an affirmative sentence, add -s: He likes football.' },
+      { type: 'truefalse', prompt: 'Is this question correct?', statement: 'Does she have a pet?', correct: true, explanation: 'Yes. With she, use does, then use the base verb: have.' },
     ],
     language: [
       { type: 'order', prompt: 'Ordena la oración', tokens: ['un', 'libro.', 'La', 'niña', 'lee'], correct: ['La', 'niña', 'lee', 'un', 'libro.'], explanation: 'Una oración clara puede organizarse como sujeto + acción + complemento.' },
@@ -52,6 +73,43 @@
       { type: 'choice', visual: true, prompt: '¿Qué objeto sirve para orientarse?', options: ['🧭', '⚖️', '🌡️', '⏰'], correct: '🧭', explanation: 'La brújula indica direcciones y ayuda a reconocer los puntos cardinales.' },
     ],
   };
+
+  function localizeEnglishPage() {
+    if (!englishMode) return;
+    document.documentElement.lang = 'en';
+    const back = document.querySelector('.app-back-button');
+    if (back) { back.textContent = '← Subjects'; back.setAttribute('aria-label', 'Back to subjects'); back.href = 'index.html?v=22'; }
+    const eyebrow = document.querySelector('.quick-hero .eyebrow');
+    if (eyebrow) eyebrow.textContent = 'Learn Grade 3 · Quick game';
+    const title = document.querySelector('.quick-hero h1');
+    if (title) title.innerHTML = '<span data-quick-subject-icon>🇬🇧</span> Quick challenge';
+    const subtitle = document.querySelector('.quick-hero .subtitle');
+    if (subtitle) subtitle.innerHTML = '<strong data-quick-subject-title>English</strong> · 5 rounds with different activities.';
+    const statLabels = document.querySelectorAll('.quick-stat > span');
+    if (statLabels[0]) statLabels[0].textContent = '⚡ XP';
+    if (statLabels[1]) statLabels[1].textContent = '🔥 Streak';
+    if (statLabels[2]) statLabels[2].textContent = '🎯 Today';
+    document.querySelector('[data-quick-subject-tabs]')?.setAttribute('aria-label', 'Choose subject');
+    document.querySelector('.quick-progress-track')?.setAttribute('aria-label', 'Challenge progress');
+    const prompt = document.querySelector('[data-quick-prompt]');
+    if (prompt) prompt.textContent = 'Preparing challenge…';
+    const check = document.querySelector('[data-quick-check]');
+    if (check) check.textContent = 'Check';
+    const next = document.querySelector('[data-quick-next]');
+    if (next) next.textContent = 'Next →';
+    const note = document.querySelector('[data-quick-game] + .dashboard-note, [data-quick-game] .dashboard-note');
+    if (note) note.textContent = 'If you make a mistake, you get a second chance before seeing the answer.';
+    const resultTitle = document.querySelector('[data-quick-result] h2');
+    if (resultTitle) resultTitle.textContent = 'Challenge complete!';
+    const replay = document.querySelector('[data-quick-replay]');
+    if (replay) replay.textContent = '🎮 Play again';
+    const resultBack = document.querySelector('[data-quick-result-back]');
+    if (resultBack) resultBack.textContent = 'Back to English';
+    const allSubjects = document.querySelector('[data-quick-result] .text-button');
+    if (allSubjects) { allSubjects.textContent = 'See all subjects'; allSubjects.href = 'index.html?v=22'; }
+  }
+
+  localizeEnglishPage();
 
   const els = {
     subjectIcon: document.querySelector('[data-quick-subject-icon]'),
@@ -77,9 +135,6 @@
     resultBack: document.querySelector('[data-quick-result-back]'),
   };
 
-  const requestedSubject = new URLSearchParams(window.location.search).get('subject');
-  const subjectKey = subjects[requestedSubject] ? requestedSubject : 'math';
-  const subject = subjects[subjectKey];
   let session = [];
   let roundIndex = 0;
   let score = 0;
@@ -112,17 +167,14 @@
   function loadProgress() {
     const fallback = {
       xp: 0, streakDays: 0, lastStudyDate: '', dailyDate: todayStamp(), dailyLessons: 0, dailyXp: 0,
-      totalLessons: 0, lastSubject: 'math', lastTopic: '', subjectXp: { math: 0, english: 0, language: 0, science: 0, history: 0 },
-      migratedExistingProgress: true,
+      totalLessons: 0, lastSubject: 'math', lastTopic: '', subjectXp: { math: 0, english: 0, language: 0, science: 0, history: 0 }, migratedExistingProgress: true,
     };
     try {
       const raw = JSON.parse(localStorage.getItem(GAME_KEY) || '{}');
       const merged = { ...fallback, ...(raw && typeof raw === 'object' ? raw : {}) };
       merged.subjectXp = { ...fallback.subjectXp, ...(merged.subjectXp || {}) };
       return merged;
-    } catch {
-      return fallback;
-    }
+    } catch { return fallback; }
   }
 
   const progressData = loadProgress();
@@ -159,7 +211,7 @@
   }
 
   function normalize(value) {
-    return String(value ?? '').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[.!?¿¡]/g, '').replace(/\s+/g, ' ');
+    return String(value ?? '').trim().toLocaleLowerCase(englishMode ? 'en' : 'es').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[.!?¿¡]/g, '').replace(/\s+/g, ' ');
   }
 
   function isSameSequence(a, b) {
@@ -168,7 +220,7 @@
 
   function setupHeader() {
     els.subjectIcon.textContent = subject.icon;
-    els.subjectTitle.textContent = subject.title;
+    els.subjectTitle.textContent = englishMode ? subject.englishTitle : subject.title;
     els.subjectBack.href = subject.href;
     els.resultBack.href = subject.href;
     els.subjectTabs.innerHTML = '';
@@ -176,15 +228,13 @@
       const link = document.createElement('a');
       link.className = `quick-subject-tab${key === subjectKey ? ' active' : ''}`;
       link.href = `games.html?subject=${key}`;
-      link.textContent = `${data.icon} ${data.title.replace(' Naturales', '').replace(' y Geografía', '')}`;
+      link.textContent = `${data.icon} ${englishMode ? data.englishTitle : data.title.replace(' Naturales', '').replace(' y Geografía', '')}`;
       if (key === subjectKey) link.setAttribute('aria-current', 'page');
       els.subjectTabs.appendChild(link);
     });
   }
 
-  function makeSession() {
-    return shuffle(banks[subjectKey]).slice(0, ROUNDS);
-  }
+  function makeSession() { return shuffle(banks[subjectKey]).slice(0, ROUNDS); }
 
   function clearRoundUi() {
     els.content.innerHTML = '';
@@ -215,22 +265,20 @@
     if (correct) {
       roundLocked = true;
       awardCorrect();
-      setFeedback('success', '✨ ¡Correcto!', explanation);
+      setFeedback('success', ui.correct, explanation);
       els.check.classList.add('hidden');
       els.next.classList.remove('hidden');
       disableRoundControls();
       return;
     }
-
     if (attempts === 0) {
       attempts = 1;
-      setFeedback('hint', '💡 Intenta una vez más', explanation);
+      setFeedback('hint', ui.tryAgain, explanation);
       resetForSecondAttempt();
       return;
     }
-
     roundLocked = true;
-    setFeedback('gentle', '🌱 Ahora lo sabemos', `${explanation}${reveal ? ` Respuesta: ${reveal}.` : ''}`);
+    setFeedback('gentle', ui.nowKnow, `${explanation}${reveal ? ` ${ui.answer}: ${reveal}.` : ''}`);
     els.check.classList.add('hidden');
     els.next.classList.remove('hidden');
     disableRoundControls();
@@ -253,10 +301,12 @@
   }
 
   function renderChoice(activity) {
-    const statement = document.createElement('div');
-    statement.className = 'quick-statement';
-    statement.textContent = activity.statement || '';
-    if (activity.statement) els.content.appendChild(statement);
+    if (activity.statement) {
+      const statement = document.createElement('div');
+      statement.className = 'quick-statement';
+      statement.textContent = activity.statement;
+      els.content.appendChild(statement);
+    }
     const grid = document.createElement('div');
     grid.className = `quick-choice-grid${activity.visual ? ' visual' : ''}`;
     shuffle(activity.options).forEach(option => {
@@ -277,12 +327,12 @@
     els.content.appendChild(statement);
     const grid = document.createElement('div');
     grid.className = 'quick-choice-grid two';
-    [{ label: '✅ Verdadero', value: true }, { label: '❌ Falso', value: false }].forEach(item => {
+    [{ label: ui.trueLabel, value: true }, { label: ui.falseLabel, value: false }].forEach(item => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'quick-choice';
       button.textContent = item.label;
-      button.addEventListener('click', () => resolveRound(item.value === activity.correct, activity.explanation, activity.correct ? 'Verdadero' : 'Falso'));
+      button.addEventListener('click', () => resolveRound(item.value === activity.correct, activity.explanation, activity.correct ? ui.trueWord : ui.falseWord));
       grid.appendChild(button);
     });
     els.content.appendChild(grid);
@@ -298,20 +348,20 @@
     input.autocomplete = 'off';
     input.autocapitalize = 'none';
     input.spellcheck = false;
-    input.setAttribute('aria-label', 'Escribe la respuesta');
+    input.setAttribute('aria-label', ui.inputAria);
     input.addEventListener('keydown', event => { if (event.key === 'Enter') els.check.click(); });
     els.content.append(statement, input);
     els.check.classList.remove('hidden');
     els.check.onclick = () => resolveRound(normalize(input.value) === normalize(activity.correct), activity.explanation, activity.correct);
-    setTimeout(() => input.focus(), 50);
+    requestAnimationFrame(() => input.focus());
   }
 
   function renderOrder(activity) {
     els.content.innerHTML = '';
     const tray = document.createElement('div');
     tray.className = 'quick-order-tray';
-    tray.setAttribute('aria-label', 'Tu respuesta');
-    if (!orderSelection.length) tray.innerHTML = '<span>Toca las piezas en el orden correcto</span>';
+    tray.setAttribute('aria-label', ui.orderAria);
+    if (!orderSelection.length) tray.innerHTML = `<span>${ui.orderHint}</span>`;
     else orderSelection.forEach((token, index) => {
       const chip = document.createElement('button');
       chip.type = 'button';
@@ -320,7 +370,6 @@
       chip.addEventListener('click', () => { orderSelection.splice(index, 1); renderOrder(activity); });
       tray.appendChild(chip);
     });
-
     const source = document.createElement('div');
     source.className = 'quick-token-bank';
     shuffle(activity.tokens.filter(token => !orderSelection.includes(token))).forEach(token => {
@@ -338,10 +387,8 @@
 
   function renderMatch(activity) {
     const cards = [];
-    activity.pairs.forEach((pair, pairIndex) => {
-      pair.forEach((text, sideIndex) => cards.push({ text, pairIndex, sideIndex }));
-    });
-    matchState = { selected: null, matched: new Set(), mistakes: 0 };
+    activity.pairs.forEach((pair, pairIndex) => pair.forEach((text, sideIndex) => cards.push({ text, pairIndex, sideIndex })));
+    matchState = { selected: null, matched: new Set() };
     const grid = document.createElement('div');
     grid.className = 'quick-match-grid';
     shuffle(cards).forEach((card, cardIndex) => {
@@ -375,16 +422,15 @@
           if (matchState.matched.size === activity.pairs.length) {
             roundLocked = true;
             awardCorrect();
-            setFeedback('success', '🧩 ¡Todas las parejas!', activity.explanation);
+            setFeedback('success', ui.pairs, activity.explanation);
             els.next.classList.remove('hidden');
           }
         } else {
-          matchState.mistakes += 1;
           first.button.classList.remove('selected');
           first.button.classList.add('wrong');
           button.classList.add('wrong');
           matchState.selected = null;
-          setTimeout(() => { first.button.classList.remove('wrong'); button.classList.remove('wrong'); }, 350);
+          setTimeout(() => { first.button.classList.remove('wrong'); button.classList.remove('wrong'); }, 300);
         }
       });
       grid.appendChild(button);
@@ -393,19 +439,22 @@
   }
 
   function speakEnglish(text, fallbackElement) {
+    if (window.AppVoice?.speakText) {
+      if (window.AppVoice.speakText(text, 'en-US') !== false) return;
+    }
     if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
-      fallbackElement.textContent = `Audio no disponible en este navegador. Palabra: ${text}`;
+      fallbackElement.textContent = `${ui.audioUnavailable} ${text}`;
       return;
     }
     try {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-GB';
-      utterance.rate = 0.82;
-      utterance.pitch = 1;
+      utterance.lang = 'en-US';
+      utterance.rate = 0.95;
+      utterance.pitch = 1.02;
       window.speechSynthesis.speak(utterance);
     } catch {
-      fallbackElement.textContent = `No se pudo reproducir el audio. Palabra: ${text}`;
+      fallbackElement.textContent = `${ui.audioError} ${text}`;
     }
   }
 
@@ -415,7 +464,7 @@
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'quick-audio-button';
-    button.textContent = '🔊 Escuchar';
+    button.textContent = ui.listen;
     const fallback = document.createElement('p');
     fallback.className = 'quick-audio-fallback';
     button.addEventListener('click', () => speakEnglish(activity.speak, fallback));
@@ -433,7 +482,6 @@
     els.counter.textContent = `${roundIndex + 1} / ${ROUNDS}`;
     els.progress.style.width = `${(roundIndex / ROUNDS) * 100}%`;
     els.prompt.textContent = activity.prompt;
-
     if (activity.type === 'truefalse') renderTrueFalse(activity);
     else if (activity.type === 'fill') renderFill(activity);
     else if (activity.type === 'order') renderOrder(activity);
@@ -458,17 +506,17 @@
     progressData.dailyLessons = (Number(progressData.dailyLessons) || 0) + 1;
     progressData.totalLessons = (Number(progressData.totalLessons) || 0) + 1;
     progressData.lastSubject = subjectKey;
-    progressData.lastTopic = 'Desafío rápido';
+    progressData.lastTopic = ui.quickTopic;
     progressData.subjectXp[subjectKey] = (Number(progressData.subjectXp[subjectKey]) || 0) + XP_BONUS;
     earnedXp += XP_BONUS;
     saveProgress();
-
     els.game.classList.add('hidden');
     els.result.classList.remove('hidden');
     els.progress.style.width = '100%';
     els.resultScore.textContent = `${score}/${ROUNDS}`;
     els.resultXp.textContent = `+${earnedXp} XP`;
-    els.resultMessage.textContent = progressData.dailyLessons >= DAILY_GOAL ? '🎯 ¡Meta diaria completada!' : `Te falta ${Math.max(0, DAILY_GOAL - progressData.dailyLessons)} lección para completar la meta de hoy.`;
+    const remaining = Math.max(0, DAILY_GOAL - progressData.dailyLessons);
+    els.resultMessage.textContent = progressData.dailyLessons >= DAILY_GOAL ? ui.dailyDone : ui.remaining(remaining);
     launchConfetti();
   }
 
@@ -476,15 +524,15 @@
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const layer = document.createElement('div');
     layer.className = 'quick-confetti';
-    for (let i = 0; i < 16; i += 1) {
+    for (let i = 0; i < 10; i += 1) {
       const piece = document.createElement('span');
       piece.textContent = ['⭐', '✨', '◆', '●'][i % 4];
-      piece.style.setProperty('--x', `${5 + ((i * 19) % 90)}vw`);
-      piece.style.setProperty('--delay', `${(i % 5) * 40}ms`);
+      piece.style.setProperty('--x', `${5 + ((i * 23) % 90)}vw`);
+      piece.style.setProperty('--delay', `${(i % 4) * 35}ms`);
       layer.appendChild(piece);
     }
     document.body.appendChild(layer);
-    setTimeout(() => layer.remove(), 1450);
+    setTimeout(() => layer.remove(), 1100);
   }
 
   function startSession() {
@@ -497,13 +545,8 @@
     renderRound();
   }
 
-  els.next.addEventListener('click', () => {
-    if (!roundLocked) return;
-    roundIndex += 1;
-    renderRound();
-  });
+  els.next.addEventListener('click', () => { if (roundLocked) { roundIndex += 1; renderRound(); } });
   els.replay.addEventListener('click', startSession);
-
   setupHeader();
   normalizeDaily();
   renderStats();
