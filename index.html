@@ -4,130 +4,56 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#7C3AED" />
-  <meta name="description" content="Colegio de Antonia: práctica de Matemáticas, Inglés y Lenguaje de 3er grado." />
-  <link rel="manifest" href="manifest.webmanifest?v=14" />
-  <link rel="icon" href="logo-antonia.svg?v=14" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-antonia.svg?v=14" />
-  <link rel="stylesheet" href="styles.css?v=14" />
-  <link rel="stylesheet" href="curriculum.css?v=14" />
+  <meta name="description" content="Colegio de Antonia: práctica de Matemáticas, Inglés, Lenguaje, Ciencias e Historia de 3er grado." />
+  <link rel="manifest" href="manifest.webmanifest?v=15" />
+  <link rel="icon" href="logo-antonia.svg?v=15" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-antonia.svg?v=15" />
+  <link rel="stylesheet" href="styles.css?v=15" />
+  <link rel="stylesheet" href="curriculum.css?v=15" />
   <title>Colegio de Antonia</title>
 </head>
 <body>
   <main class="app-shell">
-    <div class="app-back-row">
-      <button class="app-back-button" type="button" data-app-back data-fallback="./" aria-label="Volver a la pantalla anterior">← Atrás</button>
-    </div>
-
+    <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="./" aria-label="Volver a la pantalla anterior">← Atrás</button></div>
     <header class="hero">
       <div class="hero-copy">
-        <div class="brand-line">
-          <img class="brand-logo" src="logo-antonia.svg?v=14" alt="Logo Colegio de Antonia" />
-          <p class="eyebrow">Colegio de Antonia · 3er grado</p>
-        </div>
-        <h1>Matemáticas</h1>
-        <p class="subtitle">Vamos tema por tema, con ejercicios cortos, claros y entretenidos.</p>
+        <div class="brand-line"><img class="brand-logo" src="logo-antonia.svg?v=15" alt="Logo Colegio de Antonia" /><p class="eyebrow">Colegio de Antonia · 3er grado</p></div>
+        <h1>Matemáticas</h1><p class="subtitle">Vamos tema por tema, con ejercicios cortos, claros y entretenidos.</p>
       </div>
-      <div class="score-card" aria-label="Progreso">
-        <span>⭐ Estrellas</span>
-        <strong id="stars">0</strong>
-      </div>
+      <div class="score-card" aria-label="Progreso"><span>⭐ Estrellas</span><strong id="stars">0</strong></div>
     </header>
-
     <nav class="subject-switcher" aria-label="Asignaturas">
       <span class="subject-link active">🧮 Matemáticas</span>
-      <a class="subject-link" href="english.html?v=14">🇬🇧 Inglés</a>
-      <a class="subject-link" href="language.html?v=14">📚 Lenguaje</a>
+      <a class="subject-link" href="english.html?v=15">🇬🇧 Inglés</a>
+      <a class="subject-link" href="language.html?v=15">📚 Lenguaje</a>
+      <a class="subject-link" href="science.html?v=15">🔬 Ciencias</a>
+      <a class="subject-link" href="history.html?v=15">🌎 Historia</a>
     </nav>
-
     <section id="homeView" class="view active">
       <div class="panel curriculum-panel">
-        <div class="section-heading">
-          <div>
-            <p class="section-kicker">Ruta de 3er grado</p>
-            <h2>¿Qué quieres practicar?</h2>
-          </div>
-          <span class="route-badge">11 activos</span>
-        </div>
-        <p class="muted">Todos los temas están disponibles. Elige uno y hacemos una práctica corta.</p>
-        <div id="curriculumGrid" class="curriculum-grid" aria-label="Temas de Matemáticas"></div>
+        <div class="section-heading"><div><p class="section-kicker">Ruta de 3er grado</p><h2>¿Qué quieres practicar?</h2></div><span class="route-badge">11 activos</span></div>
+        <p class="muted">Todos los temas están disponibles. Elige uno y hacemos una práctica corta.</p><div id="curriculumGrid" class="curriculum-grid" aria-label="Temas de Matemáticas"></div>
       </div>
-
       <div class="panel compact progress-panel">
-        <div class="progress-row">
-          <span>Sesiones terminadas</span>
-          <strong id="sessions">0</strong>
-        </div>
-        <div class="progress-row">
-          <span>Mejor racha</span>
-          <strong id="bestStreak">0</strong>
-        </div>
-        <div class="progress-reset-row">
-          <button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaMathProgress" data-subject-name="Matemáticas">🔄 Reiniciar progreso</button>
-        </div>
+        <div class="progress-row"><span>Sesiones terminadas</span><strong id="sessions">0</strong></div>
+        <div class="progress-row"><span>Mejor racha</span><strong id="bestStreak">0</strong></div>
+        <div class="progress-reset-row"><button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaMathProgress" data-subject-name="Matemáticas">🔄 Reiniciar progreso</button></div>
       </div>
     </section>
-
     <section id="moduleView" class="view">
-      <div class="module-topbar">
-        <button id="moduleBackButton" class="ghost-button" type="button">← Todos los temas</button>
-        <span id="moduleChip" class="module-chip">🔢 Números</span>
-      </div>
-
-      <div class="panel module-hero-card">
-        <div id="moduleIcon" class="module-icon" aria-hidden="true">🔢</div>
-        <div>
-          <p id="moduleKicker" class="section-kicker">Tema 1</p>
-          <h2 id="moduleTitle">Números hasta 1.000</h2>
-          <p id="moduleDescription" class="muted">Contar, comparar y ordenar números.</p>
-        </div>
-      </div>
-
-      <div id="genericPracticePanel" class="panel">
-        <h2>Práctica rápida</h2>
-        <p id="genericPracticeText" class="muted">10 preguntas cortas, una a la vez.</p>
-        <button id="startTopicButton" class="primary-button" type="button">▶️ Empezar práctica</button>
-      </div>
-
-      <div id="multiplicationPracticePanel" class="panel hidden">
-        <h2>Elige una tabla</h2>
-        <p class="muted">Puedes practicar una sola tabla o mezclar todas.</p>
-        <div id="tableGrid" class="table-grid"></div>
-        <button id="mixedButton" class="primary-button" type="button">🎯 Desafío mezclado</button>
-      </div>
+      <div class="module-topbar"><button id="moduleBackButton" class="ghost-button" type="button">← Todos los temas</button><span id="moduleChip" class="module-chip">🔢 Números</span></div>
+      <div class="panel module-hero-card"><div id="moduleIcon" class="module-icon" aria-hidden="true">🔢</div><div><p id="moduleKicker" class="section-kicker">Tema 1</p><h2 id="moduleTitle">Números hasta 1.000</h2><p id="moduleDescription" class="muted">Contar, comparar y ordenar números.</p></div></div>
+      <div id="genericPracticePanel" class="panel"><h2>Práctica rápida</h2><p id="genericPracticeText" class="muted">10 preguntas cortas, una a la vez.</p><button id="startTopicButton" class="primary-button" type="button">▶️ Empezar práctica</button></div>
+      <div id="multiplicationPracticePanel" class="panel hidden"><h2>Elige una tabla</h2><p class="muted">Puedes practicar una sola tabla o mezclar todas.</p><div id="tableGrid" class="table-grid"></div><button id="mixedButton" class="primary-button" type="button">🎯 Desafío mezclado</button></div>
     </section>
-
     <section id="quizView" class="view" aria-live="polite">
-      <div class="quiz-topbar">
-        <button id="backButton" class="ghost-button" type="button">← Tema</button>
-        <span id="modeLabel" class="pill">Práctica</span>
-        <span id="questionCounter">1 / 10</span>
-      </div>
-
-      <div class="quiz-card">
-        <p id="questionPrompt" class="prompt">¿Cuál es la respuesta?</p>
-        <div id="question" class="question">245 + 36</div>
-        <div id="answers" class="answers"></div>
-        <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
-        <button id="nextButton" class="primary-button hidden" type="button">Siguiente →</button>
-      </div>
-
+      <div class="quiz-topbar"><button id="backButton" class="ghost-button" type="button">← Tema</button><span id="modeLabel" class="pill">Práctica</span><span id="questionCounter">1 / 10</span></div>
+      <div class="quiz-card"><p id="questionPrompt" class="prompt">¿Cuál es la respuesta?</p><div id="question" class="question">245 + 36</div><div id="answers" class="answers"></div><div id="feedback" class="feedback" role="status" aria-live="polite"></div><button id="nextButton" class="primary-button hidden" type="button">Siguiente →</button></div>
       <div class="streak-box">🔥 Racha: <strong id="streak">0</strong></div>
     </section>
-
-    <section id="resultView" class="view">
-      <div class="panel result-panel">
-        <div id="resultEmoji" class="result-emoji">🌟</div>
-        <h2 id="resultTitle">¡Muy bien!</h2>
-        <p id="resultText"></p>
-        <div class="result-score"><span id="finalScore">0</span>/10</div>
-        <button id="againButton" class="primary-button" type="button">Practicar otra vez</button>
-        <button id="homeButton" class="secondary-button" type="button">Volver al tema</button>
-        <button id="routeButton" class="text-button" type="button">Ver todos los temas</button>
-      </div>
-    </section>
+    <section id="resultView" class="view"><div class="panel result-panel"><div id="resultEmoji" class="result-emoji">🌟</div><h2 id="resultTitle">¡Muy bien!</h2><p id="resultText"></p><div class="result-score"><span id="finalScore">0</span>/10</div><button id="againButton" class="primary-button" type="button">Practicar otra vez</button><button id="homeButton" class="secondary-button" type="button">Volver al tema</button><button id="routeButton" class="text-button" type="button">Ver todos los temas</button></div></section>
   </main>
-
-  <script src="app.js?v=14"></script>
-  <script src="progress-controls.js?v=14"></script>
+  <script src="app.js?v=15"></script>
+  <script src="progress-controls.js?v=15"></script>
 </body>
 </html>
