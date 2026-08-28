@@ -83,6 +83,36 @@
   }, true);
   window.addEventListener('unhandledrejection', showRuntimeError);
 
+  function sanitizePersonalName(root) {
+    if (document.body.dataset.subject !== 'math' || !root) return;
+    const processText = node => {
+      if (node.nodeType === Node.TEXT_NODE && node.nodeValue && node.nodeValue.includes('Antonia')) {
+        node.nodeValue = node.nodeValue.replace(/,\s*Antonia/g, '').replace(/Antonia/g, '').replace(/\s{2,}/g, ' ');
+      }
+    };
+
+    if (root.nodeType === Node.TEXT_NODE) {
+      processText(root);
+      return;
+    }
+
+    if (!(root instanceof Element) && root !== document.body) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) processText(node);
+  }
+
+  if (document.body.dataset.subject === 'math') {
+    sanitizePersonalName(document.body);
+    const personalNameObserver = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'characterData') sanitizePersonalName(mutation.target);
+        mutation.addedNodes.forEach(node => sanitizePersonalName(node));
+      });
+    });
+    personalNameObserver.observe(document.body, { childList: true, characterData: true, subtree: true });
+  }
+
   const resetButton = document.querySelector('[data-reset-progress]');
   if (!resetButton) return;
 
