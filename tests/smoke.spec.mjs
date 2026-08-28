@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 const subjects = [
-  { name: 'Matemáticas', path: '/index.html', heading: 'Matemáticas', home: '#homeView', cards: '#curriculumGrid .topic-card', quiz: '#quizView', answers: '#answers .answer-button', next: '#nextButton', counter: '#questionCounter', result: '#resultView', directStart: false },
-  { name: 'Inglés', path: '/english.html', heading: 'Inglés', home: '#englishHome', cards: '#englishTopicGrid .english-topic-card', quiz: '#englishQuiz', answers: '#englishAnswers .answer-button', next: '#englishNextButton', counter: '#englishCounter', result: '#englishResult', directStart: true },
-  { name: 'Lenguaje', path: '/language.html', heading: 'Lenguaje', home: '#languageHome', cards: '#languageTopicGrid .english-topic-card', quiz: '#languageQuiz', answers: '#languageAnswers .answer-button', next: '#languageNextButton', counter: '#languageCounter', result: '#languageResult', directStart: true },
-  { name: 'Ciencias', path: '/science.html', heading: 'Ciencias Naturales', home: '#scienceHome', cards: '#scienceTopicGrid .english-topic-card', quiz: '#scienceQuiz', answers: '#scienceAnswers .answer-button', next: '#scienceNextButton', counter: '#scienceCounter', result: '#scienceResult', directStart: true },
-  { name: 'Historia', path: '/history.html', heading: 'Historia y Geografía', home: '#historyHome', cards: '#historyTopicGrid .english-topic-card', quiz: '#historyQuiz', answers: '#historyAnswers .answer-button', next: '#historyNextButton', counter: '#historyCounter', result: '#historyResult', directStart: true },
+  { name: 'Matemáticas', path: '/math.html', heading: 'Matemáticas', home: '#homeView', cards: '#curriculumGrid .topic-card', quiz: '#quizView', answers: '#answers .answer-button', next: '#nextButton', counter: '#questionCounter', result: '#resultView', directStart: false, enhanced: false },
+  { name: 'Inglés', path: '/english.html', heading: 'Inglés', home: '#englishHome', cards: '#englishTopicGrid .english-topic-card', quiz: '#englishQuiz', answers: '#englishAnswers .answer-button', next: '#englishNextButton', counter: '#englishCounter', result: '#englishResult', directStart: true, enhanced: false },
+  { name: 'Lenguaje', path: '/language.html', heading: 'Lenguaje', home: '#languageHome', cards: '#languageTopicGrid .english-topic-card', quiz: '#languageQuiz', answers: '#languageAnswers .answer-button', next: '#languageNextButton', counter: '#languageCounter', result: '#languageResult', directStart: true, enhanced: true },
+  { name: 'Ciencias', path: '/science.html', heading: 'Ciencias Naturales', home: '#scienceHome', cards: '#scienceTopicGrid .english-topic-card', quiz: '#scienceQuiz', answers: '#scienceAnswers .answer-button', next: '#scienceNextButton', counter: '#scienceCounter', result: '#scienceResult', directStart: true, enhanced: true },
+  { name: 'Historia', path: '/history.html', heading: 'Historia y Geografía', home: '#historyHome', cards: '#historyTopicGrid .english-topic-card', quiz: '#historyQuiz', answers: '#historyAnswers .answer-button', next: '#historyNextButton', counter: '#historyCounter', result: '#historyResult', directStart: true, enhanced: true },
 ];
 
 async function openTopic(page, subject, cardIndex = 0) {
@@ -38,6 +38,18 @@ async function finishCurrentQuestion(page, subject) {
   await expect(next).toBeVisible();
 }
 
+test('portada organiza las cinco materias', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: '¿Qué vamos a estudiar?', exact: true })).toBeVisible();
+  await expect(page.locator('.subject-dashboard-grid .subject-card')).toHaveCount(5);
+  await expect(page.getByRole('link', { name: /Matemáticas/ })).toHaveAttribute('href', /math\.html/);
+  await expect(page.getByRole('link', { name: /Ciencias Naturales/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Historia, Geografía/ })).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('Antonia');
+  const noPageOverflow = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2);
+  expect(noPageOverflow).toBeTruthy();
+});
+
 for (const subject of subjects) {
   test(`${subject.name}: abre, responde y avanza sin errores`, async ({ page }) => {
     const pageErrors = [];
@@ -49,6 +61,7 @@ for (const subject of subjects) {
     await expect(page.locator('.subject-switcher .subject-link')).toHaveCount(5);
     await expect(page.locator('[data-app-back]')).toBeVisible();
     await expect(page.locator('[data-reset-progress]')).toBeVisible();
+    await expect(page.locator('body')).not.toContainText('Colegio de Antonia');
 
     const noPageOverflow = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2);
     expect(noPageOverflow).toBeTruthy();
@@ -56,6 +69,7 @@ for (const subject of subjects) {
     await openTopic(page, subject, 0);
     await expect(page.locator(subject.counter)).toContainText('1 / 10');
     await finishCurrentQuestion(page, subject);
+    if (subject.enhanced) await expect(page.locator('.learning-explanation')).toBeVisible();
     await page.locator(subject.next).click();
     await expect(page.locator(subject.counter)).toContainText('2 / 10');
     expect(pageErrors).toEqual([]);
@@ -78,9 +92,7 @@ test('todos los módulos activos completan una sesión entera', async ({ page },
       for (let question = 0; question < 10; question += 1) {
         await finishCurrentQuestion(page, subject);
         await page.locator(subject.next).click();
-        if (question < 9) {
-          await expect(page.locator(subject.counter)).toContainText(`${question + 2} / 10`);
-        }
+        if (question < 9) await expect(page.locator(subject.counter)).toContainText(`${question + 2} / 10`);
       }
 
       await expect(page.locator(subject.result)).toHaveClass(/active/);
@@ -106,11 +118,12 @@ test('Ciencias conserva su pantalla al recargar sin conexión', async ({ page, c
   }
 });
 
-test('manifest y service worker están disponibles', async ({ request }) => {
+test('manifest y service worker usan identidad genérica', async ({ request }) => {
   const manifest = await request.get('/manifest.webmanifest');
   expect(manifest.ok()).toBeTruthy();
   const data = await manifest.json();
-  expect(data.name).toBe('Colegio de Antonia');
+  expect(data.name).toBe('Aprende 3° Básico');
+  expect(data.short_name).toBe('3° Básico');
   expect(data.start_url).toBe('./');
   expect(data.id).toBe('./');
 
