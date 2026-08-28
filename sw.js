@@ -1,13 +1,16 @@
-const CACHE = 'colegio-antonia-v9';
+const CACHE = 'colegio-antonia-v10';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=9',
-  './curriculum.css?v=9',
-  './app.js?v=9',
-  './hotfix.js?v=9',
-  './manifest.webmanifest?v=9',
-  './logo-antonia.svg?v=9'
+  './english.html',
+  './styles.css?v=10',
+  './curriculum.css?v=10',
+  './english.css?v=10',
+  './app.js?v=10',
+  './hotfix.js?v=10',
+  './english.js?v=10',
+  './manifest.webmanifest?v=10',
+  './logo-antonia.svg?v=10'
 ];
 
 self.addEventListener('install', event => {
