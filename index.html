@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#7C3AED" />
   <meta name="description" content="Colegio de Antonia: práctica de Matemáticas e Inglés de 3er grado." />
-  <link rel="manifest" href="manifest.webmanifest?v=11" />
-  <link rel="icon" href="logo-antonia.svg?v=11" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-antonia.svg?v=11" />
-  <link rel="stylesheet" href="styles.css?v=11" />
-  <link rel="stylesheet" href="curriculum.css?v=11" />
+  <link rel="manifest" href="manifest.webmanifest?v=12" />
+  <link rel="icon" href="logo-antonia.svg?v=12" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-antonia.svg?v=12" />
+  <link rel="stylesheet" href="styles.css?v=12" />
+  <link rel="stylesheet" href="curriculum.css?v=12" />
   <title>Colegio de Antonia</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
     <header class="hero">
       <div class="hero-copy">
         <div class="brand-line">
-          <img class="brand-logo" src="logo-antonia.svg?v=11" alt="Logo Colegio de Antonia" />
+          <img class="brand-logo" src="logo-antonia.svg?v=12" alt="Logo Colegio de Antonia" />
           <p class="eyebrow">Colegio de Antonia · 3er grado</p>
         </div>
         <h1>Matemáticas</h1>
@@ -31,7 +31,7 @@
 
     <nav class="subject-switcher" aria-label="Asignaturas">
       <span class="subject-link active">🧮 Matemáticas</span>
-      <a class="subject-link" href="english.html?v=11">🇬🇧 Inglés · Curious Kids 3</a>
+      <a class="subject-link" href="english.html?v=12">🇬🇧 Inglés · Curious Kids 3</a>
     </nav>
 
     <section id="homeView" class="view active">
@@ -61,7 +61,7 @@
 
     <section id="moduleView" class="view">
       <div class="module-topbar">
-        <button id="moduleBackButton" class="ghost-button">← Todos los temas</button>
+        <button id="moduleBackButton" class="ghost-button" type="button">← Todos los temas</button>
         <span id="moduleChip" class="module-chip">🔢 Números</span>
       </div>
 
@@ -77,20 +77,20 @@
       <div id="genericPracticePanel" class="panel">
         <h2>Práctica rápida</h2>
         <p id="genericPracticeText" class="muted">10 preguntas cortas, una a la vez.</p>
-        <button id="startTopicButton" class="primary-button">▶️ Empezar práctica</button>
+        <button id="startTopicButton" class="primary-button" type="button">▶️ Empezar práctica</button>
       </div>
 
       <div id="multiplicationPracticePanel" class="panel hidden">
         <h2>Elige una tabla</h2>
         <p class="muted">Puedes practicar una sola tabla o mezclar todas.</p>
         <div id="tableGrid" class="table-grid"></div>
-        <button id="mixedButton" class="primary-button">🎯 Desafío mezclado</button>
+        <button id="mixedButton" class="primary-button" type="button">🎯 Desafío mezclado</button>
       </div>
     </section>
 
     <section id="quizView" class="view" aria-live="polite">
       <div class="quiz-topbar">
-        <button id="backButton" class="ghost-button">← Tema</button>
+        <button id="backButton" class="ghost-button" type="button">← Tema</button>
         <span id="modeLabel" class="pill">Práctica</span>
         <span id="questionCounter">1 / 10</span>
       </div>
@@ -100,7 +100,7 @@
         <div id="question" class="question">245 + 36</div>
         <div id="answers" class="answers"></div>
         <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
-        <button id="nextButton" class="primary-button hidden">Siguiente →</button>
+        <button id="nextButton" class="primary-button hidden" type="button">Siguiente →</button>
       </div>
 
       <div class="streak-box">🔥 Racha: <strong id="streak">0</strong></div>
@@ -112,15 +112,13 @@
         <h2 id="resultTitle">¡Muy bien!</h2>
         <p id="resultText"></p>
         <div class="result-score"><span id="finalScore">0</span>/10</div>
-        <button id="againButton" class="primary-button">Practicar otra vez</button>
-        <button id="homeButton" class="secondary-button">Volver al tema</button>
-        <button id="routeButton" class="text-button">Ver todos los temas</button>
+        <button id="againButton" class="primary-button" type="button">Practicar otra vez</button>
+        <button id="homeButton" class="secondary-button" type="button">Volver al tema</button>
+        <button id="routeButton" class="text-button" type="button">Ver todos los temas</button>
       </div>
     </section>
   </main>
 
-  <script src="app.js?v=11"></script>
-  <script src="hotfix.js?v=11"></script>
-  <script src="quiz-sync.js?v=11"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>
