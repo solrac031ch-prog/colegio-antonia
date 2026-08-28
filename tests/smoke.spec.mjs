@@ -329,7 +329,7 @@ test('juego funciona al recargar sin conexión', async ({ page, context, browser
   }
 });
 
-test('service worker v22 serves app shell fast and keeps voice offline', async ({ request }) => {
+test('service worker v23 serves app shell fast and keeps voice offline', async ({ request }) => {
   const manifest = await request.get('/manifest.webmanifest');
   expect(manifest.ok()).toBeTruthy();
   const data = await manifest.json();
@@ -339,7 +339,7 @@ test('service worker v22 serves app shell fast and keeps voice offline', async (
   const serviceWorker = await request.get('/sw.js');
   expect(serviceWorker.ok()).toBeTruthy();
   const swText = await serviceWorker.text();
-  expect(swText).toContain('aprende-3-basico-v22');
+  expect(swText).toContain('aprende-3-basico-v23');
   expect(swText).toContain('staleWhileRevalidate');
   expect(swText).toContain('./voice.js');
   expect(swText).toContain('./voice.css');
