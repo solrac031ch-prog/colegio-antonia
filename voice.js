@@ -4,8 +4,14 @@
   const synth = window.speechSynthesis;
   const supported = Boolean(synth && window.SpeechSynthesisUtterance);
   const subject = document.body?.dataset?.subject || '';
+  const gameSubject = subject === 'games' ? new URLSearchParams(window.location.search).get('subject') : '';
+  const englishContext = subject === 'english' || gameSubject === 'english';
   let activeButton = null;
   let activeUtterance = null;
+
+  const labels = englishContext
+    ? { listen: '🔊 Listen', explanation: '🔊 Listen to explanation', stop: '⏹ Stop' }
+    : { listen: '🔊 Escuchar', explanation: '🔊 Escuchar explicación', stop: '⏹ Detener' };
 
   function cleanText(value, lang = 'es-CL') {
     let text = String(value || '')
@@ -13,7 +19,17 @@
       .replace(/\s+/g, ' ')
       .trim();
 
-    if (lang.toLowerCase().startsWith('es')) {
+    if (lang.toLowerCase().startsWith('en')) {
+      text = text
+        .replace(/×/g, ' times ')
+        .replace(/÷/g, ' divided by ')
+        .replace(/−/g, ' minus ')
+        .replace(/\+/g, ' plus ')
+        .replace(/=/g, ' equals ')
+        .replace(/\b1\/2\b/g, 'one half')
+        .replace(/\b1\/3\b/g, 'one third')
+        .replace(/\b1\/4\b/g, 'one quarter');
+    } else {
       text = text
         .replace(/×/g, ' por ')
         .replace(/÷/g, ' dividido por ')
@@ -22,28 +38,51 @@
         .replace(/=/g, ' igual a ')
         .replace(/\b1\/2\b/g, 'un medio')
         .replace(/\b1\/3\b/g, 'un tercio')
-        .replace(/\b1\/4\b/g, 'un cuarto')
-        .replace(/\s+/g, ' ')
-        .trim();
+        .replace(/\b1\/4\b/g, 'un cuarto');
     }
-    return text;
+
+    return text.replace(/\s+/g, ' ').trim();
+  }
+
+  function scoreVoice(voice, lang) {
+    const voiceLang = String(voice.lang || '').toLowerCase();
+    const wanted = lang.toLowerCase();
+    const base = wanted.split('-')[0];
+    if (!voiceLang.startsWith(base)) return -1000;
+
+    let score = voiceLang === wanted ? 80 : 45;
+    const name = String(voice.name || '').toLowerCase();
+    const premiumTerms = [
+      ['premium', 160], ['enhanced', 150], ['natural', 140], ['neural', 140],
+      ['siri', 120], ['samantha', 110], ['ava', 108], ['serena', 104],
+      ['daniel', 100], ['karen', 98], ['moira', 96], ['tessa', 94],
+      ['google us english', 105], ['google uk english', 100],
+      ['microsoft aria', 105], ['microsoft jenny', 105], ['microsoft guy', 95],
+      ['catalina', 105], ['paulina', 100], ['monica', 95], ['mónica', 95],
+      ['google español', 95], ['google spanish', 95]
+    ];
+    premiumTerms.forEach(([term, points]) => { if (name.includes(term)) score += points; });
+
+    const noveltyTerms = ['bells', 'boing', 'bubbles', 'cellos', 'organ', 'trinoids', 'whisper', 'zarvox', 'bad news', 'good news'];
+    if (noveltyTerms.some(term => name.includes(term))) score -= 400;
+    if (voice.localService) score += 12;
+    if (voice.default) score += 5;
+    return score;
   }
 
   function voiceFor(lang) {
     if (!supported || typeof synth.getVoices !== 'function') return null;
     const voices = synth.getVoices() || [];
-    const wanted = lang.toLowerCase();
-    const base = wanted.split('-')[0];
-    return voices.find(voice => String(voice.lang || '').toLowerCase() === wanted)
-      || voices.find(voice => String(voice.lang || '').toLowerCase().startsWith(`${base}-`))
-      || voices.find(voice => String(voice.lang || '').toLowerCase().startsWith(base))
-      || null;
+    return voices
+      .map(voice => ({ voice, score: scoreVoice(voice, lang) }))
+      .filter(item => item.score > -1000)
+      .sort((a, b) => b.score - a.score)[0]?.voice || null;
   }
 
   function resetButton(button) {
     if (!button) return;
     button.classList.remove('is-speaking');
-    button.textContent = button.dataset.voiceLabel || '🔊 Escuchar';
+    button.textContent = button.dataset.voiceLabel || labels.listen;
     button.setAttribute('aria-pressed', 'false');
   }
 
@@ -63,34 +102,42 @@
     resetButton(previousButton);
   }
 
-  function speak(text, lang, button) {
-    if (!supported) return;
+  function speakText(text, lang = 'es-CL', button = null) {
+    if (!supported) return false;
     const prepared = cleanText(text, lang);
-    if (!prepared) return;
+    if (!prepared) return false;
 
-    if (activeButton === button) {
+    if (button && activeButton === button) {
       stopSpeech();
-      return;
+      return true;
     }
 
     stopSpeech();
     const utterance = new SpeechSynthesisUtterance(prepared);
     utterance.lang = lang;
-    utterance.rate = lang.toLowerCase().startsWith('en') ? 0.78 : 0.84;
-    utterance.pitch = 1;
+    utterance.rate = lang.toLowerCase().startsWith('en') ? 0.95 : 0.98;
+    utterance.pitch = 1.02;
     utterance.volume = 1;
     const voice = voiceFor(lang);
     if (voice) utterance.voice = voice;
 
     activeButton = button;
     activeUtterance = utterance;
-    button.classList.add('is-speaking');
-    button.textContent = '⏹ Detener';
-    button.setAttribute('aria-pressed', 'true');
+    if (button) {
+      button.classList.add('is-speaking');
+      button.textContent = labels.stop;
+      button.setAttribute('aria-pressed', 'true');
+    }
 
     utterance.onend = () => finishUtterance(utterance, button);
     utterance.onerror = () => finishUtterance(utterance, button);
-    try { synth.speak(utterance); } catch { finishUtterance(utterance, button); }
+    try {
+      synth.speak(utterance);
+      return true;
+    } catch {
+      finishUtterance(utterance, button);
+      return false;
+    }
   }
 
   function makeVoiceButton(label, lang, getText, extraClass = '') {
@@ -101,16 +148,14 @@
     button.dataset.voiceLang = lang;
     button.textContent = label;
     button.setAttribute('aria-pressed', 'false');
-    button.addEventListener('click', () => speak(getText(), lang, button));
+    button.addEventListener('click', () => speakText(getText(), lang, button));
     return button;
   }
 
   function englishQuestionText() {
     const prompt = document.querySelector('#englishPrompt')?.textContent?.trim() || '';
     const question = document.querySelector('#englishQuestion')?.textContent?.trim() || '';
-    if (!question) return prompt;
-    if (!prompt || /elige|responde|completa|ordena/i.test(prompt)) return question;
-    return `${prompt}. ${question}`;
+    return [prompt, question].filter(Boolean).join('. ');
   }
 
   function injectEnglishQuestionVoice() {
@@ -119,7 +164,7 @@
     if (!answers) return;
     const row = document.createElement('div');
     row.className = 'voice-question-actions';
-    const button = makeVoiceButton('🔊 Escuchar inglés', 'en-US', englishQuestionText, 'voice-english-button');
+    const button = makeVoiceButton('🔊 Listen', 'en-US', englishQuestionText, 'voice-english-button');
     button.dataset.voiceEnglishQuestion = 'true';
     row.appendChild(button);
     answers.insertAdjacentElement('beforebegin', row);
@@ -136,7 +181,8 @@
     const text = explanationText(container).trim();
     if (text.length < 8) return;
 
-    const button = makeVoiceButton('🔊 Escuchar explicación', 'es-CL', () => explanationText(container), 'voice-explanation-button');
+    const lang = englishContext ? 'en-US' : 'es-CL';
+    const button = makeVoiceButton(labels.explanation, lang, () => explanationText(container), 'voice-explanation-button');
     button.dataset.voiceExplanation = 'true';
     const wrap = document.createElement('div');
     wrap.className = 'voice-explanation-actions';
@@ -145,26 +191,26 @@
   }
 
   function explanationContainers() {
-    return [
-      '#feedback',
-      '#englishFeedback',
-      '#languageFeedback',
-      '#scienceFeedback',
-      '#historyFeedback',
-      '[data-quick-feedback]'
-    ].flatMap(selector => Array.from(document.querySelectorAll(selector)));
+    return ['#feedback', '#englishFeedback', '#languageFeedback', '#scienceFeedback', '#historyFeedback', '[data-quick-feedback]']
+      .flatMap(selector => Array.from(document.querySelectorAll(selector)));
   }
 
-  function scanExplanations() {
-    explanationContainers().forEach(ensureExplanationVoice);
-  }
-
-  function initExplanationObserver() {
+  function initExplanationObservers() {
     if (!supported) return;
-    const containers = explanationContainers();
-    scanExplanations();
-    const observer = new MutationObserver(() => scanExplanations());
-    containers.forEach(container => observer.observe(container, { childList: true, characterData: true, subtree: true }));
+    explanationContainers().forEach(container => {
+      let scheduled = false;
+      const schedule = () => {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(() => {
+          scheduled = false;
+          ensureExplanationVoice(container);
+        });
+      };
+      ensureExplanationVoice(container);
+      const observer = new MutationObserver(schedule);
+      observer.observe(container, { childList: true, characterData: true, subtree: true });
+    });
   }
 
   function init() {
@@ -172,16 +218,18 @@
       document.documentElement.classList.add('voice-unavailable');
       return;
     }
-    injectEnglishQuestionVoice();
-    initExplanationObserver();
     if (typeof synth.getVoices === 'function') synth.getVoices();
+    injectEnglishQuestionVoice();
+    initExplanationObservers();
   }
 
-  window.addEventListener('pagehide', stopSpeech);
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopSpeech();
-  });
-  window.addEventListener('beforeunload', stopSpeech);
+  window.AppVoice = {
+    speakText: (text, lang = 'es-CL') => speakText(text, lang, null),
+    stop: stopSpeech,
+    bestVoiceName: lang => voiceFor(lang)?.name || '',
+  };
 
+  window.addEventListener('pagehide', stopSpeech);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopSpeech(); });
   init();
 })();
