@@ -244,7 +244,8 @@ test('natural voice uses English for English and Spanish for other explanations'
   await englishVoice.click();
   await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1) || null)).toMatchObject({ lang: 'en-US', voice: 'Premium English Natural' });
   const spokenEnglish = await page.evaluate(() => window.__spokenByApp.at(-1));
-  expect(spokenEnglish.rate).toBeGreaterThanOrEqual(0.9);
+  expect(spokenEnglish.rate).toBeGreaterThanOrEqual(0.76);
+  expect(spokenEnglish.rate).toBeLessThanOrEqual(0.92);
 
   await finishCurrentQuestion(page, subjects[1]);
   const englishExplanation = page.locator('#englishFeedback [data-voice-explanation]');
