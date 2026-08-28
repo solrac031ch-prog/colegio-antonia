@@ -52,6 +52,15 @@ jobs:
           grep -q 'adventure.css?v=19' index.html
           grep -q 'games.css?v=19' index.html
           grep -q 'game-progress.js?v=19' index.html
+          grep -q 'progress-controls.js?v=20' index.html
+          grep -q 'data-reset-all-progress' index.html
+          grep -q 'Reiniciar todo el progreso' index.html
+          grep -q "aprende3GameProgress" progress-controls.js
+          grep -q "antoniaMathProgress" progress-controls.js
+          grep -q "antoniaEnglishProgress" progress-controls.js
+          grep -q "antoniaLanguageProgress" progress-controls.js
+          grep -q "antoniaScienceProgress" progress-controls.js
+          grep -q "antoniaHistoryProgress" progress-controls.js
           grep -q 'games.html?subject=math' index.html
           grep -q 'math.html?v=19' index.html
           grep -q 'app.js?v=19' math.html
@@ -83,7 +92,7 @@ jobs:
             grep -q 'feedback-enhancer.js?v=19' "$page"
           done
           grep -q 'logo-3basico.svg?v=19' index.html
-          grep -q "aprende-3-basico-v19" sw.js
+          grep -q "aprende-3-basico-v20" sw.js
           grep -q "./games.html" sw.js
           grep -q "./games.js" sw.js
           grep -q "./games.css" sw.js
