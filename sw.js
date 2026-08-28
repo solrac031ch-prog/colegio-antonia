@@ -1,4 +1,4 @@
-const CACHE = 'aprende-3-basico-v17';
+const CACHE = 'aprende-3-basico-v18';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const CORE_ASSETS = [
   './curriculum.css',
   './english.css',
   './platform.css',
+  './adventure.css',
   './dashboard.css',
   './app.js',
   './english.js',
@@ -18,6 +19,7 @@ const CORE_ASSETS = [
   './science.js',
   './history.js',
   './feedback-enhancer.js',
+  './game-progress.js',
   './progress-controls.js',
   './manifest.webmanifest',
   './logo-3basico.svg'
