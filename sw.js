@@ -1,4 +1,4 @@
-const CACHE = 'colegio-antonia-v6';
+const CACHE = 'colegio-antonia-v7';
 const ASSETS = ['./', './index.html', './styles.css', './curriculum.css', './app.js', './manifest.webmanifest', './logo-antonia.svg'];
 
 self.addEventListener('install', event => {
