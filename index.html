@@ -11,13 +11,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="description" content="App educativa de práctica para estudiantes de 3° Básico." />
-  <link rel="manifest" href="manifest.webmanifest?v=18" />
-  <link rel="icon" href="logo-3basico.svg?v=18" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-3basico.svg?v=18" />
-  <link rel="stylesheet" href="styles.css?v=18" />
-  <link rel="stylesheet" href="platform.css?v=18" />
-  <link rel="stylesheet" href="adventure.css?v=18" />
-  <link rel="stylesheet" href="dashboard.css?v=18" />
+  <link rel="manifest" href="manifest.webmanifest?v=19" />
+  <link rel="icon" href="logo-3basico.svg?v=19" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=19" />
+  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="stylesheet" href="platform.css?v=19" />
+  <link rel="stylesheet" href="adventure.css?v=19" />
+  <link rel="stylesheet" href="dashboard.css?v=19" />
+  <link rel="stylesheet" href="games.css?v=19" />
   <title>Aprende 3° Básico</title>
 </head>
 <body data-subject="dashboard">
@@ -25,11 +26,11 @@
     <header class="hero dashboard-hero">
       <div class="hero-copy">
         <div class="brand-line">
-          <img class="brand-logo" src="logo-3basico.svg?v=18" alt="Logo Aprende 3° Básico" />
+          <img class="brand-logo" src="logo-3basico.svg?v=19" alt="Logo Aprende 3° Básico" />
           <p class="eyebrow">Aprende 3° Básico · Modo aventura</p>
         </div>
         <h1 class="dashboard-title">¡Sigue aprendiendo!</h1>
-        <p class="subtitle dashboard-subtitle">Gana XP, mantén tu racha y avanza por los caminos de cada materia con prácticas cortas.</p>
+        <p class="subtitle dashboard-subtitle">Gana XP, mantén tu racha y avanza por cada materia con lecciones y juegos cortos.</p>
       </div>
     </header>
 
@@ -47,7 +48,7 @@
       </div>
 
       <div class="dashboard-action-column">
-        <a class="continue-card" data-game-continue href="math.html?v=18">
+        <a class="continue-card" data-game-continue href="math.html?v=19">
           <span class="continue-icon" data-game-continue-icon aria-hidden="true">🧮</span>
           <span class="continue-copy">
             <span>▶ Continuar</span>
@@ -62,6 +63,16 @@
           <div class="daily-progress"><i data-game-daily-bar></i></div>
           <p data-game-goal-message>Completa 2 lecciones hoy.</p>
         </div>
+
+        <a class="continue-card quick-dashboard-card" href="games.html?subject=math">
+          <span class="continue-icon" aria-hidden="true">🎮</span>
+          <span class="continue-copy">
+            <span>Juego de 5 rondas</span>
+            <strong>Desafío rápido</strong>
+            <small>Ordena, une, completa, escucha y decide verdadero o falso.</small>
+          </span>
+          <span class="continue-arrow" aria-hidden="true">→</span>
+        </a>
       </div>
     </section>
 
@@ -71,32 +82,17 @@
       <p class="muted">Puedes entrar a cualquier materia. Las estaciones completadas quedarán marcadas para que se vea el avance.</p>
 
       <div class="subject-dashboard-grid">
-        <a class="subject-card" href="math.html?v=18">
-          <span class="subject-card-icon" aria-hidden="true">🧮</span>
-          <span><strong>Matemáticas</strong><small>Números, sumas, restas, tablas, división, fracciones, medidas y más.</small><span class="subject-card-action">Comenzar camino →</span></span>
-        </a>
-        <a class="subject-card" href="english.html?v=18">
-          <span class="subject-card-icon" aria-hidden="true">🇬🇧</span>
-          <span><strong>Inglés</strong><small>Vocabulary, grammar, reading, conversation, writing y repaso.</small><span class="subject-card-action">Comenzar camino →</span></span>
-        </a>
-        <a class="subject-card" href="language.html?v=18">
-          <span class="subject-card-icon" aria-hidden="true">📚</span>
-          <span><strong>Lenguaje</strong><small>Comprensión lectora, vocabulario, ortografía, gramática y escritura.</small><span class="subject-card-action">Comenzar camino →</span></span>
-        </a>
-        <a class="subject-card" href="science.html?v=18">
-          <span class="subject-card-icon" aria-hidden="true">🔬</span>
-          <span><strong>Ciencias Naturales</strong><small>Seres vivos, cuerpo y salud, materia, fuerzas, Tierra y ambiente.</small><span class="subject-card-action">Comenzar camino →</span></span>
-        </a>
-        <a class="subject-card subject-card-wide" href="history.html?v=18">
-          <span class="subject-card-icon" aria-hidden="true">🌎</span>
-          <span><strong>Historia, Geografía y Ciencias Sociales</strong><small>Mapas, paisajes, Grecia y Roma, vida en sociedad y ciudadanía.</small><span class="subject-card-action">Comenzar camino →</span></span>
-        </a>
+        <a class="subject-card" href="math.html?v=19"><span class="subject-card-icon" aria-hidden="true">🧮</span><span><strong>Matemáticas</strong><small>Números, sumas, restas, tablas, división, fracciones, medidas y más.</small><span class="subject-card-action">Comenzar camino →</span></span></a>
+        <a class="subject-card" href="english.html?v=19"><span class="subject-card-icon" aria-hidden="true">🇬🇧</span><span><strong>Inglés</strong><small>Vocabulary, grammar, reading, conversation, writing y repaso.</small><span class="subject-card-action">Comenzar camino →</span></span></a>
+        <a class="subject-card" href="language.html?v=19"><span class="subject-card-icon" aria-hidden="true">📚</span><span><strong>Lenguaje</strong><small>Comprensión lectora, vocabulario, ortografía, gramática y escritura.</small><span class="subject-card-action">Comenzar camino →</span></span></a>
+        <a class="subject-card" href="science.html?v=19"><span class="subject-card-icon" aria-hidden="true">🔬</span><span><strong>Ciencias Naturales</strong><small>Seres vivos, cuerpo y salud, materia, fuerzas, Tierra y ambiente.</small><span class="subject-card-action">Comenzar camino →</span></span></a>
+        <a class="subject-card subject-card-wide" href="history.html?v=19"><span class="subject-card-icon" aria-hidden="true">🌎</span><span><strong>Historia, Geografía y Ciencias Sociales</strong><small>Mapas, paisajes, Grecia y Roma, vida en sociedad y ciudadanía.</small><span class="subject-card-action">Comenzar camino →</span></span></a>
       </div>
     </section>
 
     <p class="dashboard-note">Los ejercicios son originales y complementarios a los textos escolares de referencia.</p>
   </main>
-  <script src="game-progress.js?v=18"></script>
-  <script src="progress-controls.js?v=18"></script>
+  <script src="game-progress.js?v=19"></script>
+  <script src="progress-controls.js?v=19"></script>
 </body>
 </html>
