@@ -4,6 +4,19 @@
   const resetButton = document.querySelector('[data-reset-progress]');
   if (!resetButton) return;
 
+  resetButton.classList.add('secondary-button');
+  resetButton.style.marginTop = '12px';
+  resetButton.style.background = '#f3f0f7';
+  resetButton.style.color = '#6b5b76';
+  resetButton.style.boxShadow = 'none';
+
+  const row = resetButton.closest('.progress-reset-row');
+  if (row) {
+    row.style.marginTop = '7px';
+    row.style.paddingTop = '7px';
+    row.style.borderTop = '1px solid #ede9fe';
+  }
+
   resetButton.addEventListener('click', () => {
     const storageKey = resetButton.dataset.storageKey;
     const subjectName = resetButton.dataset.subjectName || 'esta asignatura';
