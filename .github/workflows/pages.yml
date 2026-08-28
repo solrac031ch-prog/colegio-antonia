@@ -49,65 +49,62 @@ jobs:
           for file in index.html math.html english.html language.html science.html history.html games.html styles.css curriculum.css english.css platform.css adventure.css dashboard.css games.css voice.css feedback-enhancer.js game-progress.js games.js voice.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs; do
             test -f "$file"
           done
-          grep -q 'dashboard.css?v=19' index.html
-          grep -q 'adventure.css?v=19' index.html
-          grep -q 'games.css?v=19' index.html
-          grep -q 'game-progress.js?v=19' index.html
-          grep -q 'progress-controls.js?v=20' index.html
+
+          grep -q 'game-progress.js?v=22' index.html
+          grep -q 'progress-controls.js?v=22' index.html
           grep -q 'data-reset-all-progress' index.html
-          grep -q 'Reiniciar todo el progreso' index.html
-          grep -q "aprende3GameProgress" progress-controls.js
-          grep -q "antoniaMathProgress" progress-controls.js
-          grep -q "antoniaEnglishProgress" progress-controls.js
-          grep -q "antoniaLanguageProgress" progress-controls.js
-          grep -q "antoniaScienceProgress" progress-controls.js
-          grep -q "antoniaHistoryProgress" progress-controls.js
-          grep -q 'games.html?subject=math' index.html
-          grep -q 'math.html?v=19' index.html
-          grep -q 'app.js?v=19' math.html
-          grep -q 'english.js?v=19' english.html
-          grep -q 'language.js?v=19' language.html
-          grep -q 'science.js?v=19' science.html
-          grep -q 'history.js?v=19' history.html
-          grep -q 'games.js?v=19' games.html
-          grep -q 'games.css?v=19' games.html
-          grep -q 'speechSynthesis' games.js
+          grep -q 'math.html?v=22' index.html
+          grep -q 'english.html?v=22' index.html
+
+          grep -q '<html lang="en">' english.html
+          grep -q 'Learn Grade 3' english.html
+          grep -q 'english.js?v=22' english.html
+          grep -q 'game-progress.js?v=22' english.html
+          grep -q 'voice.js?v=22' english.html
+          grep -q 'progress-controls.js?v=22' english.html
+          grep -q 'voice.css?v=22' english.html
+          grep -q 'Reset English progress' english.html
+          grep -q 'English quick challenge' english.html
+          ! grep -Eq '← Materias|Modo aventura|⭐ Estrellas|Sesiones de Inglés|Mejor racha|Reiniciar progreso|Camino de Inglés|Tu ruta de aprendizaje|6 estaciones|Elige la mejor|Lee y responde' english.html
+          ! grep -Eq '¿|¡|significa|Con she|Con he|Con they|Con we|Completa la oración|Elige la|Lee y responde|pregunta cómo|respuesta natural' english.js
+
+          for page in math.html language.html science.html history.html; do
+            grep -q 'game-progress.js?v=22' "$page"
+            grep -q 'voice.js?v=22' "$page"
+            grep -q 'voice.css?v=22' "$page"
+            grep -q 'progress-controls.js?v=22' "$page"
+            grep -q 'games.html?subject=' "$page"
+            grep -q 'data-app-back' "$page"
+            grep -q 'aria-current="page"' "$page"
+          done
+
+          grep -q 'voice.js?v=22' games.html
+          grep -q 'games.js?v=22' games.html
+          grep -q 'progress-controls.js?v=22' games.html
           grep -q "type: 'listen'" games.js
           grep -q "type: 'order'" games.js
           grep -q "type: 'match'" games.js
           grep -q "type: 'fill'" games.js
           grep -q "type: 'truefalse'" games.js
-          grep -q 'speechSynthesis' voice.js
+          grep -q 'Match each word with its picture' games.js
+
+          grep -q 'premium' voice.js
+          grep -q 'enhanced' voice.js
+          grep -q 'natural' voice.js
           grep -q "'en-US'" voice.js
           grep -q "'es-CL'" voice.js
-          grep -q 'Escuchar inglés' voice.js
-          grep -q 'Escuchar explicación' voice.js
-          for page in math.html english.html language.html science.html history.html; do
-            grep -q 'progress-controls.js?v=19' "$page"
-            grep -q 'game-progress.js?v=19' "$page"
-            grep -q 'platform.css?v=19' "$page"
-            grep -q 'adventure.css?v=19' "$page"
-            grep -q 'games.css?v=19' "$page"
-            grep -q 'voice.css?v=21' "$page"
-            grep -q 'voice.js?v=21' "$page"
-            grep -q 'games.html?subject=' "$page"
-            grep -q 'data-app-back' "$page"
-            grep -q 'aria-current="page"' "$page"
-            grep -q 'data-subject=' "$page"
-            grep -q 'Aprende 3° Básico' "$page"
-          done
-          for page in language.html science.html history.html; do
-            grep -q 'feedback-enhancer.js?v=19' "$page"
-          done
-          grep -q 'voice.css?v=21' games.html
-          grep -q 'voice.js?v=21' games.html
-          grep -q 'logo-3basico.svg?v=19' index.html
-          grep -q "aprende-3-basico-v21" sw.js
-          grep -q "./games.html" sw.js
-          grep -q "./games.js" sw.js
-          grep -q "./games.css" sw.js
+          grep -q '0.95' voice.js
+          grep -q '0.98' voice.js
+          grep -q 'Listen to explanation' voice.js
+
+          ! grep -q 'registration.update()' progress-controls.js
+          grep -q 'requestIdleCallback' progress-controls.js
+          grep -q "aprende-3-basico-v22" sw.js
+          grep -q 'staleWhileRevalidate' sw.js
           grep -q "./voice.js" sw.js
           grep -q "./voice.css" sw.js
+          grep -q "./games.js" sw.js
+
           ! grep -q 'Colegio de Antonia\|Colegio Antonia' index.html math.html english.html language.html science.html history.html games.html manifest.webmanifest
           ! grep -q 'hotfix.js\|quiz-sync.js' math.html sw.js
 
