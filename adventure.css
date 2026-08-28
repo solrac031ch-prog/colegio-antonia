@@ -1,0 +1,247 @@
+.game-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 10px;
+  border: 1px solid rgba(124,58,237,.12);
+  border-radius: 20px;
+  background: rgba(255,255,255,.86);
+  box-shadow: 0 9px 24px rgba(91,33,182,.07);
+}
+
+.game-strip-stat,
+.game-strip-goal {
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 15px;
+  background: #f8f5ff;
+}
+
+.game-strip-stat span,
+.game-strip-goal > span {
+  display: block;
+  color: #7d7088;
+  font-size: .7rem;
+  font-weight: 850;
+  line-height: 1.2;
+}
+
+.game-strip-stat strong,
+.game-strip-goal strong {
+  display: block;
+  margin-top: 3px;
+  color: #5b21b6;
+  font-size: .96rem;
+  font-weight: 950;
+}
+
+.mini-progress,
+.daily-progress,
+.level-progress {
+  overflow: hidden;
+  height: 9px;
+  border-radius: 999px;
+  background: #e9e2f5;
+}
+
+.mini-progress { margin-top: 8px; height: 7px; }
+
+.mini-progress i,
+.daily-progress i,
+.level-progress i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8b5cf6, #f59e0b);
+  transition: width .28s ease;
+}
+
+/* Camino de aprendizaje */
+.curriculum-grid,
+.english-topic-grid {
+  display: flex !important;
+  flex-direction: column;
+  gap: 28px !important;
+  align-items: stretch;
+  margin-top: 22px !important;
+}
+
+.topic-card,
+.english-topic-card {
+  position: relative;
+  width: min(92%, 560px) !important;
+  min-height: 108px !important;
+  margin: 0 auto;
+  overflow: visible;
+  border-radius: 28px !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+}
+
+.topic-card:nth-child(odd),
+.english-topic-card:nth-child(odd) { margin-left: 2%; margin-right: auto; }
+.topic-card:nth-child(even),
+.english-topic-card:nth-child(even) { margin-left: auto; margin-right: 2%; }
+
+.topic-card:not(:last-child)::after,
+.english-topic-card:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -30px;
+  width: 5px;
+  height: 30px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #ddd4ee;
+  z-index: 0;
+}
+
+.topic-card.adventure-completed,
+.english-topic-card.adventure-completed {
+  border-color: #86efac !important;
+  background: linear-gradient(145deg, #f0fdf4, #dcfce7) !important;
+  box-shadow: 0 12px 26px rgba(22,163,74,.12) !important;
+}
+
+.topic-card.adventure-current,
+.english-topic-card.adventure-current {
+  border-color: #8b5cf6 !important;
+  background: linear-gradient(145deg, #ffffff, #ede9fe) !important;
+  box-shadow: 0 16px 34px rgba(109,40,217,.18) !important;
+  transform: scale(1.015);
+}
+
+.topic-card.adventure-available,
+.english-topic-card.adventure-available {
+  border-color: #ded6e9 !important;
+  background: linear-gradient(145deg, #fff, #faf8fc) !important;
+}
+
+.adventure-step {
+  position: absolute;
+  top: -12px;
+  left: 18px;
+  z-index: 2;
+  min-width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0 9px;
+  border: 4px solid #fff;
+  border-radius: 999px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 950;
+  box-shadow: 0 5px 12px rgba(76,29,149,.18);
+}
+
+.adventure-completed .adventure-step { background: #22c55e; }
+.adventure-available .adventure-step { background: #a99db3; }
+
+.topic-card.adventure-completed .topic-status,
+.english-topic-card.adventure-completed .english-topic-status { color: #15803d !important; }
+.topic-card.adventure-current .topic-status,
+.english-topic-card.adventure-current .english-topic-status { color: #6d28d9 !important; }
+.topic-card.adventure-available .topic-status,
+.english-topic-card.adventure-available .english-topic-status { color: #857a8e !important; }
+
+.english-topic-status::before,
+.topic-active .topic-status::before { content: none !important; }
+
+.adventure-completed .topic-icon,
+.adventure-completed .english-topic-icon { background: #bbf7d0 !important; }
+.adventure-current .topic-icon,
+.adventure-current .english-topic-icon { box-shadow: 0 0 0 5px rgba(139,92,246,.12); }
+
+/* Celebración al terminar una lección */
+.adventure-result-summary {
+  width: min(100%, 460px);
+  margin: 14px auto 18px;
+  padding: 14px;
+  border: 2px solid #ddd6fe;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #f8f5ff, #fff8e7);
+  text-align: center;
+}
+
+.adventure-xp-pop {
+  margin-bottom: 10px;
+  color: #6d28d9;
+  font-size: clamp(1.6rem, 7vw, 2.25rem);
+  font-weight: 1000;
+  letter-spacing: -.04em;
+}
+
+.adventure-result-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+
+.adventure-result-stats span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.78);
+  color: #665971;
+  font-size: .78rem;
+  font-weight: 850;
+}
+
+.adventure-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.adventure-confetti span {
+  position: absolute;
+  top: -8vh;
+  left: var(--x);
+  font-size: 1.15rem;
+  animation: adventureFall 1.25s cubic-bezier(.18,.7,.35,1) var(--delay) both;
+}
+
+@keyframes adventureFall {
+  0% { opacity: 0; transform: translateY(-10vh) rotate(0deg) scale(.7); }
+  12% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(112vh) rotate(var(--spin)) scale(1.15); }
+}
+
+@media (max-width: 700px) {
+  .game-strip {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+  .game-strip-goal { grid-column: 1 / -1; }
+  .topic-card,
+  .english-topic-card {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .game-strip { gap: 6px; padding: 8px; }
+  .game-strip-stat,
+  .game-strip-goal { padding: 8px; }
+  .game-strip-stat span,
+  .game-strip-goal > span { font-size: .65rem; }
+  .game-strip-stat strong,
+  .game-strip-goal strong { font-size: .88rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-card,
+  .english-topic-card,
+  .mini-progress i,
+  .daily-progress i,
+  .level-progress i { transition: none !important; }
+  .adventure-confetti { display: none; }
+}
