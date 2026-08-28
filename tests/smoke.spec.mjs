@@ -8,6 +8,8 @@ const subjects = [
   { key: 'history', name: 'Historia', path: '/history.html', heading: 'Historia y Geografía', home: '#historyHome', cards: '#historyTopicGrid .english-topic-card', quiz: '#historyQuiz', answers: '#historyAnswers .answer-button', next: '#historyNextButton', counter: '#historyCounter', result: '#historyResult', directStart: true, enhanced: true },
 ];
 
+const resetAllKeys = ['aprende3GameProgress', 'antoniaMathProgress', 'antoniaEnglishProgress', 'antoniaLanguageProgress', 'antoniaScienceProgress', 'antoniaHistoryProgress'];
+
 async function openTopic(page, subject, cardIndex = 0) {
   await expect(page.locator(subject.cards).nth(cardIndex)).toBeVisible();
   await page.locator(subject.cards).nth(cardIndex).click();
@@ -103,7 +105,7 @@ async function finishQuickRound(page) {
   await expect(next).toBeVisible();
 }
 
-test('portada muestra aventura, cinco materias y desafío rápido', async ({ page }) => {
+test('portada muestra aventura, cinco materias, desafío rápido y reinicio total', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: '¡Sigue aprendiendo!', exact: true })).toBeVisible();
   await expect(page.locator('.dashboard-game-panel')).toBeVisible();
@@ -112,8 +114,30 @@ test('portada muestra aventura, cinco materias y desafío rápido', async ({ pag
   await expect(page.locator('[data-game-level]').first()).toBeVisible();
   await expect(page.locator('.subject-dashboard-grid .subject-card')).toHaveCount(5);
   await expect(page.getByRole('link', { name: /Desafío rápido/ })).toHaveAttribute('href', /games\.html\?subject=math/);
+  await expect(page.locator('[data-reset-all-progress]')).toBeVisible();
   await expect(page.locator('body')).not.toContainText('Antonia');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2)).toBeTruthy();
+});
+
+test('reiniciar todo elimina solo el progreso completo de la app', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'windows-chromium', 'La prueba destructiva corre una vez en Chromium.');
+  await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(keys => {
+    keys.forEach((key, index) => localStorage.setItem(key, JSON.stringify({ seeded: true, index, xp: 999, stars: 99 })));
+    localStorage.setItem('otraAppNoTocar', 'conservar');
+  }, resetAllKeys);
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('[data-reset-all-progress]').click();
+  await page.waitForLoadState('domcontentloaded');
+  const state = await page.evaluate(keys => ({
+    appValues: keys.map(key => localStorage.getItem(key)),
+    foreignValue: localStorage.getItem('otraAppNoTocar'),
+  }), resetAllKeys);
+  expect(state.appValues.every(value => value === null)).toBeTruthy();
+  expect(state.foreignValue).toBe('conservar');
+  await expect(page.locator('[data-game-xp]').first()).toHaveText('0');
+  await expect(page.locator('[data-game-streak]').first()).toHaveText('0');
+  await expect(page.locator('[data-game-level]').first()).toHaveText('1');
 });
 
 for (const subject of subjects) {
@@ -207,7 +231,7 @@ test('juego funciona al recargar sin conexión', async ({ page, context, browser
   } finally { await context.setOffline(false); }
 });
 
-test('manifest y service worker usan aventura interactiva v19', async ({ request }) => {
+test('manifest y service worker usan aventura interactiva con cache v20', async ({ request }) => {
   const manifest = await request.get('/manifest.webmanifest');
   expect(manifest.ok()).toBeTruthy();
   const data = await manifest.json();
@@ -217,7 +241,7 @@ test('manifest y service worker usan aventura interactiva v19', async ({ request
   const serviceWorker = await request.get('/sw.js');
   expect(serviceWorker.ok()).toBeTruthy();
   const swText = await serviceWorker.text();
-  expect(swText).toContain('aprende-3-basico-v19');
+  expect(swText).toContain('aprende-3-basico-v20');
   expect(swText).toContain('./games.html');
   expect(swText).toContain('./games.js');
   expect(swText).toContain('./games.css');
