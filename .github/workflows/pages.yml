@@ -83,12 +83,19 @@ jobs:
           grep -q 'voice.css?v=23' games.html
           grep -q 'games.js?v=22' games.html
           grep -q 'progress-controls.js?v=22' games.html
-          grep -q "type: 'listen'" games.js
-          grep -q "type: 'order'" games.js
-          grep -q "type: 'match'" games.js
-          grep -q "type: 'fill'" games.js
-          grep -q "type: 'truefalse'" games.js
+          grep -q "type:'listen'" games.js
+          grep -q "type:'order'" games.js
+          grep -q "type:'match'" games.js
+          grep -q "type:'fill'" games.js
+          grep -q "type:'truefalse'" games.js
           grep -q 'Match each word with its picture' games.js
+          grep -q 'challengeUnlocked' games.js
+          grep -q 'challengeCompleted' games.js
+          grep -q 'data-quick-next-challenge' games.html
+          grep -q 'Animals' games.js
+          grep -q 'Transport' games.js
+          grep -q 'Positions' games.js
+          grep -q 'School & lunchbox' games.js
 
           grep -q 'premium' voice.js
           grep -q 'enhanced' voice.js
