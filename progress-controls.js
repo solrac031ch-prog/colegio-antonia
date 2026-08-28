@@ -113,6 +113,31 @@
     personalNameObserver.observe(document.body, { childList: true, characterData: true, subtree: true });
   }
 
+  const resetAllButton = document.querySelector('[data-reset-all-progress]');
+  if (resetAllButton) {
+    resetAllButton.addEventListener('click', () => {
+      const confirmed = window.confirm('¿Reiniciar TODO el progreso?\n\nSe borrarán XP, racha, nivel, meta diaria, estrellas, sesiones y avance de Matemáticas, Inglés, Lenguaje, Ciencias e Historia.\n\nEsta acción no se puede deshacer.');
+      if (!confirmed) return;
+
+      const appStorageKeys = [
+        'aprende3GameProgress',
+        'antoniaMathProgress',
+        'antoniaEnglishProgress',
+        'antoniaLanguageProgress',
+        'antoniaScienceProgress',
+        'antoniaHistoryProgress',
+      ];
+
+      try {
+        appStorageKeys.forEach(key => localStorage.removeItem(key));
+      } catch {
+        // La app sigue funcionando aunque el navegador bloquee el almacenamiento.
+      }
+
+      window.location.reload();
+    });
+  }
+
   const resetButton = document.querySelector('[data-reset-progress]');
   if (!resetButton) return;
 
