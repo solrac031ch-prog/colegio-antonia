@@ -47,6 +47,44 @@ async function answerEnglishCorrectly(page) {
   await expect(next).toBeVisible();
 }
 
+async function installSpeechMock(page) {
+  await page.addInitScript(() => {
+    window.__spokenByApp = [];
+    class MockUtterance {
+      constructor(text) {
+        this.text = text;
+        this.lang = '';
+        this.rate = 1;
+        this.pitch = 1;
+        this.volume = 1;
+        this.voice = null;
+        this.onend = null;
+        this.onerror = null;
+      }
+    }
+    const mock = {
+      speaking: false,
+      getVoices() {
+        return [
+          { lang: 'en-US', name: 'Mock English' },
+          { lang: 'es-CL', name: 'Mock Chile' },
+        ];
+      },
+      speak(utterance) {
+        this.speaking = true;
+        window.__spokenByApp.push({ text: utterance.text, lang: utterance.lang, rate: utterance.rate });
+        setTimeout(() => {
+          this.speaking = false;
+          if (typeof utterance.onend === 'function') utterance.onend();
+        }, 0);
+      },
+      cancel() { this.speaking = false; },
+    };
+    try { Object.defineProperty(window, 'SpeechSynthesisUtterance', { configurable: true, writable: true, value: MockUtterance }); } catch { window.SpeechSynthesisUtterance = MockUtterance; }
+    try { Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: mock }); } catch { window.speechSynthesis = mock; }
+  });
+}
+
 async function fillOrderAttempt(page) {
   const bank = page.locator('.quick-token-bank .quick-token:not(:disabled)');
   let guard = 0;
@@ -164,6 +202,41 @@ for (const subject of subjects) {
   });
 }
 
+test('voz lee Inglés en inglés y las explicaciones en español', async ({ page }, testInfo) => {
+  test.setTimeout(90000);
+  test.skip(testInfo.project.name !== 'windows-chromium', 'La prueba de síntesis de voz corre una vez.');
+  await installSpeechMock(page);
+
+  for (const subject of subjects) {
+    const pageErrors = [];
+    page.on('pageerror', error => pageErrors.push(error.message));
+    await page.goto(subject.path, { waitUntil: 'domcontentloaded' });
+    await openTopic(page, subject, 0);
+
+    if (subject.key === 'english') {
+      const englishVoice = page.locator('[data-voice-english-question]');
+      await expect(englishVoice).toBeVisible();
+      await expect(englishVoice).toHaveAttribute('data-voice-lang', 'en-US');
+      await englishVoice.click();
+      await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1)?.lang || '')).toBe('en-US');
+    }
+
+    await finishCurrentQuestion(page, subject);
+    const explanationVoice = page.locator('[data-voice-explanation]').first();
+    await expect(explanationVoice).toBeVisible();
+    await expect(explanationVoice).toHaveAttribute('data-voice-lang', 'es-CL');
+    await explanationVoice.click();
+    await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1)?.lang || '')).toBe('es-CL');
+    expect(pageErrors).toEqual([]);
+  }
+
+  await page.goto('/games.html?subject=science', { waitUntil: 'domcontentloaded' });
+  await finishQuickRound(page);
+  const gameExplanationVoice = page.locator('[data-quick-feedback] [data-voice-explanation]');
+  await expect(gameExplanationVoice).toBeVisible();
+  await expect(gameExplanationVoice).toHaveAttribute('data-voice-lang', 'es-CL');
+});
+
 test('una respuesta correcta entrega XP', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'windows-chromium', 'La prueba de XP corre una vez en Chromium.');
   await page.goto('/english.html', { waitUntil: 'domcontentloaded' });
@@ -231,7 +304,7 @@ test('juego funciona al recargar sin conexión', async ({ page, context, browser
   } finally { await context.setOffline(false); }
 });
 
-test('manifest y service worker usan aventura interactiva con cache v20', async ({ request }) => {
+test('manifest y service worker usan voz y cache v21', async ({ request }) => {
   const manifest = await request.get('/manifest.webmanifest');
   expect(manifest.ok()).toBeTruthy();
   const data = await manifest.json();
@@ -241,8 +314,10 @@ test('manifest y service worker usan aventura interactiva con cache v20', async 
   const serviceWorker = await request.get('/sw.js');
   expect(serviceWorker.ok()).toBeTruthy();
   const swText = await serviceWorker.text();
-  expect(swText).toContain('aprende-3-basico-v20');
+  expect(swText).toContain('aprende-3-basico-v21');
   expect(swText).toContain('./games.html');
   expect(swText).toContain('./games.js');
   expect(swText).toContain('./games.css');
+  expect(swText).toContain('./voice.js');
+  expect(swText).toContain('./voice.css');
 });
