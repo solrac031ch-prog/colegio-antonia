@@ -62,8 +62,8 @@ test('English offers clear and slow pronunciation with the best available voice'
     lang: 'en-US', voice: 'Premium English Natural', pitch: 1
   });
   const clearSpeech = await page.evaluate(() => window.__spokenLearning.at(-1));
-  expect(clearSpeech.rate).toBeGreaterThanOrEqual(0.76);
-  expect(clearSpeech.rate).toBeLessThanOrEqual(0.84);
+  expect(clearSpeech.rate).toBeGreaterThanOrEqual(0.84);
+  expect(clearSpeech.rate).toBeLessThanOrEqual(0.9);
 
   await slow.click();
   await expect.poll(async () => page.evaluate(() => window.__spokenLearning.at(-1)?.rate || 1)).toBeLessThan(clearSpeech.rate);
