@@ -1,4 +1,4 @@
-const CACHE = 'aprende-3-basico-v18';
+const CACHE = 'aprende-3-basico-v19';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -7,12 +7,14 @@ const CORE_ASSETS = [
   './language.html',
   './science.html',
   './history.html',
+  './games.html',
   './styles.css',
   './curriculum.css',
   './english.css',
   './platform.css',
   './adventure.css',
   './dashboard.css',
+  './games.css',
   './app.js',
   './english.js',
   './language.js',
@@ -20,6 +22,7 @@ const CORE_ASSETS = [
   './history.js',
   './feedback-enhancer.js',
   './game-progress.js',
+  './games.js',
   './progress-controls.js',
   './manifest.webmanifest',
   './logo-3basico.svg'
@@ -31,7 +34,8 @@ const OFFLINE_PAGES = new Set([
   'english.html',
   'language.html',
   'science.html',
-  'history.html'
+  'history.html',
+  'games.html'
 ]);
 
 self.addEventListener('install', event => {
