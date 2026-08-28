@@ -36,6 +36,7 @@ jobs:
           node --check feedback-enhancer.js
           node --check game-progress.js
           node --check games.js
+          node --check voice.js
           node --check progress-controls.js
           node --check sw.js
           node --check playwright.config.mjs
@@ -45,7 +46,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in index.html math.html english.html language.html science.html history.html games.html styles.css curriculum.css english.css platform.css adventure.css dashboard.css games.css feedback-enhancer.js game-progress.js games.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs; do
+          for file in index.html math.html english.html language.html science.html history.html games.html styles.css curriculum.css english.css platform.css adventure.css dashboard.css games.css voice.css feedback-enhancer.js game-progress.js games.js voice.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs; do
             test -f "$file"
           done
           grep -q 'dashboard.css?v=19' index.html
@@ -76,12 +77,19 @@ jobs:
           grep -q "type: 'match'" games.js
           grep -q "type: 'fill'" games.js
           grep -q "type: 'truefalse'" games.js
+          grep -q 'speechSynthesis' voice.js
+          grep -q "'en-US'" voice.js
+          grep -q "'es-CL'" voice.js
+          grep -q 'Escuchar inglés' voice.js
+          grep -q 'Escuchar explicación' voice.js
           for page in math.html english.html language.html science.html history.html; do
             grep -q 'progress-controls.js?v=19' "$page"
             grep -q 'game-progress.js?v=19' "$page"
             grep -q 'platform.css?v=19' "$page"
             grep -q 'adventure.css?v=19' "$page"
             grep -q 'games.css?v=19' "$page"
+            grep -q 'voice.css?v=21' "$page"
+            grep -q 'voice.js?v=21' "$page"
             grep -q 'games.html?subject=' "$page"
             grep -q 'data-app-back' "$page"
             grep -q 'aria-current="page"' "$page"
@@ -91,11 +99,15 @@ jobs:
           for page in language.html science.html history.html; do
             grep -q 'feedback-enhancer.js?v=19' "$page"
           done
+          grep -q 'voice.css?v=21' games.html
+          grep -q 'voice.js?v=21' games.html
           grep -q 'logo-3basico.svg?v=19' index.html
-          grep -q "aprende-3-basico-v20" sw.js
+          grep -q "aprende-3-basico-v21" sw.js
           grep -q "./games.html" sw.js
           grep -q "./games.js" sw.js
           grep -q "./games.css" sw.js
+          grep -q "./voice.js" sw.js
+          grep -q "./voice.css" sw.js
           ! grep -q 'Colegio de Antonia\|Colegio Antonia' index.html math.html english.html language.html science.html history.html games.html manifest.webmanifest
           ! grep -q 'hotfix.js\|quiz-sync.js' math.html sw.js
 
