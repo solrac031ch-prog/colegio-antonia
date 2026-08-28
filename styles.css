@@ -34,6 +34,27 @@ button { font: inherit; }
   padding: max(20px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom));
 }
 
+.app-back-row {
+  display: flex;
+  align-items: center;
+  margin: 0 0 12px;
+}
+
+.app-back-button {
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid rgba(109,40,217,.14);
+  border-radius: 16px;
+  background: rgba(255,255,255,.82);
+  color: var(--purple-800);
+  box-shadow: 0 6px 16px rgba(91,33,182,.08);
+  font-weight: 900;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.app-back-button:active { transform: scale(.97); }
+
 .hero {
   display: flex;
   align-items: flex-start;
