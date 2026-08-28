@@ -137,7 +137,7 @@
 
     const wordCount = String(text || '').trim().split(/\s+/).filter(Boolean).length;
     if (options.slow) return wordCount <= 2 ? 0.66 : 0.72;
-    return wordCount <= 2 ? 0.78 : 0.84;
+    return wordCount <= 2 ? 0.84 : 0.9;
   }
 
   function speakText(text, lang = 'es-CL', button = null, options = {}) {
