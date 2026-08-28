@@ -42,12 +42,13 @@ jobs:
           node --check playwright.config.mjs
           node --check tests/smoke.spec.mjs
           node --check tests/voice-learning.spec.mjs
+          node --check tests/progressive-challenges.spec.mjs
 
       - name: Validar estructura del sitio
         shell: bash
         run: |
           set -euo pipefail
-          for file in index.html math.html english.html language.html science.html history.html games.html styles.css curriculum.css english.css platform.css adventure.css dashboard.css games.css voice.css feedback-enhancer.js game-progress.js games.js voice.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs tests/voice-learning.spec.mjs; do
+          for file in index.html math.html english.html language.html science.html history.html games.html styles.css curriculum.css english.css platform.css adventure.css dashboard.css games.css voice.css feedback-enhancer.js game-progress.js games.js voice.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs tests/voice-learning.spec.mjs tests/progressive-challenges.spec.mjs; do
             test -f "$file"
           done
 
@@ -81,7 +82,8 @@ jobs:
 
           grep -q 'voice.js?v=23' games.html
           grep -q 'voice.css?v=23' games.html
-          grep -q 'games.js?v=22' games.html
+          grep -q 'games.css?v=25' games.html
+          grep -q 'games.js?v=25' games.html
           grep -q 'progress-controls.js?v=22' games.html
           grep -q "type:'listen'" games.js
           grep -q "type:'order'" games.js
@@ -91,11 +93,15 @@ jobs:
           grep -q 'Match each word with its picture' games.js
           grep -q 'challengeUnlocked' games.js
           grep -q 'challengeCompleted' games.js
+          grep -q 'transitioning' games.js
+          grep -q 'matchBusy' games.js
+          grep -q 'data-token-index' games.js
           grep -q 'data-quick-next-challenge' games.html
           grep -q 'Animals' games.js
           grep -q 'Transport' games.js
           grep -q 'Positions' games.js
           grep -q 'School & lunchbox' games.js
+          grep -q 'touch-action:manipulation' games.css
 
           grep -q 'premium' voice.js
           grep -q 'enhanced' voice.js
@@ -113,8 +119,8 @@ jobs:
 
           ! grep -q 'registration.update()' progress-controls.js
           grep -q 'requestIdleCallback' progress-controls.js
-          grep -q "aprende-3-basico-v23" sw.js
-          grep -q 'staleWhileRevalidate' sw.js
+          grep -q 'performance-v25' sw.js
+          grep -q 'networkFirst' sw.js
           grep -q "./voice.js" sw.js
           grep -q "./voice.css" sw.js
           grep -q "./games.js" sw.js
