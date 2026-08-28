@@ -1,0 +1,77 @@
+import { test, expect } from '@playwright/test';
+
+async function solveMatch(page) {
+  let guard = 0;
+  while ((await page.locator('.quick-match-card:not(:disabled)').count()) > 0) {
+    const cards = page.locator('.quick-match-card:not(:disabled)');
+    const count = await cards.count();
+    let matched = false;
+    for (let i = 0; i < count && !matched; i += 1) {
+      for (let j = i + 1; j < count && !matched; j += 1) {
+        const current = page.locator('.quick-match-card:not(:disabled)');
+        if ((await current.count()) <= j) break;
+        const first = current.nth(i);
+        const firstText = await first.textContent();
+        await first.click();
+        const afterFirst = page.locator('.quick-match-card:not(:disabled)');
+        if ((await afterFirst.count()) <= j) break;
+        await afterFirst.nth(j).click();
+        await page.waitForTimeout(330);
+        matched = !(await page.locator('.quick-match-card:not(:disabled)').filter({ hasText: firstText || '' }).count());
+      }
+    }
+    guard += 1;
+    if (guard > 18) throw new Error('No se pudieron resolver las parejas');
+  }
+  await expect(page.locator('[data-quick-next]')).toBeVisible();
+}
+
+async function finishRound(page) {
+  const next = page.locator('[data-quick-next]');
+  if (await page.locator('.quick-match-card').count()) return solveMatch(page);
+
+  if (await page.locator('.quick-input').count()) {
+    const input = page.locator('.quick-input');
+    await input.fill('__wrong__');
+    await page.locator('[data-quick-check]').click();
+    if (!(await next.isVisible())) {
+      await input.fill('__wrong__');
+      await page.locator('[data-quick-check]').click();
+    }
+    return expect(next).toBeVisible();
+  }
+
+  if (await page.locator('.quick-order-tray').count()) {
+    for (let attempt = 0; attempt < 2 && !(await next.isVisible()); attempt += 1) {
+      let guard = 0;
+      while (await page.locator('.quick-token-bank .quick-token:not(:disabled)').count()) {
+        await page.locator('.quick-token-bank .quick-token:not(:disabled)').first().click();
+        if (++guard > 12) throw new Error('No se pudo completar el orden');
+      }
+      await page.locator('[data-quick-check]').click();
+    }
+    return expect(next).toBeVisible();
+  }
+
+  await page.locator('.quick-choice:not(:disabled)').first().click();
+  if (!(await next.isVisible())) await page.locator('.quick-choice:not(:disabled)').first().click();
+  await expect(next).toBeVisible();
+}
+
+test('terminar un desafío desbloquea y abre el siguiente', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'windows-chromium', 'La progresión se verifica una vez.');
+  await page.goto('/games.html?subject=math', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('[data-quick-challenge-number]')).toHaveText('Desafío 1');
+
+  for (let round = 0; round < 5; round += 1) {
+    await finishRound(page);
+    await page.locator('[data-quick-next]').click();
+  }
+
+  await expect(page.locator('[data-quick-result]')).toBeVisible();
+  await expect(page.locator('[data-quick-next-challenge]')).toBeVisible();
+  await page.locator('[data-quick-next-challenge]').click();
+  await expect(page.locator('[data-quick-challenge-number]')).toHaveText('Desafío 2');
+  await expect(page.locator('[data-quick-counter]')).toHaveText('1 / 5');
+  await expect(page.locator('[data-quick-game]')).toBeVisible();
+});
