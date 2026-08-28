@@ -79,6 +79,8 @@
   transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
 }
 
+.topic-card .topic-number { display: none; }
+
 .topic-card:nth-child(odd),
 .english-topic-card:nth-child(odd) { margin-left: 2%; margin-right: auto; }
 .topic-card:nth-child(even),
