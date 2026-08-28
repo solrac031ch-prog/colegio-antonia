@@ -1,6 +1,18 @@
 'use strict';
 
 (() => {
+  const backButton = document.querySelector('[data-app-back]');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      const fallback = backButton.dataset.fallback || 'index.html';
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = fallback;
+      }
+    });
+  }
+
   const resetButton = document.querySelector('[data-reset-progress]');
   if (!resetButton) return;
 
