@@ -1,0 +1,50 @@
+.dashboard-shell { width: min(100%, 920px); }
+.dashboard-hero { align-items: center; margin-bottom: 18px; }
+.dashboard-hero .hero-copy { max-width: 620px; }
+.dashboard-title { font-size: clamp(2.3rem, 8vw, 4rem); }
+.dashboard-subtitle { max-width: 620px; font-size: 1.02rem; line-height: 1.5; }
+.subject-dashboard { margin-top: 10px; }
+.subject-dashboard h2 { margin-bottom: 6px; }
+.subject-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+.subject-card {
+  min-height: 150px;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid var(--purple-200);
+  border-radius: 26px;
+  background: linear-gradient(145deg, #fff, #f7f3ff);
+  color: #40324d;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgba(91,33,182,.10);
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+.subject-card:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(91,33,182,.14); border-color: var(--purple-300); }
+.subject-card:active { transform: scale(.985); }
+.subject-card-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--purple-100);
+  font-size: 2rem;
+}
+.subject-card strong { display: block; color: var(--purple-800); font-size: 1.2rem; line-height: 1.15; }
+.subject-card small { display: block; margin-top: 6px; color: #786b84; font-size: .86rem; line-height: 1.35; font-weight: 700; }
+.subject-card-action { display: block; margin-top: 10px; color: var(--purple-700); font-size: .8rem; font-weight: 950; }
+.subject-card-wide { grid-column: 1 / -1; }
+.dashboard-note { margin-top: 14px; text-align: center; color: #80748a; font-size: .84rem; line-height: 1.45; }
+@media (max-width: 650px) {
+  .subject-dashboard-grid { grid-template-columns: 1fr; }
+  .subject-card-wide { grid-column: auto; }
+  .subject-card { min-height: 126px; padding: 17px; grid-template-columns: 56px 1fr; }
+  .subject-card-icon { width: 56px; height: 56px; border-radius: 18px; font-size: 1.7rem; }
+}
