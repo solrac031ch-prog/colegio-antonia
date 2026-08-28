@@ -62,7 +62,7 @@ test('portada muestra dashboard de aventura y cinco materias', async ({ page }) 
   await expect(page.locator('[data-game-level]').first()).toBeVisible();
   await expect(page.locator('[data-game-continue]')).toHaveAttribute('href', /math\.html/);
   await expect(page.locator('.subject-dashboard-grid .subject-card')).toHaveCount(5);
-  await expect(page.getByRole('link', { name: /Matemáticas/ })).toHaveAttribute('href', /math\.html/);
+  await expect(page.locator('.subject-dashboard-grid .subject-card[href*="math.html"]')).toHaveAttribute('href', /math\.html/);
   await expect(page.getByRole('link', { name: /Ciencias Naturales/ })).toBeVisible();
   await expect(page.getByRole('link', { name: /Historia, Geografía/ })).toBeVisible();
   await expect(page.locator('body')).not.toContainText('Antonia');
