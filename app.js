@@ -1,13 +1,21 @@
+'use strict';
+
+const APP_VERSION = '12.0.0';
+const SESSION_LENGTH = 10;
+
 const state = {
   mode: null,
   topicKey: null,
   table: null,
   questionIndex: 0,
+  currentQuestionId: null,
   score: 0,
   streak: 0,
   questions: [],
   answered: false,
   attempts: 0,
+  processing: false,
+  sessionId: 0,
 };
 
 const curriculum = [
@@ -63,58 +71,63 @@ const els = {
   routeButton: document.querySelector('#routeButton'),
 };
 
-const progress = JSON.parse(localStorage.getItem('antoniaMathProgress') || '{}');
-progress.stars ||= 0;
-progress.sessions ||= 0;
-progress.bestStreak ||= 0;
-progress.byTopic ||= {};
+function assertRequiredElements() {
+  const missing = Object.entries(els).filter(([, value]) => !value).map(([key]) => key);
+  if (missing.length) throw new Error(`Faltan elementos de interfaz: ${missing.join(', ')}`);
+}
+
+function loadProgress() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('antoniaMathProgress') || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+const progress = loadProgress();
+progress.stars = Number.isFinite(progress.stars) ? progress.stars : 0;
+progress.sessions = Number.isFinite(progress.sessions) ? progress.sessions : 0;
+progress.bestStreak = Number.isFinite(progress.bestStreak) ? progress.bestStreak : 0;
+progress.byTopic = progress.byTopic && typeof progress.byTopic === 'object' ? progress.byTopic : {};
 
 function saveProgress() {
-  localStorage.setItem('antoniaMathProgress', JSON.stringify(progress));
+  try {
+    localStorage.setItem('antoniaMathProgress', JSON.stringify(progress));
+  } catch {
+    // La práctica sigue funcionando aunque el navegador bloquee almacenamiento.
+  }
   renderProgress();
 }
 
 function renderProgress() {
-  els.stars.textContent = progress.stars;
-  els.sessions.textContent = progress.sessions;
-  els.bestStreak.textContent = progress.bestStreak;
+  els.stars.textContent = String(progress.stars);
+  els.sessions.textContent = String(progress.sessions);
+  els.bestStreak.textContent = String(progress.bestStreak);
 }
 
 function showView(view) {
-  [els.homeView, els.moduleView, els.quizView, els.resultView].forEach(el => el.classList.remove('active'));
+  [els.homeView, els.moduleView, els.quizView, els.resultView].forEach(element => element.classList.remove('active'));
   view.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  window.scrollTo(0, 0);
 }
 
 function topicByKey(key) {
   return curriculum.find(topic => topic.key === key) || curriculum[0];
 }
 
-function buildCurriculumCards() {
-  els.curriculumGrid.innerHTML = '';
-
-  curriculum.forEach((topic, index) => {
-    const button = document.createElement('button');
-    button.className = 'topic-card topic-active';
-    button.type = 'button';
-    button.setAttribute('aria-label', `Abrir ${topic.title}`);
-    button.addEventListener('click', () => openTopic(topic.key));
-
-    button.innerHTML = `
-      <span class="topic-number">${index + 1}</span>
-      <span class="topic-icon" aria-hidden="true">${topic.icon}</span>
-      <span class="topic-copy">
-        <strong>${topic.title}</strong>
-        <small>${topic.subtitle}</small>
-      </span>
-      <span class="topic-status">Practicar →</span>
-    `;
-
-    els.curriculumGrid.appendChild(button);
-  });
+function cancelActiveSession() {
+  state.sessionId += 1;
+  state.processing = false;
+  state.answered = false;
+  state.currentQuestionId = null;
+  state.questions = [];
 }
 
 function openTopic(key) {
+  cancelActiveSession();
   const topic = topicByKey(key);
   const index = curriculum.findIndex(item => item.key === topic.key);
   state.topicKey = topic.key;
@@ -138,11 +151,34 @@ function openTopic(key) {
   showView(els.moduleView);
 }
 
+function buildCurriculumCards() {
+  els.curriculumGrid.innerHTML = '';
+  curriculum.forEach((topic, index) => {
+    const button = document.createElement('button');
+    button.className = 'topic-card topic-active';
+    button.type = 'button';
+    button.dataset.topicKey = topic.key;
+    button.setAttribute('aria-label', `Abrir ${topic.title}`);
+    button.innerHTML = `
+      <span class="topic-number">${index + 1}</span>
+      <span class="topic-icon" aria-hidden="true">${topic.icon}</span>
+      <span class="topic-copy">
+        <strong>${topic.title}</strong>
+        <small>${topic.subtitle}</small>
+      </span>
+      <span class="topic-status">Practicar →</span>
+    `;
+    button.addEventListener('click', () => openTopic(topic.key));
+    els.curriculumGrid.appendChild(button);
+  });
+}
+
 function buildTableButtons() {
   els.tableGrid.innerHTML = '';
   for (let table = 1; table <= 10; table += 1) {
     const button = document.createElement('button');
     button.className = 'table-button';
+    button.type = 'button';
     button.textContent = `× ${table}`;
     button.setAttribute('aria-label', `Practicar tabla del ${table}`);
     button.addEventListener('click', () => startSession({ mode: 'table', topicKey: 'multiplication', table }));
@@ -155,50 +191,69 @@ function randomInt(min, max) {
 }
 
 function shuffle(items) {
-  const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i -= 1) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
-  return arr;
+  return copy;
 }
 
-function text(value) {
-  return String(value);
+let questionSerial = 0;
+function nextQuestionId() {
+  questionSerial += 1;
+  return `q-${Date.now()}-${questionSerial}`;
+}
+
+function normalizeOptions(correct, options) {
+  const correctText = String(correct);
+  const unique = [];
+  [correctText, ...options.map(String)].forEach(value => {
+    if (!unique.includes(value)) unique.push(value);
+  });
+  return shuffle(unique);
 }
 
 function makeQuestion({ prompt, display, correct, options, explanation, work = '', summary = '', textMode = false }) {
-  return {
-    prompt,
-    display,
-    correct: text(correct),
-    options: shuffle(options.map(text)),
-    explanation,
-    work,
-    summary: summary || `${display} → ${correct}`,
-    textMode,
+  const question = {
+    id: nextQuestionId(),
+    prompt: String(prompt),
+    display: String(display),
+    correct: String(correct),
+    options: normalizeOptions(correct, options),
+    explanation: String(explanation),
+    work: String(work || ''),
+    summary: String(summary || `${display} → ${correct}`),
+    textMode: Boolean(textMode),
   };
+  return validateQuestion(question);
+}
+
+function validateQuestion(question) {
+  if (!question.prompt || !question.display || !question.correct) throw new Error('Pregunta incompleta');
+  if (!Array.isArray(question.options) || question.options.length < 2) throw new Error('Pregunta sin suficientes opciones');
+  if (!question.options.includes(question.correct)) question.options.unshift(question.correct);
+  question.options = shuffle([...new Set(question.options)]);
+  return question;
 }
 
 function numericOptions(correct, spread = 10, min = 0, max = 1000) {
   const values = new Set([correct]);
   const offsets = shuffle([-spread, spread, -2 * spread, 2 * spread, -1, 1, -10, 10, -100, 100]);
-
   offsets.forEach(offset => {
     const candidate = correct + offset;
     if (values.size < 4 && candidate >= min && candidate <= max) values.add(candidate);
   });
-
-  while (values.size < 4) {
+  let guard = 0;
+  while (values.size < 4 && guard < 100) {
     values.add(randomInt(min, max));
+    guard += 1;
   }
-
   return [...values];
 }
 
 function createNumbersQuestion() {
   const type = randomInt(0, 2);
-
   if (type === 0) {
     let a = randomInt(100, 999);
     let b = randomInt(100, 999);
@@ -213,7 +268,6 @@ function createNumbersQuestion() {
       summary: `${correct} es mayor`,
     });
   }
-
   if (type === 1) {
     const number = randomInt(100, 999);
     const places = [
@@ -233,7 +287,6 @@ function createNumbersQuestion() {
       summary: `${place.name}: ${place.digit}`,
     });
   }
-
   const number = randomInt(100, 998);
   const after = Math.random() > 0.5;
   const correct = after ? number + 1 : number - 1;
@@ -243,6 +296,7 @@ function createNumbersQuestion() {
     correct,
     options: numericOptions(correct, 1, 0, 1000),
     explanation: after ? `Después de ${number} viene ${correct}.` : `Antes de ${number} viene ${correct}.`,
+    summary: after ? `${number} → ${correct}` : `${correct} → ${number}`,
   });
 }
 
@@ -261,14 +315,10 @@ function createAdditionQuestion() {
     running = next;
     return line;
   });
-
   return makeQuestion({
-    prompt: '¿Cuánto da la suma?',
-    display: `${a} + ${b}`,
-    correct,
+    prompt: '¿Cuánto da la suma?', display: `${a} + ${b}`, correct,
     options: numericOptions(correct, 10, 0, 999),
-    explanation: 'Suma por partes para que sea más fácil.',
-    work: steps.join(' · '),
+    explanation: 'Suma por partes para que sea más fácil.', work: steps.join(' · '),
     summary: `${a} + ${b} = ${correct}`,
   });
 }
@@ -288,14 +338,10 @@ function createSubtractionQuestion() {
     running = next;
     return line;
   });
-
   return makeQuestion({
-    prompt: '¿Cuánto queda?',
-    display: `${a} − ${b}`,
-    correct,
+    prompt: '¿Cuánto queda?', display: `${a} − ${b}`, correct,
     options: numericOptions(correct, 10, 0, 999),
-    explanation: 'Quita el número por partes.',
-    work: steps.join(' · '),
+    explanation: 'Quita el número por partes.', work: steps.join(' · '),
     summary: `${a} − ${b} = ${correct}`,
   });
 }
@@ -329,27 +375,19 @@ function createDataQuestion() {
     const winner = names[values.indexOf(max)];
     const display = names.map((name, index) => `${name}: ${values[index]} ⭐`).join('\n');
     return makeQuestion({
-      prompt: '¿Quién tiene más estrellas?',
-      display,
-      correct: winner,
-      options: names,
+      prompt: '¿Quién tiene más estrellas?', display, correct: winner, options: names,
       explanation: `${winner} tiene ${max} estrellas, que es la cantidad más grande.`,
-      summary: `${winner}: ${max} estrellas`,
-      textMode: true,
+      summary: `${winner}: ${max} estrellas`, textMode: true,
     });
   }
-
   const a = randomInt(2, 9);
   const b = randomInt(2, 9);
   const correct = a + b;
   return makeQuestion({
-    prompt: '¿Cuántas hay en total?',
-    display: `Lunes: ${a} 📚\nMartes: ${b} 📚`,
-    correct,
+    prompt: '¿Cuántas hay en total?', display: `Lunes: ${a} 📚\nMartes: ${b} 📚`, correct,
     options: numericOptions(correct, 2, 0, 20),
     explanation: `Junta los dos datos: ${a} + ${b} = ${correct}.`,
-    summary: `Total: ${correct}`,
-    textMode: true,
+    summary: `Total: ${correct}`, textMode: true,
   });
 }
 
@@ -359,9 +397,7 @@ function createMultiplicationQuestion(table = null) {
   const correct = a * b;
   const sequence = Array.from({ length: a }, (_, index) => b * (index + 1));
   return makeQuestion({
-    prompt: '¿Cuánto es?',
-    display: `${a} × ${b}`,
-    correct,
+    prompt: '¿Cuánto es?', display: `${a} × ${b}`, correct,
     options: numericOptions(correct, Math.max(2, b), 1, 100),
     explanation: `${a} × ${b} es ${a} ${a === 1 ? 'vez' : 'veces'} ${b}.`,
     work: `Cuenta de ${b} en ${b}: ${sequence.join(', ')}`,
@@ -374,9 +410,7 @@ function createDivisionQuestion() {
   const quotient = randomInt(1, 10);
   const dividend = divisor * quotient;
   return makeQuestion({
-    prompt: '¿Cuánto toca en cada grupo?',
-    display: `${dividend} ÷ ${divisor}`,
-    correct: quotient,
+    prompt: '¿Cuánto toca en cada grupo?', display: `${dividend} ÷ ${divisor}`, correct: quotient,
     options: numericOptions(quotient, 1, 1, 12),
     explanation: `${dividend} repartido en ${divisor} grupos iguales da ${quotient} en cada grupo.`,
     work: `${divisor} × ${quotient} = ${dividend}`,
@@ -398,42 +432,30 @@ function createMeasurementQuestion() {
 
 function createTimeQuestion() {
   const type = randomInt(0, 2);
-
   if (type === 0) {
     const start = randomInt(1, 8);
     const duration = randomInt(1, 3);
     const end = start + duration;
     return makeQuestion({
       prompt: `Empieza a las ${start}:00 y dura ${duration} ${duration === 1 ? 'hora' : 'horas'}. ¿A qué hora termina?`,
-      display: `${start}:00  +  ${duration} h`,
-      correct: `${end}:00`,
+      display: `${start}:00 + ${duration} h`, correct: `${end}:00`,
       options: [`${end}:00`, `${start}:30`, `${end + 1}:00`, `${Math.max(1, end - 1)}:00`],
       explanation: `Cuenta ${duration} ${duration === 1 ? 'hora' : 'horas'} desde las ${start}:00.`,
-      work: `${start}:00 → ${end}:00`,
-      summary: `Termina a las ${end}:00`,
-      textMode: true,
+      work: `${start}:00 → ${end}:00`, summary: `Termina a las ${end}:00`, textMode: true,
     });
   }
-
   if (type === 1) {
     const hour = randomInt(1, 10);
     return makeQuestion({
-      prompt: '¿Qué hora será 30 minutos después?',
-      display: `${hour}:00`,
-      correct: `${hour}:30`,
+      prompt: '¿Qué hora será 30 minutos después?', display: `${hour}:00`, correct: `${hour}:30`,
       options: [`${hour}:30`, `${hour + 1}:00`, `${hour}:15`, `${hour}:45`],
       explanation: `30 minutos después de las ${hour}:00 son las ${hour}:30.`,
       summary: `${hour}:00 + 30 min = ${hour}:30`,
     });
   }
-
   return makeQuestion({
-    prompt: '¿Cuántos minutos tiene una hora?',
-    display: '1 hora',
-    correct: 60,
-    options: [30, 45, 60, 100],
-    explanation: 'Una hora completa tiene 60 minutos.',
-    summary: '1 hora = 60 minutos',
+    prompt: '¿Cuántos minutos tiene una hora?', display: '1 hora', correct: 60,
+    options: [30, 45, 60, 100], explanation: 'Una hora completa tiene 60 minutos.', summary: '1 hora = 60 minutos',
   });
 }
 
@@ -444,15 +466,12 @@ function createPositionQuestion() {
   const nextIndex = (startIndex + (right ? 1 : 3)) % 4;
   const start = directions[startIndex];
   const correct = directions[nextIndex];
-
   return makeQuestion({
     prompt: `Miras al ${start} y giras a la ${right ? 'derecha' : 'izquierda'}. ¿Hacia dónde miras ahora?`,
     display: `🧭 ${start.toUpperCase()} → giro ${right ? 'derecha' : 'izquierda'}`,
-    correct,
-    options: directions,
+    correct, options: directions,
     explanation: `Si miras al ${start} y giras a la ${right ? 'derecha' : 'izquierda'}, quedas mirando al ${correct}.`,
-    summary: `${start} + giro ${right ? 'derecha' : 'izquierda'} = ${correct}`,
-    textMode: true,
+    summary: `${start} + giro ${right ? 'derecha' : 'izquierda'} = ${correct}`, textMode: true,
   });
 }
 
@@ -483,26 +502,15 @@ function showFeedback(kind, html, compact = false) {
   els.feedback.innerHTML = html;
 }
 
-function learningCard(current, finalAttempt = false) {
+function learningCard(question, finalAttempt = false) {
   const title = finalAttempt ? '🌷 Mira, Antonia' : '💡 Vamos paso a paso';
   const subtitle = finalAttempt ? 'Miremos la respuesta y seguimos.' : 'Una pista fácil:';
-  const ending = finalAttempt ? 'Seguimos con la siguiente 🌱' : `Ahora toca <strong>${current.correct}</strong> ✨`;
-
+  const ending = finalAttempt ? 'Seguimos con la siguiente 🌱' : `Ahora toca <strong>${question.correct}</strong> ✨`;
   return `
-    <div class="feedback-heading">
-      <div>
-        <strong>${title}</strong>
-        <span>${subtitle}</span>
-      </div>
-    </div>
-    <div class="feedback-step">
-      <strong>${current.explanation}</strong>
-    </div>
-    ${current.work ? `<div class="feedback-step"><strong class="feedback-math">${current.work}</strong></div>` : ''}
-    <div class="feedback-answer">
-      <span>La respuesta es</span>
-      <strong>${current.correct}</strong>
-    </div>
+    <div class="feedback-heading"><div><strong>${title}</strong><span>${subtitle}</span></div></div>
+    <div class="feedback-step"><strong>${question.explanation}</strong></div>
+    ${question.work ? `<div class="feedback-step"><strong class="feedback-math">${question.work}</strong></div>` : ''}
+    <div class="feedback-answer"><span>La respuesta es</span><strong>${question.correct}</strong></div>
     <div class="feedback-action">${ending}</div>
   `;
 }
@@ -511,42 +519,69 @@ function startTopicSession(topicKey) {
   startSession({ mode: 'topic', topicKey });
 }
 
+function buildSessionQuestions(topicKey, table) {
+  const questions = [];
+  for (let index = 0; index < SESSION_LENGTH; index += 1) {
+    let question;
+    let attempts = 0;
+    do {
+      question = createTopicQuestion(topicKey, table);
+      attempts += 1;
+    } while (!question && attempts < 3);
+    if (!question) throw new Error(`No se pudo crear una pregunta de ${topicKey}`);
+    questions.push(question);
+  }
+  return questions;
+}
+
 function startSession({ mode, topicKey = state.topicKey || 'multiplication', table = null }) {
+  state.sessionId += 1;
   state.mode = mode;
   state.topicKey = topicKey;
   state.table = table;
   state.questionIndex = 0;
+  state.currentQuestionId = null;
   state.score = 0;
   state.streak = 0;
   state.answered = false;
   state.attempts = 0;
-
+  state.processing = false;
   const fixedTable = mode === 'table' ? table : null;
-  state.questions = Array.from({ length: 10 }, () => createTopicQuestion(topicKey, fixedTable));
+  state.questions = buildSessionQuestions(topicKey, fixedTable);
 
   const topic = topicByKey(topicKey);
-  if (mode === 'table') {
-    els.modeLabel.textContent = `Tabla del ${table}`;
-  } else if (mode === 'mixed') {
-    els.modeLabel.textContent = 'Tablas mezcladas';
-  } else {
-    els.modeLabel.textContent = topic.short;
-  }
-
+  els.modeLabel.textContent = mode === 'table' ? `Tabla del ${table}` : mode === 'mixed' ? 'Tablas mezcladas' : topic.short;
   els.backButton.textContent = `← ${topic.short}`;
   showView(els.quizView);
   renderQuestion();
 }
 
+function getCurrentQuestion() {
+  return state.questions[state.questionIndex] || null;
+}
+
+function isCurrentQuestion(questionId) {
+  const current = getCurrentQuestion();
+  return Boolean(current && current.id === questionId && state.currentQuestionId === questionId);
+}
+
 function renderQuestion() {
-  const current = state.questions[state.questionIndex];
+  const current = getCurrentQuestion();
+  if (!current) {
+    finishSession();
+    return;
+  }
+
+  state.currentQuestionId = current.id;
   state.answered = false;
   state.attempts = 0;
-  els.questionCounter.textContent = `${state.questionIndex + 1} / 10`;
+  state.processing = false;
+
+  els.questionCounter.textContent = `${state.questionIndex + 1} / ${SESSION_LENGTH}`;
   els.questionPrompt.textContent = current.prompt;
   els.question.textContent = current.display;
   els.question.classList.toggle('question-text', current.textMode || current.display.length > 18 || current.display.includes('\n'));
-  els.streak.textContent = state.streak;
+  els.streak.textContent = String(state.streak);
   resetFeedback();
   els.nextButton.classList.add('hidden');
   els.answers.innerHTML = '';
@@ -554,79 +589,75 @@ function renderQuestion() {
   current.options.forEach(option => {
     const button = document.createElement('button');
     button.className = 'answer-button';
+    button.type = 'button';
     button.textContent = option;
     button.dataset.value = option;
-    button.addEventListener('click', () => answerQuestion(option, button));
+    button.dataset.questionId = current.id;
+    button.addEventListener('click', () => answerQuestion(current.id, option, button));
     els.answers.appendChild(button);
   });
 }
 
-function finishAnswer() {
-  const current = state.questions[state.questionIndex];
-  const buttons = [...els.answers.querySelectorAll('.answer-button')];
-
+function finishAnswer(questionId) {
+  if (!isCurrentQuestion(questionId)) return;
+  const current = getCurrentQuestion();
   state.answered = true;
-  buttons.forEach(button => {
+  [...els.answers.querySelectorAll('.answer-button')].forEach(button => {
     button.disabled = true;
-    if (button.dataset.value === current.correct) button.classList.add('correct');
+    if (button.dataset.questionId === questionId && button.dataset.value === current.correct) button.classList.add('correct');
   });
-
   progress.bestStreak = Math.max(progress.bestStreak, state.streak);
   saveProgress();
-  els.streak.textContent = state.streak;
-  els.nextButton.textContent = state.questionIndex === 9 ? 'Ver resultado 🌟' : 'Siguiente →';
+  els.streak.textContent = String(state.streak);
+  els.nextButton.textContent = state.questionIndex === SESSION_LENGTH - 1 ? 'Ver resultado 🌟' : 'Siguiente →';
   els.nextButton.classList.remove('hidden');
 }
 
-function answerQuestion(value, selectedButton) {
-  if (state.answered || selectedButton.disabled) return;
-  const current = state.questions[state.questionIndex];
+function answerQuestion(questionId, value, selectedButton) {
+  if (state.processing || state.answered || selectedButton.disabled) return;
+  if (!isCurrentQuestion(questionId) || selectedButton.dataset.questionId !== questionId) return;
 
-  if (value === current.correct) {
-    selectedButton.classList.add('correct');
-    state.score += 1;
-    state.streak += 1;
-    progress.stars += 1;
+  state.processing = true;
+  try {
+    const current = getCurrentQuestion();
+    if (String(value) === current.correct) {
+      selectedButton.classList.add('correct');
+      state.score += 1;
+      state.streak += 1;
+      progress.stars += 1;
 
-    if (state.attempts === 1) {
-      showFeedback(
-        'success',
-        `<div class="feedback-heading success-heading"><div><strong>🌟 ¡Eso, Antonia!</strong><span>Lo miraste y lo corregiste.</span></div></div>
-         <div class="feedback-mini-equation">${current.summary}</div>
-         <div class="feedback-action">¡Muy bien! 💛</div>`,
-        true
-      );
-    } else {
-      const message = state.streak >= 3 ? '🔥 ¡Excelente racha, Antonia!' : '✨ ¡Muy bien, Antonia!';
-      showFeedback(
-        'success',
-        `<div class="feedback-heading success-heading"><div><strong>${message}</strong><span>${current.summary}</span></div></div>`,
-        true
-      );
+      if (state.attempts === 1) {
+        showFeedback('success', `<div class="feedback-heading success-heading"><div><strong>🌟 ¡Eso, Antonia!</strong><span>Lo miraste y lo corregiste.</span></div></div><div class="feedback-mini-equation">${current.summary}</div><div class="feedback-action">¡Muy bien! 💛</div>`, true);
+      } else {
+        const message = state.streak >= 3 ? '🔥 ¡Excelente racha, Antonia!' : '✨ ¡Muy bien, Antonia!';
+        showFeedback('success', `<div class="feedback-heading success-heading"><div><strong>${message}</strong><span>${current.summary}</span></div></div>`, true);
+      }
+      finishAnswer(questionId);
+      return;
     }
 
-    finishAnswer();
-    return;
+    selectedButton.classList.add('wrong');
+    selectedButton.disabled = true;
+    if (state.attempts === 0) {
+      state.attempts = 1;
+      showFeedback('hint', learningCard(current, false));
+      return;
+    }
+
+    state.attempts = 2;
+    state.streak = 0;
+    showFeedback('gentle', learningCard(current, true));
+    finishAnswer(questionId);
+  } finally {
+    state.processing = false;
   }
-
-  selectedButton.classList.add('wrong');
-  selectedButton.disabled = true;
-
-  if (state.attempts === 0) {
-    state.attempts = 1;
-    showFeedback('hint', learningCard(current, false));
-    return;
-  }
-
-  state.attempts = 2;
-  state.streak = 0;
-  showFeedback('gentle', learningCard(current, true));
-  finishAnswer();
 }
 
 function nextQuestion() {
-  if (!state.answered) return;
-  if (state.questionIndex < 9) {
+  if (!state.answered || state.processing) return;
+  state.answered = false;
+  state.currentQuestionId = null;
+  if (state.questionIndex < SESSION_LENGTH - 1) {
     state.questionIndex += 1;
     renderQuestion();
   } else {
@@ -637,9 +668,9 @@ function nextQuestion() {
 function finishSession() {
   const topic = topicByKey(state.topicKey);
   progress.sessions += 1;
-  progress.byTopic[state.topicKey] = (progress.byTopic[state.topicKey] || 0) + 1;
+  progress.byTopic[state.topicKey] = (Number(progress.byTopic[state.topicKey]) || 0) + 1;
   saveProgress();
-  els.finalScore.textContent = state.score;
+  els.finalScore.textContent = String(state.score);
 
   if (state.score >= 9) {
     els.resultEmoji.textContent = '🏆';
@@ -664,28 +695,54 @@ function finishSession() {
 }
 
 function restartCurrentSession() {
-  if (state.mode === 'table') {
-    startSession({ mode: 'table', topicKey: 'multiplication', table: state.table });
-  } else if (state.mode === 'mixed') {
-    startSession({ mode: 'mixed', topicKey: 'multiplication' });
-  } else {
-    startTopicSession(state.topicKey);
-  }
+  if (state.mode === 'table') startSession({ mode: 'table', topicKey: 'multiplication', table: state.table });
+  else if (state.mode === 'mixed') startSession({ mode: 'mixed', topicKey: 'multiplication' });
+  else startTopicSession(state.topicKey);
 }
 
-els.moduleBackButton.addEventListener('click', () => showView(els.homeView));
-els.startTopicButton.addEventListener('click', () => startTopicSession(state.topicKey));
-els.mixedButton.addEventListener('click', () => startSession({ mode: 'mixed', topicKey: 'multiplication' }));
-els.backButton.addEventListener('click', () => openTopic(state.topicKey));
-els.nextButton.addEventListener('click', nextQuestion);
-els.againButton.addEventListener('click', restartCurrentSession);
-els.homeButton.addEventListener('click', () => openTopic(state.topicKey));
-els.routeButton.addEventListener('click', () => showView(els.homeView));
+function bindEvents() {
+  els.moduleBackButton.addEventListener('click', () => { cancelActiveSession(); showView(els.homeView); });
+  els.startTopicButton.addEventListener('click', () => startTopicSession(state.topicKey));
+  els.mixedButton.addEventListener('click', () => startSession({ mode: 'mixed', topicKey: 'multiplication' }));
+  els.backButton.addEventListener('click', () => openTopic(state.topicKey));
+  els.nextButton.addEventListener('click', nextQuestion);
+  els.againButton.addEventListener('click', restartCurrentSession);
+  els.homeButton.addEventListener('click', () => openTopic(state.topicKey));
+  els.routeButton.addEventListener('click', () => { cancelActiveSession(); showView(els.homeView); });
+}
 
-buildCurriculumCards();
-buildTableButtons();
-renderProgress();
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('./sw.js');
+      registration.update().catch(() => {});
+    } catch {
+      // La app funciona online aunque el service worker falle.
+    }
+  });
+}
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+function init() {
+  assertRequiredElements();
+  buildCurriculumCards();
+  buildTableButtons();
+  bindEvents();
+  renderProgress();
+  registerServiceWorker();
+  document.documentElement.dataset.appVersion = APP_VERSION;
+}
+
+try {
+  init();
+} catch (error) {
+  console.error('No se pudo iniciar Colegio de Antonia', error);
+  const main = document.querySelector('main');
+  if (main) {
+    const notice = document.createElement('div');
+    notice.className = 'panel';
+    notice.setAttribute('role', 'alert');
+    notice.innerHTML = '<h2>Necesitamos recargar</h2><p>La app no pudo iniciar correctamente. Cierra esta ventana y vuelve a abrirla.</p>';
+    main.prepend(notice);
+  }
 }
