@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#7C3AED" />
+  <meta name="description" content="Colegio de Antonia: práctica complementaria de Inglés para Curious Kids 3." />
+  <link rel="manifest" href="manifest.webmanifest?v=10" />
+  <link rel="icon" href="logo-antonia.svg?v=10" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-antonia.svg?v=10" />
+  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="english.css?v=10" />
+  <title>Inglés · Colegio de Antonia</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero english-hero">
+      <div class="hero-copy">
+        <div class="brand-line">
+          <img class="brand-logo" src="logo-antonia.svg?v=10" alt="Logo Colegio de Antonia" />
+          <p class="eyebrow">Colegio de Antonia · 3er grado</p>
+        </div>
+        <h1>Inglés</h1>
+        <p class="subtitle">Práctica complementaria para Curious Kids 3 · Macmillan.</p>
+      </div>
+      <div class="score-card" aria-label="Progreso de Inglés">
+        <span>⭐ Estrellas</span>
+        <strong id="englishStars">0</strong>
+      </div>
+    </header>
+
+    <nav class="subject-switcher" aria-label="Asignaturas">
+      <a class="subject-link" href="index.html?v=10">🧮 Matemáticas</a>
+      <span class="subject-link active">🇬🇧 Inglés</span>
+    </nav>
+
+    <section id="englishHome" class="english-view active">
+      <div class="panel book-card">
+        <div class="book-icon" aria-hidden="true">📘</div>
+        <div>
+          <p class="section-kicker">Libro de referencia</p>
+          <h2>Curious Kids 3</h2>
+          <p class="muted">Pupil’s Book + Activity Book · Macmillan</p>
+          <p class="book-note">Usamos el nivel y enfoque como guía para crear ejercicios propios. No copiamos las páginas del libro.</p>
+        </div>
+      </div>
+
+      <div class="panel english-menu-panel">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">English practice</p>
+            <h2>¿Qué quieres practicar?</h2>
+          </div>
+          <span class="english-badge">6 activos</span>
+        </div>
+        <div id="englishTopicGrid" class="english-topic-grid"></div>
+      </div>
+
+      <div class="panel compact english-progress-panel">
+        <div class="progress-row">
+          <span>Sesiones de Inglés</span>
+          <strong id="englishSessions">0</strong>
+        </div>
+        <div class="progress-row">
+          <span>Mejor racha</span>
+          <strong id="englishBestStreak">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="englishQuiz" class="english-view" aria-live="polite">
+      <div class="quiz-topbar">
+        <button id="englishBackButton" class="ghost-button">← Inglés</button>
+        <span id="englishModeLabel" class="pill">Vocabulary</span>
+        <span id="englishCounter">1 / 10</span>
+      </div>
+
+      <div class="quiz-card english-quiz-card">
+        <p id="englishPrompt" class="prompt">Choose the correct answer.</p>
+        <div id="englishQuestion" class="english-question">apple</div>
+        <div id="englishAnswers" class="answers"></div>
+        <div id="englishFeedback" class="feedback" role="status" aria-live="polite"></div>
+        <button id="englishNextButton" class="primary-button hidden">Next →</button>
+      </div>
+
+      <div class="streak-box">🔥 Racha: <strong id="englishStreak">0</strong></div>
+    </section>
+
+    <section id="englishResult" class="english-view">
+      <div class="panel result-panel">
+        <div id="englishResultEmoji" class="result-emoji">🌟</div>
+        <h2 id="englishResultTitle">Great job!</h2>
+        <p id="englishResultText"></p>
+        <div class="result-score"><span id="englishFinalScore">0</span>/10</div>
+        <button id="englishAgainButton" class="primary-button">Practicar otra vez</button>
+        <button id="englishHomeButton" class="secondary-button">Volver a Inglés</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="english.js?v=10"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
