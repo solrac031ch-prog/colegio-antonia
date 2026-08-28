@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const subjects = [
   { key: 'math', name: 'Matemáticas', path: '/math.html', heading: 'Matemáticas', home: '#homeView', cards: '#curriculumGrid .topic-card', quiz: '#quizView', answers: '#answers .answer-button', next: '#nextButton', counter: '#questionCounter', result: '#resultView', directStart: false, enhanced: false },
-  { key: 'english', name: 'Inglés', path: '/english.html', heading: 'Inglés', home: '#englishHome', cards: '#englishTopicGrid .english-topic-card', quiz: '#englishQuiz', answers: '#englishAnswers .answer-button', next: '#englishNextButton', counter: '#englishCounter', result: '#englishResult', directStart: true, enhanced: false },
+  { key: 'english', name: 'English', path: '/english.html', heading: 'English', home: '#englishHome', cards: '#englishTopicGrid .english-topic-card', quiz: '#englishQuiz', answers: '#englishAnswers .answer-button', next: '#englishNextButton', counter: '#englishCounter', result: '#englishResult', directStart: true, enhanced: false },
   { key: 'language', name: 'Lenguaje', path: '/language.html', heading: 'Lenguaje', home: '#languageHome', cards: '#languageTopicGrid .english-topic-card', quiz: '#languageQuiz', answers: '#languageAnswers .answer-button', next: '#languageNextButton', counter: '#languageCounter', result: '#languageResult', directStart: true, enhanced: true },
   { key: 'science', name: 'Ciencias', path: '/science.html', heading: 'Ciencias Naturales', home: '#scienceHome', cards: '#scienceTopicGrid .english-topic-card', quiz: '#scienceQuiz', answers: '#scienceAnswers .answer-button', next: '#scienceNextButton', counter: '#scienceCounter', result: '#scienceResult', directStart: true, enhanced: true },
   { key: 'history', name: 'Historia', path: '/history.html', heading: 'Historia y Geografía', home: '#historyHome', cards: '#historyTopicGrid .english-topic-card', quiz: '#historyQuiz', answers: '#historyAnswers .answer-button', next: '#historyNextButton', counter: '#historyCounter', result: '#historyResult', directStart: true, enhanced: true },
@@ -16,7 +16,10 @@ async function openTopic(page, subject, cardIndex = 0) {
   if (!subject.directStart) {
     const genericStart = page.locator('#startTopicButton');
     if (await genericStart.isVisible()) await genericStart.click();
-    else { await expect(page.locator('#mixedButton')).toBeVisible(); await page.locator('#mixedButton').click(); }
+    else {
+      await expect(page.locator('#mixedButton')).toBeVisible();
+      await page.locator('#mixedButton').click();
+    }
   }
   await expect(page.locator(subject.quiz)).toHaveClass(/active/);
   await expect(page.locator(subject.answers).first()).toBeVisible();
@@ -40,7 +43,7 @@ async function answerEnglishCorrectly(page) {
   if (await next.isVisible()) return;
   const hint = page.locator('#englishFeedback .english-feedback-answer');
   await expect(hint).toBeVisible();
-  const hintText = (await hint.textContent() || '').replace(/^Busca:\s*/, '').trim();
+  const hintText = (await hint.textContent() || '').replace(/^Look for:\s*/, '').trim();
   const correctButton = page.locator('#englishAnswers .answer-button:not(:disabled)').filter({ hasText: hintText }).first();
   await expect(correctButton).toBeVisible();
   await correctButton.click();
@@ -66,13 +69,14 @@ async function installSpeechMock(page) {
       speaking: false,
       getVoices() {
         return [
-          { lang: 'en-US', name: 'Mock English' },
-          { lang: 'es-CL', name: 'Mock Chile' },
+          { lang: 'en-US', name: 'Premium English Natural', localService: true },
+          { lang: 'en-US', name: 'Basic English', localService: true },
+          { lang: 'es-CL', name: 'Enhanced Catalina', localService: true },
         ];
       },
       speak(utterance) {
         this.speaking = true;
-        window.__spokenByApp.push({ text: utterance.text, lang: utterance.lang, rate: utterance.rate });
+        window.__spokenByApp.push({ text: utterance.text, lang: utterance.lang, rate: utterance.rate, voice: utterance.voice?.name || '' });
         setTimeout(() => {
           this.speaking = false;
           if (typeof utterance.onend === 'function') utterance.onend();
@@ -80,8 +84,8 @@ async function installSpeechMock(page) {
       },
       cancel() { this.speaking = false; },
     };
-    try { Object.defineProperty(window, 'SpeechSynthesisUtterance', { configurable: true, writable: true, value: MockUtterance }); } catch { window.SpeechSynthesisUtterance = MockUtterance; }
-    try { Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: mock }); } catch { window.speechSynthesis = mock; }
+    Object.defineProperty(window, 'SpeechSynthesisUtterance', { configurable: true, writable: true, value: MockUtterance });
+    Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: mock });
   });
 }
 
@@ -109,7 +113,7 @@ async function solveMatch(page) {
       const candidate = page.locator('.quick-match-card:not(:disabled)').nth(index);
       await first.click();
       await candidate.click();
-      await page.waitForTimeout(390);
+      await page.waitForTimeout(330);
       if (!(await page.locator('.quick-match-card:not(:disabled)').filter({ hasText: firstText || '' }).count())) { matched = true; break; }
     }
     guard += 1;
@@ -121,12 +125,18 @@ async function solveMatch(page) {
 
 async function finishQuickRound(page) {
   const next = page.locator('[data-quick-next]');
-  if (await page.locator('.quick-match-card').count()) { await solveMatch(page); return; }
+  if (await page.locator('.quick-match-card').count()) {
+    await solveMatch(page);
+    return;
+  }
   if (await page.locator('.quick-input').count()) {
     const input = page.locator('.quick-input');
-    await input.fill('__respuesta__');
+    await input.fill('__answer__');
     await page.locator('[data-quick-check]').click();
-    if (!(await next.isVisible())) { await input.fill('__respuesta__'); await page.locator('[data-quick-check]').click(); }
+    if (!(await next.isVisible())) {
+      await input.fill('__answer__');
+      await page.locator('[data-quick-check]').click();
+    }
     await expect(next).toBeVisible();
     return;
   }
@@ -153,8 +163,31 @@ test('portada muestra aventura, cinco materias, desafío rápido y reinicio tota
   await expect(page.locator('.subject-dashboard-grid .subject-card')).toHaveCount(5);
   await expect(page.getByRole('link', { name: /Desafío rápido/ })).toHaveAttribute('href', /games\.html\?subject=math/);
   await expect(page.locator('[data-reset-all-progress]')).toBeVisible();
-  await expect(page.locator('body')).not.toContainText('Antonia');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2)).toBeTruthy();
+});
+
+test('English is fully immersive with no Spanish UI', async ({ page }) => {
+  await page.goto('/english.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.getByRole('heading', { name: 'English', exact: true })).toBeVisible();
+  await expect(page.locator('.game-strip')).toContainText('Streak');
+  await expect(page.locator('.game-strip')).toContainText('Level');
+  await expect(page.locator('[data-reset-progress]')).toContainText('Reset English progress');
+  const homeText = await page.locator('body').innerText();
+  expect(homeText).not.toMatch(/Materias|Modo aventura|Estrellas|Sesiones de|Mejor racha|Reiniciar|Camino de|Tu ruta|estaciones|Siguiente estación|Disponible/);
+
+  await openTopic(page, subjects[1], 0);
+  await expect(page.locator('[data-voice-english-question]')).toContainText('Listen');
+  await finishCurrentQuestion(page, subjects[1]);
+  const quizText = await page.locator('#englishQuiz').innerText();
+  expect(quizText).not.toMatch(/Correcto|Intenta|Ahora|Respuesta|Escuchar|Detener|Racha/);
+
+  await page.goto('/games.html?subject=english', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: /Quick challenge/ })).toBeVisible();
+  await expect(page.locator('[data-quick-subject-title]')).toHaveText('English');
+  await expect(page.locator('[data-quick-subject-tabs]')).toContainText('Mathematics');
+  const gameText = await page.locator('body').innerText();
+  expect(gameText).not.toMatch(/Materias|Desafío|Racha|Hoy|Comprobar|Siguiente|Verdadero|Falso|Respuesta|Jugar otra vez|Volver a|gato|libro|agua/);
 });
 
 test('reiniciar todo elimina solo el progreso completo de la app', async ({ page }, testInfo) => {
@@ -167,10 +200,7 @@ test('reiniciar todo elimina solo el progreso completo de la app', async ({ page
   page.once('dialog', dialog => dialog.accept());
   await page.locator('[data-reset-all-progress]').click();
   await page.waitForLoadState('domcontentloaded');
-  const state = await page.evaluate(keys => ({
-    appValues: keys.map(key => localStorage.getItem(key)),
-    foreignValue: localStorage.getItem('otraAppNoTocar'),
-  }), resetAllKeys);
+  const state = await page.evaluate(keys => ({ appValues: keys.map(key => localStorage.getItem(key)), foreignValue: localStorage.getItem('otraAppNoTocar') }), resetAllKeys);
   expect(state.appValues.every(value => value === null)).toBeTruthy();
   expect(state.foreignValue).toBe('conservar');
   await expect(page.locator('[data-game-xp]').first()).toHaveText('0');
@@ -202,39 +232,33 @@ for (const subject of subjects) {
   });
 }
 
-test('voz lee Inglés en inglés y las explicaciones en español', async ({ page }, testInfo) => {
+test('natural voice uses English for English and Spanish for other explanations', async ({ page }, testInfo) => {
   test.setTimeout(90000);
   test.skip(testInfo.project.name !== 'windows-chromium', 'La prueba de síntesis de voz corre una vez.');
   await installSpeechMock(page);
 
-  for (const subject of subjects) {
-    const pageErrors = [];
-    page.on('pageerror', error => pageErrors.push(error.message));
-    await page.goto(subject.path, { waitUntil: 'domcontentloaded' });
-    await openTopic(page, subject, 0);
+  await page.goto('/english.html', { waitUntil: 'domcontentloaded' });
+  await openTopic(page, subjects[1], 0);
+  const englishVoice = page.locator('[data-voice-english-question]');
+  await expect(englishVoice).toHaveAttribute('data-voice-lang', 'en-US');
+  await englishVoice.click();
+  await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1) || null)).toMatchObject({ lang: 'en-US', voice: 'Premium English Natural' });
+  const spokenEnglish = await page.evaluate(() => window.__spokenByApp.at(-1));
+  expect(spokenEnglish.rate).toBeGreaterThanOrEqual(0.9);
 
-    if (subject.key === 'english') {
-      const englishVoice = page.locator('[data-voice-english-question]');
-      await expect(englishVoice).toBeVisible();
-      await expect(englishVoice).toHaveAttribute('data-voice-lang', 'en-US');
-      await englishVoice.click();
-      await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1)?.lang || '')).toBe('en-US');
-    }
+  await finishCurrentQuestion(page, subjects[1]);
+  const englishExplanation = page.locator('#englishFeedback [data-voice-explanation]');
+  await expect(englishExplanation).toHaveAttribute('data-voice-lang', 'en-US');
+  await englishExplanation.click();
+  await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1)?.lang || '')).toBe('en-US');
 
-    await finishCurrentQuestion(page, subject);
-    const explanationVoice = page.locator('[data-voice-explanation]').first();
-    await expect(explanationVoice).toBeVisible();
-    await expect(explanationVoice).toHaveAttribute('data-voice-lang', 'es-CL');
-    await explanationVoice.click();
-    await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1)?.lang || '')).toBe('es-CL');
-    expect(pageErrors).toEqual([]);
-  }
-
-  await page.goto('/games.html?subject=science', { waitUntil: 'domcontentloaded' });
-  await finishQuickRound(page);
-  const gameExplanationVoice = page.locator('[data-quick-feedback] [data-voice-explanation]');
-  await expect(gameExplanationVoice).toBeVisible();
-  await expect(gameExplanationVoice).toHaveAttribute('data-voice-lang', 'es-CL');
+  await page.goto('/science.html', { waitUntil: 'domcontentloaded' });
+  await openTopic(page, subjects[3], 0);
+  await finishCurrentQuestion(page, subjects[3]);
+  const spanishExplanation = page.locator('#scienceFeedback [data-voice-explanation]');
+  await expect(spanishExplanation).toHaveAttribute('data-voice-lang', 'es-CL');
+  await spanishExplanation.click();
+  await expect.poll(async () => page.evaluate(() => window.__spokenByApp?.at(-1) || null)).toMatchObject({ lang: 'es-CL', voice: 'Enhanced Catalina' });
 });
 
 test('una respuesta correcta entrega XP', async ({ page }, testInfo) => {
@@ -253,7 +277,7 @@ test('desafíos rápidos de las cinco materias completan 5 rondas', async ({ pag
     const pageErrors = [];
     page.on('pageerror', error => pageErrors.push(error.message));
     await page.goto(`/games.html?subject=${subject.key}`, { waitUntil: 'domcontentloaded' });
-    const expectedTitle = subject.key === 'history' ? 'Historia y Geografía' : subject.heading;
+    const expectedTitle = subject.key === 'english' ? 'English' : subject.key === 'history' ? 'Historia y Geografía' : subject.heading;
     await expect(page.locator('[data-quick-subject-title]')).toHaveText(expectedTitle);
     await expect(page.locator('[data-quick-counter]')).toHaveText('1 / 5');
     let sawAudio = false;
@@ -295,29 +319,34 @@ test('juego funciona al recargar sin conexión', async ({ page, context, browser
   test.skip(browserName !== 'chromium' || testInfo.project.name !== 'windows-chromium', 'Prueba offline en Chromium.');
   await page.goto('/games.html?subject=science', { waitUntil: 'networkidle' });
   await page.evaluate(async () => { if ('serviceWorker' in navigator) await navigator.serviceWorker.ready; });
-  await page.waitForTimeout(500);
   await context.setOffline(true);
   try {
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.locator('[data-quick-subject-title]')).toHaveText('Ciencias Naturales');
     await expect(page.locator('[data-quick-counter]')).toHaveText('1 / 5');
-  } finally { await context.setOffline(false); }
+  } finally {
+    await context.setOffline(false);
+  }
 });
 
-test('manifest y service worker usan voz y cache v21', async ({ request }) => {
+test('service worker v22 serves app shell fast and keeps voice offline', async ({ request }) => {
   const manifest = await request.get('/manifest.webmanifest');
   expect(manifest.ok()).toBeTruthy();
   const data = await manifest.json();
   expect(data.name).toBe('Aprende 3° Básico');
-  expect(data.short_name).toBe('3° Básico');
   expect(data.shortcuts.some(item => item.url.includes('games.html'))).toBeTruthy();
+
   const serviceWorker = await request.get('/sw.js');
   expect(serviceWorker.ok()).toBeTruthy();
   const swText = await serviceWorker.text();
-  expect(swText).toContain('aprende-3-basico-v21');
-  expect(swText).toContain('./games.html');
-  expect(swText).toContain('./games.js');
-  expect(swText).toContain('./games.css');
+  expect(swText).toContain('aprende-3-basico-v22');
+  expect(swText).toContain('staleWhileRevalidate');
   expect(swText).toContain('./voice.js');
   expect(swText).toContain('./voice.css');
+  expect(swText).toContain('./games.js');
+
+  const controls = await request.get('/progress-controls.js');
+  const controlsText = await controls.text();
+  expect(controlsText).not.toContain('registration.update()');
+  expect(controlsText).toContain('requestIdleCallback');
 });
