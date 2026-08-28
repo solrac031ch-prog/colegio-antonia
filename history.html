@@ -7,107 +7,44 @@
   <meta name="color-scheme" content="light" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Colegio Antonia" />
+  <meta name="apple-mobile-web-app-title" content="3° Básico" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
-  <meta name="description" content="Colegio de Antonia: práctica complementaria de Historia, Geografía y Ciencias Sociales de 3° Básico." />
-  <link rel="manifest" href="manifest.webmanifest?v=16" />
-  <link rel="icon" href="logo-antonia.svg?v=16" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-antonia.svg?v=16" />
-  <link rel="stylesheet" href="styles.css?v=16" />
-  <link rel="stylesheet" href="english.css?v=16" />
-  <link rel="stylesheet" href="platform.css?v=16" />
-  <title>Historia · Colegio de Antonia</title>
+  <meta name="description" content="Práctica complementaria de Historia, Geografía y Ciencias Sociales para 3° Básico." />
+  <link rel="manifest" href="manifest.webmanifest?v=17" />
+  <link rel="icon" href="logo-3basico.svg?v=17" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=17" />
+  <link rel="stylesheet" href="styles.css?v=17" />
+  <link rel="stylesheet" href="english.css?v=17" />
+  <link rel="stylesheet" href="platform.css?v=17" />
+  <title>Historia y Geografía · Aprende 3° Básico</title>
 </head>
 <body>
   <main class="app-shell">
-    <div class="app-back-row">
-      <button class="app-back-button" type="button" data-app-back data-fallback="./" aria-label="Volver a la pantalla anterior">← Atrás</button>
-    </div>
-
+    <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Volver a materias">← Materias</button></div>
     <header class="hero english-hero">
       <div class="hero-copy">
-        <div class="brand-line">
-          <img class="brand-logo" src="logo-antonia.svg?v=16" alt="Logo Colegio de Antonia" />
-          <p class="eyebrow">Colegio de Antonia · 3er grado</p>
-        </div>
+        <div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=17" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico</p></div>
         <h1>Historia y Geografía</h1>
         <p class="subtitle">Ubicarnos, conocer otras sociedades y aprender a vivir juntos.</p>
       </div>
-      <div class="score-card" aria-label="Progreso de Historia">
-        <span>⭐ Estrellas</span>
-        <strong id="historyStars">0</strong>
-      </div>
+      <div class="score-card" aria-label="Progreso de Historia"><span>⭐ Estrellas</span><strong id="historyStars">0</strong></div>
     </header>
-
     <nav class="subject-switcher" aria-label="Asignaturas">
-      <a class="subject-link" href="index.html?v=16">🧮 Matemáticas</a>
-      <a class="subject-link" href="english.html?v=16">🇬🇧 Inglés</a>
-      <a class="subject-link" href="language.html?v=16">📚 Lenguaje</a>
-      <a class="subject-link" href="science.html?v=16">🔬 Ciencias</a>
+      <a class="subject-link" href="math.html?v=17">🧮 Matemáticas</a>
+      <a class="subject-link" href="english.html?v=17">🇬🇧 Inglés</a>
+      <a class="subject-link" href="language.html?v=17">📚 Lenguaje</a>
+      <a class="subject-link" href="science.html?v=17">🔬 Ciencias</a>
       <span class="subject-link active" aria-current="page">🌎 Historia</span>
     </nav>
-
     <section id="historyHome" class="english-view active">
-      <div class="panel book-card">
-        <div class="book-icon" aria-hidden="true">🌎</div>
-        <div>
-          <p class="section-kicker">Texto de referencia</p>
-          <h2>Historia 3° Básico · Proyecto Valientes</h2>
-          <p class="muted">Historia, Geografía y Ciencias Sociales · Editorial SM</p>
-          <p class="book-note">Usamos el nivel y enfoque como guía para crear ejercicios propios. No copiamos páginas ni actividades del libro.</p>
-        </div>
-      </div>
-
-      <div class="panel english-menu-panel">
-        <div class="section-heading">
-          <div>
-            <p class="section-kicker">Práctica de Historia</p>
-            <h2>¿Qué quieres practicar?</h2>
-          </div>
-          <span class="english-badge">6 activos</span>
-        </div>
-        <div id="historyTopicGrid" class="english-topic-grid"></div>
-      </div>
-
-      <div class="panel compact english-progress-panel">
-        <div class="progress-row"><span>Sesiones de Historia</span><strong id="historySessions">0</strong></div>
-        <div class="progress-row"><span>Mejor racha</span><strong id="historyBestStreak">0</strong></div>
-        <div class="progress-reset-row">
-          <button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaHistoryProgress" data-subject-name="Historia">🔄 Reiniciar progreso</button>
-        </div>
-      </div>
+      <div class="panel book-card"><div class="book-icon" aria-hidden="true">🌎</div><div><p class="section-kicker">Texto de referencia</p><h2>Historia 3° Básico · Proyecto Valientes</h2><p class="muted">Historia, Geografía y Ciencias Sociales · Editorial SM</p><p class="book-note">Usamos el nivel y enfoque como guía para crear ejercicios propios. No copiamos páginas ni actividades del libro.</p></div></div>
+      <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">Práctica de Historia y Geografía</p><h2>¿Qué quieres practicar?</h2></div><span class="english-badge">6 activos</span></div><div id="historyTopicGrid" class="english-topic-grid"></div></div>
+      <div class="panel compact english-progress-panel"><div class="progress-row"><span>Sesiones de Historia</span><strong id="historySessions">0</strong></div><div class="progress-row"><span>Mejor racha</span><strong id="historyBestStreak">0</strong></div><div class="progress-reset-row"><button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaHistoryProgress" data-subject-name="Historia y Geografía">🔄 Reiniciar progreso</button></div></div>
     </section>
-
-    <section id="historyQuiz" class="english-view" aria-live="polite">
-      <div class="quiz-topbar">
-        <button id="historyBackButton" class="ghost-button" type="button">← Historia</button>
-        <span id="historyModeLabel" class="pill">Mapas y ubicación</span>
-        <span id="historyCounter">1 / 10</span>
-      </div>
-      <div class="quiz-card english-quiz-card">
-        <p id="historyPrompt" class="prompt">Elige la respuesta correcta.</p>
-        <div id="historyQuestion" class="english-question">Pregunta</div>
-        <div id="historyAnswers" class="answers"></div>
-        <div id="historyFeedback" class="feedback" role="status" aria-live="polite"></div>
-        <button id="historyNextButton" class="primary-button hidden" type="button">Siguiente →</button>
-      </div>
-      <div class="streak-box">🔥 Racha: <strong id="historyStreak">0</strong></div>
-    </section>
-
-    <section id="historyResult" class="english-view">
-      <div class="panel result-panel">
-        <div id="historyResultEmoji" class="result-emoji">🌟</div>
-        <h2 id="historyResultTitle">¡Muy bien!</h2>
-        <p id="historyResultText"></p>
-        <div class="result-score"><span id="historyFinalScore">0</span>/10</div>
-        <button id="historyAgainButton" class="primary-button" type="button">Practicar otra vez</button>
-        <button id="historyHomeButton" class="secondary-button" type="button">Volver a Historia</button>
-      </div>
-    </section>
+    <section id="historyQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="historyBackButton" class="ghost-button" type="button">← Historia</button><span id="historyModeLabel" class="pill">Mapas y ubicación</span><span id="historyCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="historyPrompt" class="prompt">Elige la respuesta correcta.</p><div id="historyQuestion" class="english-question">Pregunta</div><div id="historyAnswers" class="answers"></div><div id="historyFeedback" class="feedback" role="status" aria-live="polite"></div><button id="historyNextButton" class="primary-button hidden" type="button">Siguiente →</button></div><div class="streak-box">🔥 Racha: <strong id="historyStreak">0</strong></div></section>
+    <section id="historyResult" class="english-view"><div class="panel result-panel"><div id="historyResultEmoji" class="result-emoji">🌟</div><h2 id="historyResultTitle">¡Muy bien!</h2><p id="historyResultText"></p><div class="result-score"><span id="historyFinalScore">0</span>/10</div><button id="historyAgainButton" class="primary-button" type="button">Practicar otra vez</button><button id="historyHomeButton" class="secondary-button" type="button">Volver a Historia</button></div></section>
   </main>
-
-  <script src="history.js?v=16"></script>
-  <script src="progress-controls.js?v=16"></script>
+  <script src="history.js?v=17"></script><script src="feedback-enhancer.js?v=17"></script><script src="progress-controls.js?v=17"></script>
 </body>
 </html>
