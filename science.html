@@ -11,33 +11,27 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="description" content="Práctica complementaria de Ciencias Naturales para 3° Básico." />
-  <link rel="manifest" href="manifest.webmanifest?v=18" />
-  <link rel="icon" href="logo-3basico.svg?v=18" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-3basico.svg?v=18" />
-  <link rel="stylesheet" href="styles.css?v=18" />
-  <link rel="stylesheet" href="english.css?v=18" />
-  <link rel="stylesheet" href="platform.css?v=18" />
-  <link rel="stylesheet" href="adventure.css?v=18" />
+  <link rel="manifest" href="manifest.webmanifest?v=19" />
+  <link rel="icon" href="logo-3basico.svg?v=19" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=19" />
+  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="stylesheet" href="english.css?v=19" />
+  <link rel="stylesheet" href="platform.css?v=19" />
+  <link rel="stylesheet" href="adventure.css?v=19" />
+  <link rel="stylesheet" href="games.css?v=19" />
   <title>Ciencias Naturales · Aprende 3° Básico</title>
 </head>
 <body data-subject="science">
   <main class="app-shell">
     <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Volver a materias">← Materias</button></div>
     <header class="hero english-hero">
-      <div class="hero-copy">
-        <div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=18" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Modo aventura</p></div>
-        <h1>Ciencias Naturales</h1>
-        <p class="subtitle">Explora, razona y completa estaciones mientras ganas XP.</p>
-      </div>
+      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=19" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Modo aventura</p></div><h1>Ciencias Naturales</h1><p class="subtitle">Explora, razona y completa estaciones mientras ganas XP.</p></div>
       <div class="score-card" aria-label="Progreso de Ciencias Naturales"><span>⭐ Estrellas</span><strong id="scienceStars">0</strong></div>
     </header>
     <nav class="subject-switcher" aria-label="Asignaturas">
-      <a class="subject-link" href="math.html?v=18">🧮 Matemáticas</a>
-      <a class="subject-link" href="english.html?v=18">🇬🇧 Inglés</a>
-      <a class="subject-link" href="language.html?v=18">📚 Lenguaje</a>
-      <span class="subject-link active" aria-current="page">🔬 Ciencias</span>
-      <a class="subject-link" href="history.html?v=18">🌎 Historia</a>
+      <a class="subject-link" href="math.html?v=19">🧮 Matemáticas</a><a class="subject-link" href="english.html?v=19">🇬🇧 Inglés</a><a class="subject-link" href="language.html?v=19">📚 Lenguaje</a><span class="subject-link active" aria-current="page">🔬 Ciencias</span><a class="subject-link" href="history.html?v=19">🌎 Historia</a>
     </nav>
+    <a class="quick-game-banner" href="games.html?subject=science"><span class="quick-banner-icon" aria-hidden="true">🔬</span><span><strong>Desafío rápido de Ciencias</strong><small>Une órganos y funciones, ordena procesos, completa y observa.</small></span><span aria-hidden="true">→</span></a>
     <section id="scienceHome" class="english-view active">
       <div class="panel book-card"><div class="book-icon" aria-hidden="true">🔬</div><div><p class="section-kicker">Textos de referencia</p><h2>Max Science 3</h2><p class="muted">Book + Digital SB · Workbook · Editorial Macmillan</p><p class="book-note">Usamos el nivel y enfoque como guía para crear ejercicios propios. No copiamos páginas ni actividades del libro.</p></div></div>
       <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">Camino de Ciencias</p><h2>Tu ruta de aprendizaje</h2></div><span class="english-badge">6 estaciones</span></div><p class="muted">Completa estaciones para marcar tu avance. Todas siguen disponibles para volver a practicar.</p><div id="scienceTopicGrid" class="english-topic-grid"></div></div>
@@ -46,9 +40,9 @@
     <section id="scienceQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="scienceBackButton" class="ghost-button" type="button">← Camino</button><span id="scienceModeLabel" class="pill">Seres vivos</span><span id="scienceCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="sciencePrompt" class="prompt">Elige la respuesta correcta.</p><div id="scienceQuestion" class="english-question">Pregunta</div><div id="scienceAnswers" class="answers"></div><div id="scienceFeedback" class="feedback" role="status" aria-live="polite"></div><button id="scienceNextButton" class="primary-button hidden" type="button">Siguiente →</button></div><div class="streak-box">🔥 Racha: <strong id="scienceStreak">0</strong></div></section>
     <section id="scienceResult" class="english-view"><div class="panel result-panel"><div id="scienceResultEmoji" class="result-emoji">🌟</div><h2 id="scienceResultTitle">¡Muy bien!</h2><p id="scienceResultText"></p><div class="result-score"><span id="scienceFinalScore">0</span>/10</div><button id="scienceAgainButton" class="primary-button" type="button">Practicar otra vez</button><button id="scienceHomeButton" class="secondary-button" type="button">Volver al camino</button></div></section>
   </main>
-  <script src="science.js?v=18"></script>
-  <script src="feedback-enhancer.js?v=18"></script>
-  <script src="game-progress.js?v=18"></script>
-  <script src="progress-controls.js?v=18"></script>
+  <script src="science.js?v=19"></script>
+  <script src="feedback-enhancer.js?v=19"></script>
+  <script src="game-progress.js?v=19"></script>
+  <script src="progress-controls.js?v=19"></script>
 </body>
 </html>
