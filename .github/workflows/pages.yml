@@ -1,4 +1,4 @@
-name: Publicar Colegio de Antonia
+name: Publicar Aprende 3° Básico
 
 on:
   push:
@@ -33,6 +33,7 @@ jobs:
           node --check language.js
           node --check science.js
           node --check history.js
+          node --check feedback-enhancer.js
           node --check progress-controls.js
           node --check sw.js
           node --check playwright.config.mjs
@@ -42,25 +43,31 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in index.html english.html language.html science.html history.html styles.css curriculum.css english.css platform.css manifest.webmanifest logo-antonia.svg package.json playwright.config.mjs tests/smoke.spec.mjs; do
+          for file in index.html math.html english.html language.html science.html history.html styles.css curriculum.css english.css platform.css dashboard.css feedback-enhancer.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs; do
             test -f "$file"
           done
-          grep -q 'app.js?v=16' index.html
-          grep -q 'english.js?v=16' english.html
-          grep -q 'language.js?v=16' language.html
-          grep -q 'science.js?v=16' science.html
-          grep -q 'history.js?v=16' history.html
-          for page in index.html english.html language.html science.html history.html; do
-            grep -q 'progress-controls.js?v=16' "$page"
-            grep -q 'platform.css?v=16' "$page"
+          grep -q 'dashboard.css?v=17' index.html
+          grep -q 'math.html?v=17' index.html
+          grep -q 'app.js?v=17' math.html
+          grep -q 'english.js?v=17' english.html
+          grep -q 'language.js?v=17' language.html
+          grep -q 'science.js?v=17' science.html
+          grep -q 'history.js?v=17' history.html
+          for page in math.html english.html language.html science.html history.html; do
+            grep -q 'progress-controls.js?v=17' "$page"
+            grep -q 'platform.css?v=17' "$page"
             grep -q 'data-app-back' "$page"
             grep -q 'aria-current="page"' "$page"
+            grep -q 'Aprende 3° Básico' "$page"
           done
-          grep -q 'science.html?v=16' index.html
-          grep -q 'history.html?v=16' index.html
-          grep -q "colegio-antonia-v16" sw.js
-          ! grep -q 'hotfix.js\|quiz-sync.js' index.html
-          ! grep -q 'hotfix.js\|quiz-sync.js' sw.js
+          for page in language.html science.html history.html; do
+            grep -q 'feedback-enhancer.js?v=17' "$page"
+          done
+          grep -q 'progress-controls.js?v=17' index.html
+          grep -q 'logo-3basico.svg?v=17' index.html
+          grep -q "aprende-3-basico-v17" sw.js
+          ! grep -q 'Colegio de Antonia\|Colegio Antonia' index.html math.html english.html language.html science.html history.html manifest.webmanifest
+          ! grep -q 'hotfix.js\|quiz-sync.js' math.html sw.js
 
       - name: Validar JSON
         run: |
@@ -106,17 +113,14 @@ jobs:
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
-
       - name: Configurar Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
       - name: Preparar sitio
         uses: actions/upload-pages-artifact@v3
         with:
           path: "."
-
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
