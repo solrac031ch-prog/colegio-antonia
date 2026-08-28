@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Logo Aprende 3° Básico</title>
+  <desc id="desc">Mochila morada con el número 3 y una estrella dorada</desc>
+  <defs>
+    <linearGradient id="bg" x1="70" y1="40" x2="450" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#6D28D9"/>
+    </linearGradient>
+    <linearGradient id="bag" x1="170" y1="130" x2="340" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EDE9FE"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#4C1D95" flood-opacity=".24"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="118" fill="url(#bg)"/>
+  <circle cx="410" cy="102" r="54" fill="#FFFFFF" fill-opacity=".14"/>
+  <circle cx="98" cy="422" r="72" fill="#FFFFFF" fill-opacity=".10"/>
+  <g filter="url(#shadow)">
+    <path d="M190 166c0-48 30-78 66-78s66 30 66 78" fill="none" stroke="#F5F3FF" stroke-width="25" stroke-linecap="round"/>
+    <path d="M154 185c0-37 30-67 67-67h70c37 0 67 30 67 67v193c0 25-20 45-45 45H199c-25 0-45-20-45-45V185Z" fill="url(#bag)"/>
+    <path d="M154 252h204v126c0 25-20 45-45 45H199c-25 0-45-20-45-45V252Z" fill="#DDD6FE"/>
+    <rect x="179" y="280" width="154" height="105" rx="39" fill="#C4B5FD"/>
+    <path d="M154 210h-23c-21 0-38 17-38 38v92c0 18 14 32 32 32h29V210Zm204 0h23c21 0 38 17 38 38v92c0 18-14 32-32 32h-29V210Z" fill="#EDE9FE"/>
+  </g>
+  <text x="256" y="245" text-anchor="middle" font-family="Arial Rounded MT Bold, Nunito, system-ui, sans-serif" font-size="100" font-weight="900" fill="#6D28D9">3°</text>
+  <g transform="translate(354 92) rotate(8)">
+    <path d="M0-47 13-15 48-13 21 9 30 44 0 25-30 44-21 9-48-13-13-15Z" fill="#FBBF24" stroke="#FFF7D6" stroke-width="9" stroke-linejoin="round"/>
+  </g>
+</svg>
