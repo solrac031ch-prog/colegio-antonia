@@ -34,11 +34,11 @@
         <div class="section-heading">
           <div>
             <p class="section-kicker">Ruta de 3er grado</p>
-            <h2>¿Qué vamos a aprender?</h2>
+            <h2>¿Qué quieres practicar?</h2>
           </div>
-          <span class="route-badge">11 temas</span>
+          <span class="route-badge">11 activos</span>
         </div>
-        <p class="muted">La ruta sigue los grandes temas de Max Maths 3. Iremos activando cada módulo paso a paso.</p>
+        <p class="muted">Todos los temas están disponibles. Elige uno y hacemos una práctica corta.</p>
         <div id="curriculumGrid" class="curriculum-grid" aria-label="Temas de Matemáticas"></div>
       </div>
 
@@ -54,22 +54,28 @@
       </div>
     </section>
 
-    <section id="multiplicationView" class="view">
+    <section id="moduleView" class="view">
       <div class="module-topbar">
         <button id="moduleBackButton" class="ghost-button">← Todos los temas</button>
-        <span class="module-chip">✖️ Multiplicación</span>
+        <span id="moduleChip" class="module-chip">🔢 Números</span>
       </div>
 
       <div class="panel module-hero-card">
-        <div class="module-icon" aria-hidden="true">✖️</div>
+        <div id="moduleIcon" class="module-icon" aria-hidden="true">🔢</div>
         <div>
-          <p class="section-kicker">Tema 7</p>
-          <h2>Multiplicación</h2>
-          <p class="muted">Aprende las tablas con práctica corta, correcciones fáciles y una pregunta a la vez.</p>
+          <p id="moduleKicker" class="section-kicker">Tema 1</p>
+          <h2 id="moduleTitle">Números hasta 1.000</h2>
+          <p id="moduleDescription" class="muted">Contar, comparar y ordenar números.</p>
         </div>
       </div>
 
-      <div class="panel">
+      <div id="genericPracticePanel" class="panel">
+        <h2>Práctica rápida</h2>
+        <p id="genericPracticeText" class="muted">10 preguntas cortas, una a la vez.</p>
+        <button id="startTopicButton" class="primary-button">▶️ Empezar práctica</button>
+      </div>
+
+      <div id="multiplicationPracticePanel" class="panel hidden">
         <h2>Elige una tabla</h2>
         <p class="muted">Puedes practicar una sola tabla o mezclar todas.</p>
         <div id="tableGrid" class="table-grid"></div>
@@ -79,14 +85,14 @@
 
     <section id="quizView" class="view" aria-live="polite">
       <div class="quiz-topbar">
-        <button id="backButton" class="ghost-button">← Multiplicación</button>
-        <span id="modeLabel" class="pill">Tabla del 2</span>
+        <button id="backButton" class="ghost-button">← Tema</button>
+        <span id="modeLabel" class="pill">Práctica</span>
         <span id="questionCounter">1 / 10</span>
       </div>
 
       <div class="quiz-card">
-        <p class="prompt">¿Cuánto es?</p>
-        <div id="question" class="question">2 × 4</div>
+        <p id="questionPrompt" class="prompt">¿Cuál es la respuesta?</p>
+        <div id="question" class="question">245 + 36</div>
         <div id="answers" class="answers"></div>
         <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
         <button id="nextButton" class="primary-button hidden">Siguiente →</button>
@@ -102,7 +108,7 @@
         <p id="resultText"></p>
         <div class="result-score"><span id="finalScore">0</span>/10</div>
         <button id="againButton" class="primary-button">Practicar otra vez</button>
-        <button id="homeButton" class="secondary-button">Volver a Multiplicación</button>
+        <button id="homeButton" class="secondary-button">Volver al tema</button>
         <button id="routeButton" class="text-button">Ver todos los temas</button>
       </div>
     </section>
