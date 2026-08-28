@@ -9,10 +9,27 @@ const state = {
   attempts: 0,
 };
 
+const curriculum = [
+  { icon: '🔢', title: 'Números hasta 1.000', subtitle: 'Contar, comparar y ordenar', active: false },
+  { icon: '➕', title: 'Sumas', subtitle: 'Sumar con seguridad', active: false },
+  { icon: '➖', title: 'Restas', subtitle: 'Restar paso a paso', active: false },
+  { icon: '🍕', title: 'Fracciones', subtitle: 'Partes de un todo', active: false },
+  { icon: '🔷', title: 'Formas y espacio', subtitle: 'Figuras y propiedades', active: false },
+  { icon: '📊', title: 'Gráficos y datos', subtitle: 'Leer y organizar información', active: false },
+  { icon: '✖️', title: 'Multiplicación', subtitle: 'Tablas del 1 al 10', active: true },
+  { icon: '➗', title: 'División', subtitle: 'Repartir en partes iguales', active: false },
+  { icon: '📏', title: 'Longitud, masa y volumen', subtitle: 'Medir y comparar', active: false },
+  { icon: '🕐', title: 'La hora y el tiempo', subtitle: 'Relojes y duración', active: false },
+  { icon: '🧭', title: 'Posición y movimiento', subtitle: 'Ubicar y describir recorridos', active: false },
+];
+
 const els = {
   homeView: document.querySelector('#homeView'),
+  multiplicationView: document.querySelector('#multiplicationView'),
   quizView: document.querySelector('#quizView'),
   resultView: document.querySelector('#resultView'),
+  curriculumGrid: document.querySelector('#curriculumGrid'),
+  moduleBackButton: document.querySelector('#moduleBackButton'),
   tableGrid: document.querySelector('#tableGrid'),
   mixedButton: document.querySelector('#mixedButton'),
   backButton: document.querySelector('#backButton'),
@@ -32,6 +49,7 @@ const els = {
   finalScore: document.querySelector('#finalScore'),
   againButton: document.querySelector('#againButton'),
   homeButton: document.querySelector('#homeButton'),
+  routeButton: document.querySelector('#routeButton'),
 };
 
 const progress = JSON.parse(localStorage.getItem('antoniaMathProgress') || '{}');
@@ -51,9 +69,39 @@ function renderProgress() {
 }
 
 function showView(view) {
-  [els.homeView, els.quizView, els.resultView].forEach(el => el.classList.remove('active'));
+  [els.homeView, els.multiplicationView, els.quizView, els.resultView].forEach(el => el.classList.remove('active'));
   view.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildCurriculumCards() {
+  els.curriculumGrid.innerHTML = '';
+
+  curriculum.forEach((topic, index) => {
+    const button = document.createElement('button');
+    button.className = `topic-card${topic.active ? ' topic-active' : ''}`;
+    button.type = 'button';
+
+    if (!topic.active) {
+      button.disabled = true;
+      button.setAttribute('aria-label', `${topic.title}. Próximamente.`);
+    } else {
+      button.setAttribute('aria-label', `Abrir ${topic.title}`);
+      button.addEventListener('click', () => showView(els.multiplicationView));
+    }
+
+    button.innerHTML = `
+      <span class="topic-number">${index + 1}</span>
+      <span class="topic-icon" aria-hidden="true">${topic.icon}</span>
+      <span class="topic-copy">
+        <strong>${topic.title}</strong>
+        <small>${topic.subtitle}</small>
+      </span>
+      <span class="topic-status">${topic.active ? 'Practicar →' : 'Pronto'}</span>
+    `;
+
+    els.curriculumGrid.appendChild(button);
+  });
 }
 
 function buildTableButtons() {
@@ -306,12 +354,15 @@ function finishSession() {
   showView(els.resultView);
 }
 
+els.moduleBackButton.addEventListener('click', () => showView(els.homeView));
 els.mixedButton.addEventListener('click', () => startSession({ mode: 'mixed' }));
-els.backButton.addEventListener('click', () => showView(els.homeView));
+els.backButton.addEventListener('click', () => showView(els.multiplicationView));
 els.nextButton.addEventListener('click', nextQuestion);
 els.againButton.addEventListener('click', () => startSession({ mode: state.mode, table: state.table }));
-els.homeButton.addEventListener('click', () => showView(els.homeView));
+els.homeButton.addEventListener('click', () => showView(els.multiplicationView));
+els.routeButton.addEventListener('click', () => showView(els.homeView));
 
+buildCurriculumCards();
 buildTableButtons();
 renderProgress();
 
