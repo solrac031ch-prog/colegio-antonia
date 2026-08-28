@@ -40,19 +40,27 @@
       || null;
   }
 
-  function resetActiveButton() {
-    if (!activeButton) return;
-    activeButton.classList.remove('is-speaking');
-    activeButton.textContent = activeButton.dataset.voiceLabel || '🔊 Escuchar';
-    activeButton.setAttribute('aria-pressed', 'false');
-    activeButton = null;
+  function resetButton(button) {
+    if (!button) return;
+    button.classList.remove('is-speaking');
+    button.textContent = button.dataset.voiceLabel || '🔊 Escuchar';
+    button.setAttribute('aria-pressed', 'false');
+  }
+
+  function finishUtterance(utterance, button) {
+    if (activeUtterance !== utterance) return;
     activeUtterance = null;
+    activeButton = null;
+    resetButton(button);
   }
 
   function stopSpeech() {
     if (!supported) return;
+    const previousButton = activeButton;
+    activeButton = null;
+    activeUtterance = null;
     try { synth.cancel(); } catch {}
-    resetActiveButton();
+    resetButton(previousButton);
   }
 
   function speak(text, lang, button) {
@@ -80,9 +88,9 @@
     button.textContent = '⏹ Detener';
     button.setAttribute('aria-pressed', 'true');
 
-    utterance.onend = resetActiveButton;
-    utterance.onerror = resetActiveButton;
-    try { synth.speak(utterance); } catch { resetActiveButton(); }
+    utterance.onend = () => finishUtterance(utterance, button);
+    utterance.onerror = () => finishUtterance(utterance, button);
+    try { synth.speak(utterance); } catch { finishUtterance(utterance, button); }
   }
 
   function makeVoiceButton(label, lang, getText, extraClass = '') {
@@ -153,9 +161,10 @@
 
   function initExplanationObserver() {
     if (!supported) return;
+    const containers = explanationContainers();
     scanExplanations();
     const observer = new MutationObserver(() => scanExplanations());
-    explanationContainers().forEach(container => observer.observe(container, { childList: true, characterData: true, subtree: true }));
+    containers.forEach(container => observer.observe(container, { childList: true, characterData: true, subtree: true }));
   }
 
   function init() {
