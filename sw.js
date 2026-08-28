@@ -1,7 +1,8 @@
-const CACHE = 'colegio-antonia-v16';
+const CACHE = 'aprende-3-basico-v17';
 const CORE_ASSETS = [
   './',
   './index.html',
+  './math.html',
   './english.html',
   './language.html',
   './science.html',
@@ -10,18 +11,21 @@ const CORE_ASSETS = [
   './curriculum.css',
   './english.css',
   './platform.css',
+  './dashboard.css',
   './app.js',
   './english.js',
   './language.js',
   './science.js',
   './history.js',
+  './feedback-enhancer.js',
   './progress-controls.js',
   './manifest.webmanifest',
-  './logo-antonia.svg'
+  './logo-3basico.svg'
 ];
 
 const OFFLINE_PAGES = new Set([
   'index.html',
+  'math.html',
   'english.html',
   'language.html',
   'science.html',
