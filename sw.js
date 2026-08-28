@@ -1,4 +1,4 @@
-const CACHE = 'aprende-3-basico-v23-progressive-v24';
+const CACHE = 'aprende-3-basico-v25-performance';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -81,21 +81,16 @@ async function offlineNavigationFallback(request) {
   return caches.match('./index.html');
 }
 
-async function staleWhileRevalidate(request, event) {
-  const cached = await cachedResponse(request);
-  const refresh = fetch(request, { cache: 'no-store' })
-    .then(response => cacheResponse(request, response))
-    .catch(() => null);
-
-  if (cached) {
-    event.waitUntil(refresh);
-    return cached;
+async function networkFirst(request) {
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    return cacheResponse(request, response);
+  } catch {
+    const cached = await cachedResponse(request);
+    if (cached) return cached;
+    if (request.mode === 'navigate') return offlineNavigationFallback(request);
+    throw new Error('offline-and-not-cached');
   }
-
-  const fresh = await refresh;
-  if (fresh) return fresh;
-  if (request.mode === 'navigate') return offlineNavigationFallback(request);
-  throw new Error('offline-and-not-cached');
 }
 
 async function cacheFirst(request) {
@@ -116,5 +111,5 @@ self.addEventListener('fetch', event => {
     pathname.endsWith('.html') || pathname.endsWith('.js') ||
     pathname.endsWith('.css') || pathname.endsWith('.webmanifest');
 
-  event.respondWith(appShellAsset ? staleWhileRevalidate(request, event) : cacheFirst(request));
+  event.respondWith(appShellAsset ? networkFirst(request) : cacheFirst(request));
 });
