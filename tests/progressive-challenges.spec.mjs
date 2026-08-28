@@ -16,7 +16,7 @@ async function solveMatch(page) {
         const afterFirst = page.locator('.quick-match-card:not(:disabled)');
         if ((await afterFirst.count()) <= j) break;
         await afterFirst.nth(j).click();
-        await page.waitForTimeout(330);
+        await page.waitForTimeout(250);
         matched = !(await page.locator('.quick-match-card:not(:disabled)').filter({ hasText: firstText || '' }).count());
       }
     }
@@ -58,8 +58,11 @@ async function finishRound(page) {
   await expect(next).toBeVisible();
 }
 
-test('terminar un desafío desbloquea y abre el siguiente', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'windows-chromium', 'La progresión se verifica una vez.');
+test('los desafíos avanzan sin bloquearse en Windows Android e iPhone', async ({ page }) => {
+  test.setTimeout(90_000);
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+
   await page.goto('/games.html?subject=math', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-quick-challenge-number]')).toHaveText('Desafío 1');
 
@@ -74,4 +77,5 @@ test('terminar un desafío desbloquea y abre el siguiente', async ({ page }, tes
   await expect(page.locator('[data-quick-challenge-number]')).toHaveText('Desafío 2');
   await expect(page.locator('[data-quick-counter]')).toHaveText('1 / 5');
   await expect(page.locator('[data-quick-game]')).toBeVisible();
+  expect(pageErrors).toEqual([]);
 });
