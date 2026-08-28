@@ -1,48 +1,34 @@
-# 🎒 Colegio de Antonia — 3er grado
+# 🎒 Aprende 3° Básico
 
-Aplicación educativa personal para acompañar el aprendizaje de Antonia en 3er grado.
+Aplicación educativa web para practicar contenidos de 3° Básico en celular, tablet o computador.
 
 ## Materias
 
-- 🧮 **Matemáticas** — primer módulo activo
-- 📚 Lenguaje — próximamente
-- 🇬🇧 Inglés — próximamente
-- 🔬 Ciencias — próximamente
+- 🧮 Matemáticas
+- 🇬🇧 Inglés
+- 📚 Lenguaje
+- 🔬 Ciencias Naturales
+- 🌎 Historia, Geografía y Ciencias Sociales
 
-## Matemáticas · primera etapa
+Cada materia incluye sesiones breves, respuestas grandes, segunda oportunidad, explicaciones y progreso guardado en el dispositivo.
 
-La primera versión está enfocada en aprender y reforzar las **tablas de multiplicar del 1 al 10** mediante sesiones breves, simples y entretenidas.
+## Enfoque
 
-Incluye:
+La app usa los textos escolares indicados por las familias como referencia de nivel y secuencia, pero los ejercicios son originales y complementarios; no reproduce páginas ni actividades protegidas de los libros.
 
-- práctica por tabla;
-- desafío con preguntas mezcladas;
-- respuestas grandes y fáciles de tocar en celular;
-- refuerzo positivo inmediato;
-- rachas y estrellas;
-- progreso guardado en el dispositivo;
-- diseño adaptable a iPhone, Android y computador;
-- sesiones de 10 preguntas sin presión de tiempo.
+## Compatibilidad
+
+Diseñada y probada para:
+
+- iOS / Safari-WebKit;
+- Android / Chromium;
+- Windows / Chromium-Edge;
+- instalación como PWA y uso offline del contenido ya guardado.
+
+## Calidad
+
+Antes de publicar una versión, GitHub Actions valida sintaxis y estructura y ejecuta pruebas de navegador. Las pruebas abren las cinco materias, responden ejercicios, recorren todos los módulos activos y verifican comportamiento móvil y offline.
 
 ## Tecnología
 
-HTML, CSS y JavaScript sin dependencias externas. Está preparado para publicarse con GitHub Pages y funcionar como aplicación web instalable (PWA).
-
-## Estructura
-
-```text
-colegio-antonia/
-├── index.html
-├── styles.css
-├── app.js
-├── manifest.webmanifest
-├── sw.js
-└── README.md
-```
-
-## Próximos pasos
-
-1. Probar el módulo de tablas del 1 al 10 con Antonia.
-2. Ajustar dificultad y dinámica según cómo responda.
-3. Incorporar otros contenidos de Matemáticas de 3er grado.
-4. Añadir Lenguaje, Inglés y Ciencias manteniendo cada materia separada.
+HTML, CSS y JavaScript sin framework de interfaz. Publicación mediante GitHub Pages.
