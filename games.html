@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="3° Básico" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
-  <meta name="description" content="Desafíos interactivos de 3° Básico." />
+  <meta name="description" content="Desafíos progresivos e interactivos de 3° Básico." />
   <link rel="manifest" href="manifest.webmanifest?v=22" />
   <link rel="icon" href="logo-3basico.svg?v=22" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="logo-3basico.svg?v=22" />
@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="platform.css?v=19" />
   <link rel="stylesheet" href="games.css?v=19" />
   <link rel="stylesheet" href="voice.css?v=23" />
-  <title>Desafío rápido · Aprende 3° Básico</title>
+  <title>Desafíos progresivos · Aprende 3° Básico</title>
 </head>
 <body data-subject="games">
   <main class="app-shell quick-shell">
@@ -26,9 +26,9 @@
 
     <header class="hero quick-hero">
       <div class="hero-copy">
-        <div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=22" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Juego rápido</p></div>
+        <div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=22" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Ruta de desafíos</p></div>
         <h1><span data-quick-subject-icon>🧮</span> Desafío rápido</h1>
-        <p class="subtitle"><strong data-quick-subject-title>Matemáticas</strong> · 5 rondas con actividades diferentes.</p>
+        <p class="subtitle"><strong data-quick-subject-title>Matemáticas</strong> · desafíos cortos que aumentan paso a paso.</p>
       </div>
     </header>
 
@@ -39,6 +39,21 @@
     </div>
 
     <nav class="quick-subject-tabs" data-quick-subject-tabs aria-label="Elegir materia"></nav>
+
+    <section class="quick-path-card" aria-label="Ruta de aprendizaje">
+      <div class="quick-path-head">
+        <div>
+          <strong data-quick-challenge-number>Desafío 1</strong>
+          <span data-quick-stage-name>Etapa: Inicio</span>
+        </div>
+        <span class="quick-difficulty" data-quick-difficulty>Dificultad: Inicio</span>
+      </div>
+      <div class="quick-track-row">
+        <div class="quick-track" aria-label="Progreso de la ruta"><i data-quick-track-progress></i></div>
+        <strong data-quick-track-text>1/1</strong>
+      </div>
+      <p>Al terminar, se desbloquea automáticamente el siguiente desafío. Cada etapa agrega contenido nuevo y mantiene repaso de lo anterior.</p>
+    </section>
 
     <section data-quick-game>
       <div class="quick-progress-wrap">
@@ -55,7 +70,7 @@
           <button class="primary-button hidden" type="button" data-quick-next>Siguiente →</button>
         </div>
       </div>
-      <p class="dashboard-note">Si te equivocas, tienes una segunda oportunidad antes de ver la respuesta.</p>
+      <p class="dashboard-note">Si te equivocas, tienes una segunda oportunidad. Los desafíos siguientes mezclan repaso y contenido nuevo.</p>
     </section>
 
     <section class="panel quick-result hidden" data-quick-result aria-live="polite">
@@ -65,7 +80,8 @@
       <div class="quick-result-xp" data-quick-result-xp>+0 XP</div>
       <p class="quick-result-message" data-quick-result-message></p>
       <div class="quick-result-actions">
-        <button class="primary-button" type="button" data-quick-replay>🎮 Jugar otra vez</button>
+        <button class="primary-button" type="button" data-quick-next-challenge>Siguiente desafío →</button>
+        <button class="secondary-button" type="button" data-quick-replay>↻ Practicar este desafío otra vez</button>
         <a class="secondary-button" data-quick-subject-back data-quick-result-back href="math.html?v=22">Volver a la materia</a>
         <a class="text-button" href="index.html?v=22">Ver todas las materias</a>
       </div>
