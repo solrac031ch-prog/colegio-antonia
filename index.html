@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#7C3AED" />
-  <meta name="description" content="Colegio de Antonia: práctica de Matemáticas e Inglés de 3er grado." />
-  <link rel="manifest" href="manifest.webmanifest?v=12" />
-  <link rel="icon" href="logo-antonia.svg?v=12" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-antonia.svg?v=12" />
-  <link rel="stylesheet" href="styles.css?v=12" />
-  <link rel="stylesheet" href="curriculum.css?v=12" />
+  <meta name="description" content="Colegio de Antonia: práctica de Matemáticas, Inglés y Lenguaje de 3er grado." />
+  <link rel="manifest" href="manifest.webmanifest?v=13" />
+  <link rel="icon" href="logo-antonia.svg?v=13" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-antonia.svg?v=13" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="curriculum.css?v=13" />
   <title>Colegio de Antonia</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
     <header class="hero">
       <div class="hero-copy">
         <div class="brand-line">
-          <img class="brand-logo" src="logo-antonia.svg?v=12" alt="Logo Colegio de Antonia" />
+          <img class="brand-logo" src="logo-antonia.svg?v=13" alt="Logo Colegio de Antonia" />
           <p class="eyebrow">Colegio de Antonia · 3er grado</p>
         </div>
         <h1>Matemáticas</h1>
@@ -31,7 +31,8 @@
 
     <nav class="subject-switcher" aria-label="Asignaturas">
       <span class="subject-link active">🧮 Matemáticas</span>
-      <a class="subject-link" href="english.html?v=12">🇬🇧 Inglés · Curious Kids 3</a>
+      <a class="subject-link" href="english.html?v=13">🇬🇧 Inglés</a>
+      <a class="subject-link" href="language.html?v=13">📚 Lenguaje</a>
     </nav>
 
     <section id="homeView" class="view active">
@@ -55,6 +56,9 @@
         <div class="progress-row">
           <span>Mejor racha</span>
           <strong id="bestStreak">0</strong>
+        </div>
+        <div class="progress-reset-row">
+          <button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaMathProgress" data-subject-name="Matemáticas">🔄 Reiniciar progreso</button>
         </div>
       </div>
     </section>
@@ -119,6 +123,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
+  <script src="progress-controls.js?v=13"></script>
 </body>
 </html>
