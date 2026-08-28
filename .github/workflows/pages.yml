@@ -95,7 +95,7 @@ jobs:
           grep -q 'challengeCompleted' games.js
           grep -q 'transitioning' games.js
           grep -q 'matchBusy' games.js
-          grep -q 'data-token-index' games.js
+          grep -q 'dataset.tokenIndex' games.js
           grep -q 'data-quick-next-challenge' games.html
           grep -q 'Animals' games.js
           grep -q 'Transport' games.js
