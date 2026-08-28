@@ -1,4 +1,4 @@
-const CACHE = 'aprende-3-basico-v19';
+const CACHE = 'aprende-3-basico-v20';
 const CORE_ASSETS = [
   './',
   './index.html',
