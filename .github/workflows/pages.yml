@@ -35,31 +35,70 @@ jobs:
           node --check history.js
           node --check progress-controls.js
           node --check sw.js
+          node --check playwright.config.mjs
+          node --check tests/smoke.spec.mjs
 
       - name: Validar estructura del sitio
         shell: bash
         run: |
           set -euo pipefail
-          for file in index.html english.html language.html science.html history.html styles.css curriculum.css english.css manifest.webmanifest logo-antonia.svg; do test -f "$file"; done
-          grep -q 'app.js?v=15' index.html
-          grep -q 'english.js?v=15' english.html
-          grep -q 'language.js?v=15' language.html
-          grep -q 'science.js?v=15' science.html
-          grep -q 'history.js?v=15' history.html
-          for page in index.html english.html language.html science.html history.html; do
-            grep -q 'progress-controls.js?v=15' "$page"
-            grep -q 'data-app-back' "$page"
+          for file in index.html english.html language.html science.html history.html styles.css curriculum.css english.css platform.css manifest.webmanifest logo-antonia.svg package.json playwright.config.mjs tests/smoke.spec.mjs; do
+            test -f "$file"
           done
-          grep -q 'science.html?v=15' index.html
-          grep -q 'history.html?v=15' index.html
+          grep -q 'app.js?v=16' index.html
+          grep -q 'english.js?v=16' english.html
+          grep -q 'language.js?v=16' language.html
+          grep -q 'science.js?v=16' science.html
+          grep -q 'history.js?v=16' history.html
+          for page in index.html english.html language.html science.html history.html; do
+            grep -q 'progress-controls.js?v=16' "$page"
+            grep -q 'platform.css?v=16' "$page"
+            grep -q 'data-app-back' "$page"
+            grep -q 'aria-current="page"' "$page"
+          done
+          grep -q 'science.html?v=16' index.html
+          grep -q 'history.html?v=16' index.html
+          grep -q "colegio-antonia-v16" sw.js
           ! grep -q 'hotfix.js\|quiz-sync.js' index.html
           ! grep -q 'hotfix.js\|quiz-sync.js' sw.js
 
-      - name: Validar manifest
-        run: python -m json.tool manifest.webmanifest > /dev/null
+      - name: Validar JSON
+        run: |
+          python -m json.tool manifest.webmanifest > /dev/null
+          python -m json.tool package.json > /dev/null
+
+  browser-test:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar pruebas
+        run: npm install --no-audit --no-fund
+
+      - name: Instalar navegadores
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Probar Windows Android e iOS
+        run: npm run test:e2e
+
+      - name: Guardar diagnóstico si falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-diagnostics
+          path: test-results
+          if-no-files-found: ignore
+          retention-days: 7
 
   deploy:
-    needs: validate
+    needs: [validate, browser-test]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -67,14 +106,17 @@ jobs:
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
+
       - name: Configurar Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
       - name: Preparar sitio
         uses: actions/upload-pages-artifact@v3
         with:
           path: "."
+
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
