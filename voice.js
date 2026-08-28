@@ -8,14 +8,38 @@
   const englishContext = subject === 'english' || gameSubject === 'english';
   let activeButton = null;
   let activeUtterance = null;
+  let availableVoices = [];
 
   const labels = englishContext
-    ? { listen: '🔊 Listen', explanation: '🔊 Listen to explanation', stop: '⏹ Stop' }
-    : { listen: '🔊 Escuchar', explanation: '🔊 Escuchar explicación', stop: '⏹ Detener' };
+    ? {
+        listen: '🔊 Listen',
+        slow: '🐢 Repeat slowly',
+        explanation: '🔊 Listen to explanation',
+        slowExplanation: '🐢 Repeat explanation slowly',
+        stop: '⏹ Stop'
+      }
+    : {
+        listen: '🔊 Escuchar',
+        slow: '🐢 Repetir lento',
+        explanation: '🔊 Escuchar explicación',
+        slowExplanation: '🐢 Repetir explicación lento',
+        stop: '⏹ Detener'
+      };
+
+  function refreshVoices() {
+    if (!supported || typeof synth.getVoices !== 'function') return [];
+    try {
+      const voices = synth.getVoices() || [];
+      if (voices.length) availableVoices = voices;
+    } catch {
+      // Si el navegador aún no entrega voces, usamos la voz predeterminada.
+    }
+    return availableVoices;
+  }
 
   function cleanText(value, lang = 'es-CL') {
     let text = String(value || '')
-      .replace(/[🔊🔈🔉🔇⏹️▶️⭐✨💡🌱🎉🏆🔥⚡🎯🏅🧠📚🔬🌎🧮🇬🇧]/gu, ' ')
+      .replace(/[🔊🔈🔉🔇⏹️▶️⭐✨💡🌱🎉🏆🔥⚡🎯🏅🧠📚🔬🌎🧮🇬🇧🐢]/gu, ' ')
       .replace(/\s+/g, ' ')
       .trim();
 
@@ -50,29 +74,34 @@
     const base = wanted.split('-')[0];
     if (!voiceLang.startsWith(base)) return -1000;
 
-    let score = voiceLang === wanted ? 80 : 45;
-    const name = String(voice.name || '').toLowerCase();
-    const premiumTerms = [
-      ['premium', 160], ['enhanced', 150], ['natural', 140], ['neural', 140],
-      ['siri', 120], ['samantha', 110], ['ava', 108], ['serena', 104],
-      ['daniel', 100], ['karen', 98], ['moira', 96], ['tessa', 94],
-      ['google us english', 105], ['google uk english', 100],
-      ['microsoft aria', 105], ['microsoft jenny', 105], ['microsoft guy', 95],
-      ['catalina', 105], ['paulina', 100], ['monica', 95], ['mónica', 95],
-      ['google español', 95], ['google spanish', 95]
+    let score = voiceLang === wanted ? 120 : 70;
+    const descriptor = `${String(voice.name || '')} ${String(voice.voiceURI || '')}`.toLowerCase();
+    const qualityTerms = [
+      ['premium', 260], ['enhanced', 245], ['natural', 235], ['neural', 235], ['siri', 205],
+      ['ava', 175], ['samantha', 170], ['allison', 165], ['serena', 162], ['daniel', 160],
+      ['karen', 155], ['moira', 150], ['tessa', 148], ['aaron', 145], ['nicky', 145],
+      ['google us english', 175], ['google uk english', 165],
+      ['microsoft aria', 180], ['microsoft jenny', 180], ['microsoft guy', 165],
+      ['catalina', 175], ['paulina', 165], ['monica', 160], ['mónica', 160],
+      ['google español', 155], ['google spanish', 155]
     ];
-    premiumTerms.forEach(([term, points]) => { if (name.includes(term)) score += points; });
+    qualityTerms.forEach(([term, points]) => {
+      if (descriptor.includes(term)) score += points;
+    });
 
-    const noveltyTerms = ['bells', 'boing', 'bubbles', 'cellos', 'organ', 'trinoids', 'whisper', 'zarvox', 'bad news', 'good news'];
-    if (noveltyTerms.some(term => name.includes(term))) score -= 400;
-    if (voice.localService) score += 12;
-    if (voice.default) score += 5;
+    const noveltyTerms = [
+      'bells', 'boing', 'bubbles', 'cellos', 'organ', 'trinoids', 'whisper', 'zarvox',
+      'bad news', 'good news', 'bahh', 'jester', 'wobble'
+    ];
+    if (noveltyTerms.some(term => descriptor.includes(term))) score -= 600;
+    if (voice.localService) score += 25;
+    if (voice.default) score += 8;
     return score;
   }
 
   function voiceFor(lang) {
-    if (!supported || typeof synth.getVoices !== 'function') return null;
-    const voices = synth.getVoices() || [];
+    if (!supported) return null;
+    const voices = availableVoices.length ? availableVoices : refreshVoices();
     return voices
       .map(voice => ({ voice, score: scoreVoice(voice, lang) }))
       .filter(item => item.score > -1000)
@@ -102,7 +131,16 @@
     resetButton(previousButton);
   }
 
-  function speakText(text, lang = 'es-CL', button = null) {
+  function speechRate(text, lang, options = {}) {
+    const isEnglish = lang.toLowerCase().startsWith('en');
+    if (!isEnglish) return options.slow ? 0.8 : 0.92;
+
+    const wordCount = String(text || '').trim().split(/\s+/).filter(Boolean).length;
+    if (options.slow) return wordCount <= 2 ? 0.66 : 0.72;
+    return wordCount <= 2 ? 0.78 : 0.84;
+  }
+
+  function speakText(text, lang = 'es-CL', button = null, options = {}) {
     if (!supported) return false;
     const prepared = cleanText(text, lang);
     if (!prepared) return false;
@@ -113,10 +151,11 @@
     }
 
     stopSpeech();
+    refreshVoices();
     const utterance = new SpeechSynthesisUtterance(prepared);
     utterance.lang = lang;
-    utterance.rate = lang.toLowerCase().startsWith('en') ? 0.95 : 0.98;
-    utterance.pitch = 1.02;
+    utterance.rate = speechRate(prepared, lang, options);
+    utterance.pitch = 1;
     utterance.volume = 1;
     const voice = voiceFor(lang);
     if (voice) utterance.voice = voice;
@@ -140,15 +179,16 @@
     }
   }
 
-  function makeVoiceButton(label, lang, getText, extraClass = '') {
+  function makeVoiceButton(label, lang, getText, extraClass = '', options = {}) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `voice-button ${extraClass}`.trim();
     button.dataset.voiceLabel = label;
     button.dataset.voiceLang = lang;
+    button.dataset.voiceSpeed = options.slow ? 'slow' : 'clear';
     button.textContent = label;
     button.setAttribute('aria-pressed', 'false');
-    button.addEventListener('click', () => speakText(getText(), lang, button));
+    button.addEventListener('click', () => speakText(getText(), lang, button, options));
     return button;
   }
 
@@ -162,17 +202,23 @@
     if (!supported || subject !== 'english' || document.querySelector('[data-voice-english-question]')) return;
     const answers = document.querySelector('#englishAnswers');
     if (!answers) return;
+
     const row = document.createElement('div');
     row.className = 'voice-question-actions';
-    const button = makeVoiceButton('🔊 Listen', 'en-US', englishQuestionText, 'voice-english-button');
-    button.dataset.voiceEnglishQuestion = 'true';
-    row.appendChild(button);
+
+    const listenButton = makeVoiceButton(labels.listen, 'en-US', englishQuestionText, 'voice-english-button');
+    listenButton.dataset.voiceEnglishQuestion = 'true';
+
+    const slowButton = makeVoiceButton(labels.slow, 'en-US', englishQuestionText, 'voice-slow-button', { slow: true });
+    slowButton.dataset.voiceEnglishSlow = 'true';
+
+    row.append(listenButton, slowButton);
     answers.insertAdjacentElement('beforebegin', row);
   }
 
   function explanationText(container) {
     const clone = container.cloneNode(true);
-    clone.querySelectorAll('.voice-button, [data-voice-explanation]').forEach(node => node.remove());
+    clone.querySelectorAll('.voice-button, .voice-explanation-actions').forEach(node => node.remove());
     return clone.textContent || '';
   }
 
@@ -182,11 +228,19 @@
     if (text.length < 8) return;
 
     const lang = englishContext ? 'en-US' : 'es-CL';
-    const button = makeVoiceButton(labels.explanation, lang, () => explanationText(container), 'voice-explanation-button');
-    button.dataset.voiceExplanation = 'true';
     const wrap = document.createElement('div');
     wrap.className = 'voice-explanation-actions';
-    wrap.appendChild(button);
+
+    const listenButton = makeVoiceButton(labels.explanation, lang, () => explanationText(container), 'voice-explanation-button');
+    listenButton.dataset.voiceExplanation = 'true';
+    wrap.appendChild(listenButton);
+
+    if (englishContext) {
+      const slowButton = makeVoiceButton(labels.slowExplanation, lang, () => explanationText(container), 'voice-explanation-button voice-slow-button', { slow: true });
+      slowButton.dataset.voiceExplanationSlow = 'true';
+      wrap.appendChild(slowButton);
+    }
+
     container.appendChild(wrap);
   }
 
@@ -218,15 +272,22 @@
       document.documentElement.classList.add('voice-unavailable');
       return;
     }
-    if (typeof synth.getVoices === 'function') synth.getVoices();
+
+    refreshVoices();
+    try {
+      if (typeof synth.addEventListener === 'function') synth.addEventListener('voiceschanged', refreshVoices);
+      else synth.onvoiceschanged = refreshVoices;
+    } catch {}
+
     injectEnglishQuestionVoice();
     initExplanationObservers();
   }
 
   window.AppVoice = {
-    speakText: (text, lang = 'es-CL') => speakText(text, lang, null),
+    speakText: (text, lang = 'es-CL', options = {}) => speakText(text, lang, null, options),
     stop: stopSpeech,
     bestVoiceName: lang => voiceFor(lang)?.name || '',
+    refreshVoices,
   };
 
   window.addEventListener('pagehide', stopSpeech);
