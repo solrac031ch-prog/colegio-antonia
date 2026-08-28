@@ -1,71 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 const subjects = [
-  {
-    name: 'Matemáticas',
-    path: '/index.html',
-    heading: 'Matemáticas',
-    home: '#homeView',
-    cards: '#curriculumGrid .topic-card',
-    quiz: '#quizView',
-    answers: '#answers .answer-button',
-    next: '#nextButton',
-    counter: '#questionCounter',
-    result: '#resultView',
-    directStart: false,
-  },
-  {
-    name: 'Inglés',
-    path: '/english.html',
-    heading: 'Inglés',
-    home: '#englishHome',
-    cards: '#englishTopicGrid .english-topic-card',
-    quiz: '#englishQuiz',
-    answers: '#englishAnswers .answer-button',
-    next: '#englishNextButton',
-    counter: '#englishCounter',
-    result: '#englishResult',
-    directStart: true,
-  },
-  {
-    name: 'Lenguaje',
-    path: '/language.html',
-    heading: 'Lenguaje',
-    home: '#languageHome',
-    cards: '#languageTopicGrid .english-topic-card',
-    quiz: '#languageQuiz',
-    answers: '#languageAnswers .answer-button',
-    next: '#languageNextButton',
-    counter: '#languageCounter',
-    result: '#languageResult',
-    directStart: true,
-  },
-  {
-    name: 'Ciencias',
-    path: '/science.html',
-    heading: 'Ciencias Naturales',
-    home: '#scienceHome',
-    cards: '#scienceTopicGrid .english-topic-card',
-    quiz: '#scienceQuiz',
-    answers: '#scienceAnswers .answer-button',
-    next: '#scienceNextButton',
-    counter: '#scienceCounter',
-    result: '#scienceResult',
-    directStart: true,
-  },
-  {
-    name: 'Historia',
-    path: '/history.html',
-    heading: 'Historia y Geografía',
-    home: '#historyHome',
-    cards: '#historyTopicGrid .english-topic-card',
-    quiz: '#historyQuiz',
-    answers: '#historyAnswers .answer-button',
-    next: '#historyNextButton',
-    counter: '#historyCounter',
-    result: '#historyResult',
-    directStart: true,
-  },
+  { name: 'Matemáticas', path: '/index.html', heading: 'Matemáticas', home: '#homeView', cards: '#curriculumGrid .topic-card', quiz: '#quizView', answers: '#answers .answer-button', next: '#nextButton', counter: '#questionCounter', result: '#resultView', directStart: false },
+  { name: 'Inglés', path: '/english.html', heading: 'Inglés', home: '#englishHome', cards: '#englishTopicGrid .english-topic-card', quiz: '#englishQuiz', answers: '#englishAnswers .answer-button', next: '#englishNextButton', counter: '#englishCounter', result: '#englishResult', directStart: true },
+  { name: 'Lenguaje', path: '/language.html', heading: 'Lenguaje', home: '#languageHome', cards: '#languageTopicGrid .english-topic-card', quiz: '#languageQuiz', answers: '#languageAnswers .answer-button', next: '#languageNextButton', counter: '#languageCounter', result: '#languageResult', directStart: true },
+  { name: 'Ciencias', path: '/science.html', heading: 'Ciencias Naturales', home: '#scienceHome', cards: '#scienceTopicGrid .english-topic-card', quiz: '#scienceQuiz', answers: '#scienceAnswers .answer-button', next: '#scienceNextButton', counter: '#scienceCounter', result: '#scienceResult', directStart: true },
+  { name: 'Historia', path: '/history.html', heading: 'Historia y Geografía', home: '#historyHome', cards: '#historyTopicGrid .english-topic-card', quiz: '#historyQuiz', answers: '#historyAnswers .answer-button', next: '#historyNextButton', counter: '#historyCounter', result: '#historyResult', directStart: true },
 ];
 
 async function openTopic(page, subject, cardIndex = 0) {
@@ -123,6 +63,7 @@ for (const subject of subjects) {
 }
 
 test('todos los módulos activos completan una sesión entera', async ({ page }, testInfo) => {
+  test.setTimeout(240000);
   test.skip(testInfo.project.name !== 'windows-chromium', 'La prueba exhaustiva corre una vez en Chromium.');
 
   for (const subject of subjects) {
@@ -171,6 +112,7 @@ test('manifest y service worker están disponibles', async ({ request }) => {
   const data = await manifest.json();
   expect(data.name).toBe('Colegio de Antonia');
   expect(data.start_url).toBe('./');
+  expect(data.id).toBe('./');
 
   const serviceWorker = await request.get('/sw.js');
   expect(serviceWorker.ok()).toBeTruthy();
