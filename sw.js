@@ -1,22 +1,23 @@
-const CACHE = 'colegio-antonia-v11';
+const CACHE = 'colegio-antonia-v12';
 const CORE_ASSETS = [
   './',
   './index.html',
   './english.html',
-  './styles.css?v=11',
-  './curriculum.css?v=11',
-  './app.js?v=11',
-  './hotfix.js?v=11',
-  './quiz-sync.js?v=11',
-  './english.css?v=10',
-  './english.js?v=10',
-  './manifest.webmanifest?v=11',
-  './logo-antonia.svg?v=11'
+  './styles.css',
+  './curriculum.css',
+  './english.css',
+  './app.js',
+  './english.js',
+  './manifest.webmanifest',
+  './logo-antonia.svg'
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE_ASSETS)));
-  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE)
+      .then(cache => cache.addAll(CORE_ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -27,40 +28,43 @@ self.addEventListener('activate', event => {
   );
 });
 
+async function cacheResponse(request, response) {
+  if (!response || !response.ok) return response;
+  const cache = await caches.open(CACHE);
+  await cache.put(request, response.clone());
+  return response;
+}
+
+async function networkFirst(request) {
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    return cacheResponse(request, response);
+  } catch {
+    const cached = await caches.match(request, { ignoreSearch: true });
+    if (cached) return cached;
+    if (request.mode === 'navigate') return caches.match('./index.html');
+    throw new Error('offline-and-not-cached');
+  }
+}
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request, { ignoreSearch: true });
+  if (cached) return cached;
+  const response = await fetch(request);
+  return cacheResponse(request, response);
+}
+
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  const networkFirst = event.request.mode === 'navigate' ||
-    url.pathname.endsWith('.html') ||
-    url.pathname.endsWith('.js') ||
-    url.pathname.endsWith('.css') ||
-    url.pathname.endsWith('.webmanifest');
+  const pathname = url.pathname;
+  const freshAsset = event.request.mode === 'navigate' ||
+    pathname.endsWith('.html') ||
+    pathname.endsWith('.js') ||
+    pathname.endsWith('.css') ||
+    pathname.endsWith('.webmanifest');
 
-  if (networkFirst) {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE).then(cache => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      if (response && response.ok) {
-        const copy = response.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, copy));
-      }
-      return response;
-    }))
-  );
+  event.respondWith(freshAsset ? networkFirst(event.request) : cacheFirst(event.request));
 });
