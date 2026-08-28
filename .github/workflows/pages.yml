@@ -41,12 +41,13 @@ jobs:
           node --check sw.js
           node --check playwright.config.mjs
           node --check tests/smoke.spec.mjs
+          node --check tests/voice-learning.spec.mjs
 
       - name: Validar estructura del sitio
         shell: bash
         run: |
           set -euo pipefail
-          for file in index.html math.html english.html language.html science.html history.html games.html styles.css curriculum.css english.css platform.css adventure.css dashboard.css games.css voice.css feedback-enhancer.js game-progress.js games.js voice.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs; do
+          for file in index.html math.html english.html language.html science.html history.html games.html styles.css curriculum.css english.css platform.css adventure.css dashboard.css games.css voice.css feedback-enhancer.js game-progress.js games.js voice.js manifest.webmanifest logo-3basico.svg package.json playwright.config.mjs tests/smoke.spec.mjs tests/voice-learning.spec.mjs; do
             test -f "$file"
           done
 
@@ -60,9 +61,9 @@ jobs:
           grep -q 'Learn Grade 3' english.html
           grep -q 'english.js?v=22' english.html
           grep -q 'game-progress.js?v=22' english.html
-          grep -q 'voice.js?v=22' english.html
+          grep -q 'voice.js?v=23' english.html
           grep -q 'progress-controls.js?v=22' english.html
-          grep -q 'voice.css?v=22' english.html
+          grep -q 'voice.css?v=23' english.html
           grep -q 'Reset English progress' english.html
           grep -q 'English quick challenge' english.html
           ! grep -Eq '← Materias|Modo aventura|⭐ Estrellas|Sesiones de Inglés|Mejor racha|Reiniciar progreso|Camino de Inglés|Tu ruta de aprendizaje|6 estaciones|Elige la mejor|Lee y responde' english.html
@@ -78,7 +79,8 @@ jobs:
             grep -q 'aria-current="page"' "$page"
           done
 
-          grep -q 'voice.js?v=22' games.html
+          grep -q 'voice.js?v=23' games.html
+          grep -q 'voice.css?v=23' games.html
           grep -q 'games.js?v=22' games.html
           grep -q 'progress-controls.js?v=22' games.html
           grep -q "type: 'listen'" games.js
@@ -93,13 +95,18 @@ jobs:
           grep -q 'natural' voice.js
           grep -q "'en-US'" voice.js
           grep -q "'es-CL'" voice.js
-          grep -q '0.95' voice.js
-          grep -q '0.98' voice.js
-          grep -q 'Listen to explanation' voice.js
+          grep -q '0.84' voice.js
+          grep -q '0.9' voice.js
+          grep -q '0.72' voice.js
+          grep -q '0.66' voice.js
+          grep -q 'Repeat slowly' voice.js
+          grep -q 'Repeat explanation slowly' voice.js
+          grep -q 'voiceschanged' voice.js
+          grep -q 'data-voice-english-slow' tests/voice-learning.spec.mjs
 
           ! grep -q 'registration.update()' progress-controls.js
           grep -q 'requestIdleCallback' progress-controls.js
-          grep -q "aprende-3-basico-v22" sw.js
+          grep -q "aprende-3-basico-v23" sw.js
           grep -q 'staleWhileRevalidate' sw.js
           grep -q "./voice.js" sw.js
           grep -q "./voice.css" sw.js
