@@ -1,13 +1,16 @@
-const CACHE = 'colegio-antonia-v12';
+const CACHE = 'colegio-antonia-v13';
 const CORE_ASSETS = [
   './',
   './index.html',
   './english.html',
+  './language.html',
   './styles.css',
   './curriculum.css',
   './english.css',
   './app.js',
   './english.js',
+  './language.js',
+  './progress-controls.js',
   './manifest.webmanifest',
   './logo-antonia.svg'
 ];
