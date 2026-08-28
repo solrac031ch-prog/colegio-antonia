@@ -1,4 +1,4 @@
-const CACHE = 'colegio-antonia-v13';
+const CACHE = 'colegio-antonia-v14';
 const CORE_ASSETS = [
   './',
   './index.html',
