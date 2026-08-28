@@ -1,17 +1,76 @@
 'use strict';
 
 (() => {
+  function getAppRootPath() {
+    try {
+      return new URL('./', window.location.href).pathname;
+    } catch {
+      return '/';
+    }
+  }
+
+  function hasInternalReferrer() {
+    if (!document.referrer) return false;
+    try {
+      const referrer = new URL(document.referrer);
+      return referrer.origin === window.location.origin && referrer.pathname.startsWith(getAppRootPath());
+    } catch {
+      return false;
+    }
+  }
+
   const backButton = document.querySelector('[data-app-back]');
   if (backButton) {
     backButton.addEventListener('click', () => {
       const fallback = backButton.dataset.fallback || 'index.html';
-      if (window.history.length > 1) {
+      if (window.history.length > 1 && hasInternalReferrer()) {
         window.history.back();
       } else {
-        window.location.href = fallback;
+        window.location.assign(fallback);
       }
     });
   }
+
+  let connectionStatus = null;
+  function updateConnectionStatus() {
+    if (navigator.onLine) {
+      connectionStatus?.remove();
+      connectionStatus = null;
+      return;
+    }
+
+    if (connectionStatus) return;
+    connectionStatus = document.createElement('div');
+    connectionStatus.className = 'connection-status';
+    connectionStatus.setAttribute('role', 'status');
+    connectionStatus.textContent = '📴 Sin conexión · puedes seguir usando el contenido guardado.';
+    document.body.appendChild(connectionStatus);
+  }
+
+  window.addEventListener('online', updateConnectionStatus);
+  window.addEventListener('offline', updateConnectionStatus);
+  updateConnectionStatus();
+
+  let runtimeErrorShown = false;
+  function showRuntimeError() {
+    if (runtimeErrorShown) return;
+    runtimeErrorShown = true;
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const notice = document.createElement('section');
+    notice.className = 'panel runtime-error';
+    notice.setAttribute('role', 'alert');
+    notice.innerHTML = '<h2>Algo no cargó bien</h2><p>El progreso está guardado. Recarga la app para continuar.</p><button class="secondary-button" type="button" data-runtime-reload>↻ Recargar</button>';
+    notice.querySelector('[data-runtime-reload]')?.addEventListener('click', () => window.location.reload());
+    main.prepend(notice);
+  }
+
+  window.addEventListener('error', event => {
+    const target = event.target;
+    if (target instanceof HTMLScriptElement || target instanceof HTMLLinkElement) showRuntimeError();
+  }, true);
+  window.addEventListener('unhandledrejection', showRuntimeError);
 
   const resetButton = document.querySelector('[data-reset-progress]');
   if (!resetButton) return;
@@ -40,7 +99,7 @@
     try {
       localStorage.removeItem(storageKey);
     } catch {
-      // Si el navegador bloquea el almacenamiento, recargamos igualmente.
+      // La app sigue funcionando aunque el navegador bloquee el almacenamiento.
     }
 
     window.location.reload();
