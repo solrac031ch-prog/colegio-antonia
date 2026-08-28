@@ -1,5 +1,5 @@
-const CACHE = 'colegio-antonia-v5';
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.webmanifest', './logo-antonia.svg'];
+const CACHE = 'colegio-antonia-v6';
+const ASSETS = ['./', './index.html', './styles.css', './curriculum.css', './app.js', './manifest.webmanifest', './logo-antonia.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
