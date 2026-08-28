@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -7,43 +7,43 @@
   <meta name="color-scheme" content="light" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="3° Básico" />
+  <meta name="apple-mobile-web-app-title" content="Grade 3" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
-  <meta name="description" content="Práctica complementaria de Inglés para 3° Básico y Curious Kids 3." />
-  <link rel="manifest" href="manifest.webmanifest?v=19" />
-  <link rel="icon" href="logo-3basico.svg?v=19" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-3basico.svg?v=19" />
+  <meta name="description" content="English practice for Grade 3, aligned with the level of Curious Kids 3." />
+  <link rel="manifest" href="manifest.webmanifest?v=22" />
+  <link rel="icon" href="logo-3basico.svg?v=22" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=22" />
   <link rel="stylesheet" href="styles.css?v=19" />
   <link rel="stylesheet" href="english.css?v=19" />
   <link rel="stylesheet" href="platform.css?v=19" />
   <link rel="stylesheet" href="adventure.css?v=19" />
   <link rel="stylesheet" href="games.css?v=19" />
-  <link rel="stylesheet" href="voice.css?v=21" />
-  <title>Inglés · Aprende 3° Básico</title>
+  <link rel="stylesheet" href="voice.css?v=22" />
+  <title>English · Learn Grade 3</title>
 </head>
 <body data-subject="english">
   <main class="app-shell">
-    <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Volver a materias">← Materias</button></div>
+    <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Back to subjects">← Subjects</button></div>
     <header class="hero english-hero">
-      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=19" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Modo aventura</p></div><h1>Inglés</h1><p class="subtitle">Avanza por Vocabulary, Grammar, Reading y más mientras ganas XP.</p></div>
-      <div class="score-card" aria-label="Progreso de Inglés"><span>⭐ Estrellas</span><strong id="englishStars">0</strong></div>
+      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=22" alt="Learn Grade 3 logo" /><p class="eyebrow">Learn Grade 3 · Adventure mode</p></div><h1>English</h1><p class="subtitle">Build vocabulary, grammar, reading, conversation and writing skills while earning XP.</p></div>
+      <div class="score-card" aria-label="English progress"><span>⭐ Stars</span><strong id="englishStars">0</strong></div>
     </header>
-    <nav class="subject-switcher" aria-label="Asignaturas">
-      <a class="subject-link" href="math.html?v=19">🧮 Matemáticas</a><span class="subject-link active" aria-current="page">🇬🇧 Inglés</span><a class="subject-link" href="language.html?v=19">📚 Lenguaje</a><a class="subject-link" href="science.html?v=19">🔬 Ciencias</a><a class="subject-link" href="history.html?v=19">🌎 Historia</a>
+    <nav class="subject-switcher" aria-label="Subjects">
+      <a class="subject-link" href="math.html?v=22">🧮 Mathematics</a><span class="subject-link active" aria-current="page">🇬🇧 English</span><a class="subject-link" href="language.html?v=22">📚 Language</a><a class="subject-link" href="science.html?v=22">🔬 Science</a><a class="subject-link" href="history.html?v=22">🌎 History</a>
     </nav>
-    <a class="quick-game-banner" href="games.html?subject=english"><span class="quick-banner-icon" aria-hidden="true">🔊</span><span><strong>Desafío interactivo de Inglés</strong><small>Escucha palabras, ordena oraciones, une parejas y completa.</small></span><span aria-hidden="true">→</span></a>
+    <a class="quick-game-banner" href="games.html?subject=english"><span class="quick-banner-icon" aria-hidden="true">🔊</span><span><strong>English quick challenge</strong><small>Listen, order sentences, match pairs, complete words and answer.</small></span><span aria-hidden="true">→</span></a>
     <section id="englishHome" class="english-view active">
-      <div class="panel book-card"><div class="book-icon" aria-hidden="true">📘</div><div><p class="section-kicker">Libro de referencia</p><h2>Curious Kids 3</h2><p class="muted">Pupil’s Book + Activity Book · Macmillan</p><p class="book-note">Usamos el nivel y enfoque como guía para crear ejercicios propios. No copiamos las páginas del libro.</p></div></div>
-      <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">Camino de Inglés</p><h2>Tu ruta de aprendizaje</h2></div><span class="english-badge">6 estaciones</span></div><p class="muted">Completa estaciones para marcar tu avance. Puedes entrar a cualquiera cuando quieras.</p><div id="englishTopicGrid" class="english-topic-grid"></div></div>
-      <div class="panel compact english-progress-panel"><div class="progress-row"><span>Sesiones de Inglés</span><strong id="englishSessions">0</strong></div><div class="progress-row"><span>Mejor racha de respuestas</span><strong id="englishBestStreak">0</strong></div><div class="progress-reset-row"><button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaEnglishProgress" data-subject-name="Inglés">🔄 Reiniciar progreso</button></div></div>
+      <div class="panel book-card"><div class="book-icon" aria-hidden="true">📘</div><div><p class="section-kicker">Reference books</p><h2>Curious Kids 3</h2><p class="muted">Pupil’s Book + Activity Book · Macmillan</p><p class="book-note">We use the level and learning approach as a guide to create original practice. We do not copy pages or activities from the books.</p></div></div>
+      <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">English learning path</p><h2>Your learning journey</h2></div><span class="english-badge">6 stations</span></div><p class="muted">Complete stations to mark your progress. You can open any station whenever you want to practise.</p><div id="englishTopicGrid" class="english-topic-grid"></div></div>
+      <div class="panel compact english-progress-panel"><div class="progress-row"><span>English sessions</span><strong id="englishSessions">0</strong></div><div class="progress-row"><span>Best answer streak</span><strong id="englishBestStreak">0</strong></div><div class="progress-reset-row"><button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaEnglishProgress" data-subject-name="English">🔄 Reset English progress</button></div></div>
     </section>
-    <section id="englishQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="englishBackButton" class="ghost-button" type="button">← Camino</button><span id="englishModeLabel" class="pill">Vocabulary</span><span id="englishCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="englishPrompt" class="prompt">Choose the correct answer.</p><div id="englishQuestion" class="english-question">apple</div><div id="englishAnswers" class="answers"></div><div id="englishFeedback" class="feedback" role="status" aria-live="polite"></div><button id="englishNextButton" class="primary-button hidden" type="button">Next →</button></div><div class="streak-box">🔥 Racha: <strong id="englishStreak">0</strong></div></section>
-    <section id="englishResult" class="english-view"><div class="panel result-panel"><div id="englishResultEmoji" class="result-emoji">🌟</div><h2 id="englishResultTitle">Great job!</h2><p id="englishResultText"></p><div class="result-score"><span id="englishFinalScore">0</span>/10</div><button id="englishAgainButton" class="primary-button" type="button">Practicar otra vez</button><button id="englishHomeButton" class="secondary-button" type="button">Volver al camino</button></div></section>
+    <section id="englishQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="englishBackButton" class="ghost-button" type="button">← Path</button><span id="englishModeLabel" class="pill">Vocabulary</span><span id="englishCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="englishPrompt" class="prompt">Choose the correct answer.</p><div id="englishQuestion" class="english-question">apple</div><div id="englishAnswers" class="answers"></div><div id="englishFeedback" class="feedback" role="status" aria-live="polite"></div><button id="englishNextButton" class="primary-button hidden" type="button">Next →</button></div><div class="streak-box">🔥 Answer streak: <strong id="englishStreak">0</strong></div></section>
+    <section id="englishResult" class="english-view"><div class="panel result-panel"><div id="englishResultEmoji" class="result-emoji">🌟</div><h2 id="englishResultTitle">Great job!</h2><p id="englishResultText"></p><div class="result-score"><span id="englishFinalScore">0</span>/10</div><button id="englishAgainButton" class="primary-button" type="button">Practice again</button><button id="englishHomeButton" class="secondary-button" type="button">Back to the path</button></div></section>
   </main>
-  <script src="english.js?v=19"></script>
-  <script src="game-progress.js?v=19"></script>
-  <script src="voice.js?v=21"></script>
-  <script src="progress-controls.js?v=19"></script>
+  <script src="english.js?v=22"></script>
+  <script src="game-progress.js?v=22"></script>
+  <script src="voice.js?v=22"></script>
+  <script src="progress-controls.js?v=22"></script>
 </body>
 </html>
