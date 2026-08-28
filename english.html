@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#7C3AED" />
   <meta name="description" content="Colegio de Antonia: práctica complementaria de Inglés para Curious Kids 3." />
-  <link rel="manifest" href="manifest.webmanifest?v=12" />
-  <link rel="icon" href="logo-antonia.svg?v=12" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-antonia.svg?v=12" />
-  <link rel="stylesheet" href="styles.css?v=12" />
-  <link rel="stylesheet" href="english.css?v=12" />
+  <link rel="manifest" href="manifest.webmanifest?v=13" />
+  <link rel="icon" href="logo-antonia.svg?v=13" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-antonia.svg?v=13" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="english.css?v=13" />
   <title>Inglés · Colegio de Antonia</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
     <header class="hero english-hero">
       <div class="hero-copy">
         <div class="brand-line">
-          <img class="brand-logo" src="logo-antonia.svg?v=12" alt="Logo Colegio de Antonia" />
+          <img class="brand-logo" src="logo-antonia.svg?v=13" alt="Logo Colegio de Antonia" />
           <p class="eyebrow">Colegio de Antonia · 3er grado</p>
         </div>
         <h1>Inglés</h1>
@@ -30,8 +30,9 @@
     </header>
 
     <nav class="subject-switcher" aria-label="Asignaturas">
-      <a class="subject-link" href="index.html?v=12">🧮 Matemáticas</a>
+      <a class="subject-link" href="index.html?v=13">🧮 Matemáticas</a>
       <span class="subject-link active">🇬🇧 Inglés</span>
+      <a class="subject-link" href="language.html?v=13">📚 Lenguaje</a>
     </nav>
 
     <section id="englishHome" class="english-view active">
@@ -64,6 +65,9 @@
         <div class="progress-row">
           <span>Mejor racha</span>
           <strong id="englishBestStreak">0</strong>
+        </div>
+        <div class="progress-reset-row">
+          <button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaEnglishProgress" data-subject-name="Inglés">🔄 Reiniciar progreso</button>
         </div>
       </div>
     </section>
@@ -98,6 +102,7 @@
     </section>
   </main>
 
-  <script src="english.js?v=12"></script>
+  <script src="english.js?v=13"></script>
+  <script src="progress-controls.js?v=13"></script>
 </body>
 </html>
