@@ -1,4 +1,4 @@
-const CACHE = 'aprende-3-basico-v25-performance';
+const CACHE = 'aprende-3-basico-v23-progressive-v24-performance-v25';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -81,6 +81,7 @@ async function offlineNavigationFallback(request) {
   return caches.match('./index.html');
 }
 
+// v25: networkFirst reemplaza staleWhileRevalidate para no servir un motor de desafíos antiguo cuando hay conexión.
 async function networkFirst(request) {
   try {
     const response = await fetch(request, { cache: 'no-store' });
