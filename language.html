@@ -11,32 +11,36 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="description" content="Práctica complementaria de Lenguaje para 3° Básico, Proyecto Valientes." />
-  <link rel="manifest" href="manifest.webmanifest?v=17" />
-  <link rel="icon" href="logo-3basico.svg?v=17" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-3basico.svg?v=17" />
-  <link rel="stylesheet" href="styles.css?v=17" />
-  <link rel="stylesheet" href="english.css?v=17" />
-  <link rel="stylesheet" href="platform.css?v=17" />
+  <link rel="manifest" href="manifest.webmanifest?v=18" />
+  <link rel="icon" href="logo-3basico.svg?v=18" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=18" />
+  <link rel="stylesheet" href="styles.css?v=18" />
+  <link rel="stylesheet" href="english.css?v=18" />
+  <link rel="stylesheet" href="platform.css?v=18" />
+  <link rel="stylesheet" href="adventure.css?v=18" />
   <title>Lenguaje · Aprende 3° Básico</title>
 </head>
-<body>
+<body data-subject="language">
   <main class="app-shell">
     <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Volver a materias">← Materias</button></div>
     <header class="hero english-hero">
-      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=17" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico</p></div><h1>Lenguaje</h1><p class="subtitle">Lectura, palabras y escritura con prácticas cortas y claras.</p></div>
+      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=18" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico · Modo aventura</p></div><h1>Lenguaje</h1><p class="subtitle">Lee, descubre pistas y avanza por el camino ganando XP.</p></div>
       <div class="score-card" aria-label="Progreso de Lenguaje"><span>⭐ Estrellas</span><strong id="languageStars">0</strong></div>
     </header>
     <nav class="subject-switcher" aria-label="Asignaturas">
-      <a class="subject-link" href="math.html?v=17">🧮 Matemáticas</a><a class="subject-link" href="english.html?v=17">🇬🇧 Inglés</a><span class="subject-link active" aria-current="page">📚 Lenguaje</span><a class="subject-link" href="science.html?v=17">🔬 Ciencias</a><a class="subject-link" href="history.html?v=17">🌎 Historia</a>
+      <a class="subject-link" href="math.html?v=18">🧮 Matemáticas</a><a class="subject-link" href="english.html?v=18">🇬🇧 Inglés</a><span class="subject-link active" aria-current="page">📚 Lenguaje</span><a class="subject-link" href="science.html?v=18">🔬 Ciencias</a><a class="subject-link" href="history.html?v=18">🌎 Historia</a>
     </nav>
     <section id="languageHome" class="english-view active">
       <div class="panel book-card"><div class="book-icon" aria-hidden="true">📚</div><div><p class="section-kicker">Texto de referencia</p><h2>Lenguaje 3° Básico · Proyecto Valientes</h2><p class="muted">Editorial SM · Pack ISBN 978-956-403-514-7</p><p class="book-note">Usamos el nivel como guía para crear ejercicios propios. No copiamos páginas ni actividades del libro.</p></div></div>
-      <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">Práctica de Lenguaje</p><h2>¿Qué quieres practicar?</h2></div><span class="english-badge">6 activos</span></div><div id="languageTopicGrid" class="english-topic-grid"></div></div>
-      <div class="panel compact english-progress-panel"><div class="progress-row"><span>Sesiones de Lenguaje</span><strong id="languageSessions">0</strong></div><div class="progress-row"><span>Mejor racha</span><strong id="languageBestStreak">0</strong></div><div class="progress-reset-row"><button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaLanguageProgress" data-subject-name="Lenguaje">🔄 Reiniciar progreso</button></div></div>
+      <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">Camino de Lenguaje</p><h2>Tu ruta de aprendizaje</h2></div><span class="english-badge">6 estaciones</span></div><p class="muted">Completa estaciones para marcar tu avance. Puedes volver a cualquier tema para reforzarlo.</p><div id="languageTopicGrid" class="english-topic-grid"></div></div>
+      <div class="panel compact english-progress-panel"><div class="progress-row"><span>Sesiones de Lenguaje</span><strong id="languageSessions">0</strong></div><div class="progress-row"><span>Mejor racha de respuestas</span><strong id="languageBestStreak">0</strong></div><div class="progress-reset-row"><button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaLanguageProgress" data-subject-name="Lenguaje">🔄 Reiniciar progreso</button></div></div>
     </section>
-    <section id="languageQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="languageBackButton" class="ghost-button" type="button">← Lenguaje</button><span id="languageModeLabel" class="pill">Comprensión</span><span id="languageCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="languagePrompt" class="prompt">Lee y responde.</p><div id="languageQuestion" class="english-question">Texto</div><div id="languageAnswers" class="answers"></div><div id="languageFeedback" class="feedback" role="status" aria-live="polite"></div><button id="languageNextButton" class="primary-button hidden" type="button">Siguiente →</button></div><div class="streak-box">🔥 Racha: <strong id="languageStreak">0</strong></div></section>
-    <section id="languageResult" class="english-view"><div class="panel result-panel"><div id="languageResultEmoji" class="result-emoji">🌟</div><h2 id="languageResultTitle">¡Muy bien!</h2><p id="languageResultText"></p><div class="result-score"><span id="languageFinalScore">0</span>/10</div><button id="languageAgainButton" class="primary-button" type="button">Practicar otra vez</button><button id="languageHomeButton" class="secondary-button" type="button">Volver a Lenguaje</button></div></section>
+    <section id="languageQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="languageBackButton" class="ghost-button" type="button">← Camino</button><span id="languageModeLabel" class="pill">Comprensión</span><span id="languageCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="languagePrompt" class="prompt">Lee y responde.</p><div id="languageQuestion" class="english-question">Texto</div><div id="languageAnswers" class="answers"></div><div id="languageFeedback" class="feedback" role="status" aria-live="polite"></div><button id="languageNextButton" class="primary-button hidden" type="button">Siguiente →</button></div><div class="streak-box">🔥 Racha: <strong id="languageStreak">0</strong></div></section>
+    <section id="languageResult" class="english-view"><div class="panel result-panel"><div id="languageResultEmoji" class="result-emoji">🌟</div><h2 id="languageResultTitle">¡Muy bien!</h2><p id="languageResultText"></p><div class="result-score"><span id="languageFinalScore">0</span>/10</div><button id="languageAgainButton" class="primary-button" type="button">Practicar otra vez</button><button id="languageHomeButton" class="secondary-button" type="button">Volver al camino</button></div></section>
   </main>
-  <script src="language.js?v=17"></script><script src="feedback-enhancer.js?v=17"></script><script src="progress-controls.js?v=17"></script>
+  <script src="language.js?v=18"></script>
+  <script src="feedback-enhancer.js?v=18"></script>
+  <script src="game-progress.js?v=18"></script>
+  <script src="progress-controls.js?v=18"></script>
 </body>
 </html>
