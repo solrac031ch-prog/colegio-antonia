@@ -8,29 +8,15 @@
   const XP_PER_LEVEL = 250;
 
   const subjects = {
-    math: {
-      title: 'Matemáticas', icon: '🧮', href: 'math.html?v=18', progressKey: 'antoniaMathProgress',
-      cards: '#curriculumGrid .topic-card', topicAttr: 'topicKey', stars: '#stars', sessions: '#sessions', mode: '#modeLabel', result: '#resultView'
-    },
-    english: {
-      title: 'Inglés', icon: '🇬🇧', href: 'english.html?v=18', progressKey: 'antoniaEnglishProgress',
-      cards: '#englishTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#englishStars', sessions: '#englishSessions', mode: '#englishModeLabel', result: '#englishResult'
-    },
-    language: {
-      title: 'Lenguaje', icon: '📚', href: 'language.html?v=18', progressKey: 'antoniaLanguageProgress',
-      cards: '#languageTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#languageStars', sessions: '#languageSessions', mode: '#languageModeLabel', result: '#languageResult'
-    },
-    science: {
-      title: 'Ciencias Naturales', icon: '🔬', href: 'science.html?v=18', progressKey: 'antoniaScienceProgress',
-      cards: '#scienceTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#scienceStars', sessions: '#scienceSessions', mode: '#scienceModeLabel', result: '#scienceResult'
-    },
-    history: {
-      title: 'Historia y Geografía', icon: '🌎', href: 'history.html?v=18', progressKey: 'antoniaHistoryProgress',
-      cards: '#historyTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#historyStars', sessions: '#historySessions', mode: '#historyModeLabel', result: '#historyResult'
-    }
+    math: { title: 'Matemáticas', englishTitle: 'Mathematics', icon: '🧮', href: 'math.html?v=22', progressKey: 'antoniaMathProgress', cards: '#curriculumGrid .topic-card', topicAttr: 'topicKey', stars: '#stars', sessions: '#sessions', mode: '#modeLabel', result: '#resultView' },
+    english: { title: 'Inglés', englishTitle: 'English', icon: '🇬🇧', href: 'english.html?v=22', progressKey: 'antoniaEnglishProgress', cards: '#englishTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#englishStars', sessions: '#englishSessions', mode: '#englishModeLabel', result: '#englishResult' },
+    language: { title: 'Lenguaje', englishTitle: 'Language', icon: '📚', href: 'language.html?v=22', progressKey: 'antoniaLanguageProgress', cards: '#languageTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#languageStars', sessions: '#languageSessions', mode: '#languageModeLabel', result: '#languageResult' },
+    science: { title: 'Ciencias Naturales', englishTitle: 'Science', icon: '🔬', href: 'science.html?v=22', progressKey: 'antoniaScienceProgress', cards: '#scienceTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#scienceStars', sessions: '#scienceSessions', mode: '#scienceModeLabel', result: '#scienceResult' },
+    history: { title: 'Historia y Geografía', englishTitle: 'History', icon: '🌎', href: 'history.html?v=22', progressKey: 'antoniaHistoryProgress', cards: '#historyTopicGrid .english-topic-card', topicAttr: 'topic', stars: '#historyStars', sessions: '#historySessions', mode: '#historyModeLabel', result: '#historyResult' },
   };
 
   const currentSubject = document.body.dataset.subject || 'dashboard';
+  const englishPage = currentSubject === 'english';
   let lessonXp = 0;
 
   function todayStamp(date = new Date()) {
@@ -77,7 +63,7 @@
       lastSubject: 'math',
       lastTopic: '',
       subjectXp: { math: 0, english: 0, language: 0, science: 0, history: 0 },
-      migratedExistingProgress: false
+      migratedExistingProgress: false,
     };
   }
 
@@ -85,9 +71,7 @@
     const fallback = defaultGameProgress();
     try {
       const parsed = safeObject(JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'));
-      const result = { ...fallback, ...parsed };
-      result.subjectXp = { ...fallback.subjectXp, ...safeObject(parsed.subjectXp) };
-      return result;
+      return { ...fallback, ...parsed, subjectXp: { ...fallback.subjectXp, ...safeObject(parsed.subjectXp) } };
     } catch {
       return fallback;
     }
@@ -119,11 +103,7 @@
   }
 
   function saveGameProgress() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(game));
-    } catch {
-      // La práctica sigue funcionando aunque el navegador bloquee almacenamiento.
-    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(game)); } catch {}
   }
 
   function levelFromXp(xp) {
@@ -141,16 +121,14 @@
 
   function renderGameProgress() {
     normalizeDailyProgress();
-    const level = levelFromXp(game.xp);
-    const dailyPercent = Math.min(100, (game.dailyLessons / DAILY_GOAL) * 100);
-    const levelPercent = percentToNextLevel(game.xp);
-
     setText('[data-game-xp]', game.xp);
     setText('[data-game-streak]', game.streakDays);
-    setText('[data-game-level]', level);
+    setText('[data-game-level]', levelFromXp(game.xp));
     setText('[data-game-daily]', `${Math.min(game.dailyLessons, DAILY_GOAL)}/${DAILY_GOAL}`);
     setText('[data-game-total-lessons]', game.totalLessons);
 
+    const dailyPercent = Math.min(100, (game.dailyLessons / DAILY_GOAL) * 100);
+    const levelPercent = percentToNextLevel(game.xp);
     document.querySelectorAll('[data-game-daily-bar]').forEach(bar => { bar.style.width = `${dailyPercent}%`; });
     document.querySelectorAll('[data-game-level-bar]').forEach(bar => { bar.style.width = `${levelPercent}%`; });
 
@@ -158,10 +136,9 @@
     const continueLink = document.querySelector('[data-game-continue]');
     if (continueLink) {
       continueLink.href = last.href;
-      const icon = continueLink.querySelector('[data-game-continue-icon]');
+      continueLink.querySelector('[data-game-continue-icon]')?.replaceChildren(document.createTextNode(last.icon));
       const title = continueLink.querySelector('[data-game-continue-title]');
       const detail = continueLink.querySelector('[data-game-continue-detail]');
-      if (icon) icon.textContent = last.icon;
       if (title) title.textContent = last.title;
       if (detail) detail.textContent = game.lastTopic ? `Último tema: ${game.lastTopic}` : 'Continúa tu camino de aprendizaje';
     }
@@ -179,20 +156,11 @@
     if (!backRow) return;
     const strip = document.createElement('section');
     strip.className = 'game-strip';
-    strip.setAttribute('aria-label', 'Progreso de aventura');
-    strip.innerHTML = `
-      <div class="game-strip-stat"><span>🔥 Racha</span><strong><span data-game-streak>0</span> días</strong></div>
-      <div class="game-strip-stat"><span>⚡ XP</span><strong data-game-xp>0</strong></div>
-      <div class="game-strip-stat"><span>🏅 Nivel</span><strong data-game-level>1</strong></div>
-      <div class="game-strip-goal"><span>🎯 Hoy <strong data-game-daily>0/${DAILY_GOAL}</strong></span><div class="mini-progress"><i data-game-daily-bar></i></div></div>
-    `;
+    strip.setAttribute('aria-label', englishPage ? 'Adventure progress' : 'Progreso de aventura');
+    strip.innerHTML = englishPage
+      ? `<div class="game-strip-stat"><span>🔥 Streak</span><strong><span data-game-streak>0</span> days</strong></div><div class="game-strip-stat"><span>⚡ XP</span><strong data-game-xp>0</strong></div><div class="game-strip-stat"><span>🏅 Level</span><strong data-game-level>1</strong></div><div class="game-strip-goal"><span>🎯 Today <strong data-game-daily>0/${DAILY_GOAL}</strong></span><div class="mini-progress"><i data-game-daily-bar></i></div></div>`
+      : `<div class="game-strip-stat"><span>🔥 Racha</span><strong><span data-game-streak>0</span> días</strong></div><div class="game-strip-stat"><span>⚡ XP</span><strong data-game-xp>0</strong></div><div class="game-strip-stat"><span>🏅 Nivel</span><strong data-game-level>1</strong></div><div class="game-strip-goal"><span>🎯 Hoy <strong data-game-daily>0/${DAILY_GOAL}</strong></span><div class="mini-progress"><i data-game-daily-bar></i></div></div>`;
     backRow.insertAdjacentElement('afterend', strip);
-  }
-
-  function pathProgress() {
-    const subject = subjects[currentSubject];
-    if (!subject) return null;
-    return readSubjectProgress(subject.progressKey);
   }
 
   function decoratePath() {
@@ -200,7 +168,7 @@
     if (!subject) return;
     const cards = Array.from(document.querySelectorAll(subject.cards));
     if (!cards.length) return;
-    const progress = pathProgress() || {};
+    const progress = readSubjectProgress(subject.progressKey);
     const byTopic = safeObject(progress.byTopic);
     let foundCurrent = false;
 
@@ -208,7 +176,6 @@
       const key = card.dataset[subject.topicAttr] || '';
       const completedCount = Number(byTopic[key]) || 0;
       card.classList.remove('adventure-completed', 'adventure-current', 'adventure-available');
-
       let step = card.querySelector('.adventure-step');
       if (!step) {
         step = document.createElement('span');
@@ -220,14 +187,16 @@
       const status = card.querySelector('.topic-status, .english-topic-status');
       if (completedCount > 0) {
         card.classList.add('adventure-completed');
-        if (status) status.textContent = completedCount > 1 ? `✓ Completado ${completedCount} veces` : '✓ Completado';
+        if (status) status.textContent = englishPage
+          ? (completedCount > 1 ? `✓ Completed ${completedCount} times` : '✓ Completed')
+          : (completedCount > 1 ? `✓ Completado ${completedCount} veces` : '✓ Completado');
       } else if (!foundCurrent) {
         foundCurrent = true;
         card.classList.add('adventure-current');
-        if (status) status.textContent = '▶ Siguiente estación';
+        if (status) status.textContent = englishPage ? '▶ Next station' : '▶ Siguiente estación';
       } else {
         card.classList.add('adventure-available');
-        if (status) status.textContent = 'Disponible';
+        if (status) status.textContent = englishPage ? 'Available' : 'Disponible';
       }
     });
   }
@@ -236,8 +205,7 @@
     const today = todayStamp();
     if (game.lastStudyDate === today) return;
     const difference = daysBetween(game.lastStudyDate, today);
-    if (difference === 1) game.streakDays = Math.max(1, Number(game.streakDays) || 0) + 1;
-    else game.streakDays = 1;
+    game.streakDays = difference === 1 ? Math.max(1, Number(game.streakDays) || 0) + 1 : 1;
     game.lastStudyDate = today;
   }
 
@@ -254,8 +222,7 @@
 
   function currentModeLabel() {
     const subject = subjects[currentSubject];
-    if (!subject) return '';
-    return document.querySelector(subject.mode)?.textContent?.trim() || '';
+    return subject ? (document.querySelector(subject.mode)?.textContent?.trim() || '') : '';
   }
 
   function completeLesson() {
@@ -273,16 +240,15 @@
     lessonXp = 0;
     saveGameProgress();
     renderGameProgress();
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       decoratePath();
       showLessonCelebration(gained);
-    }, 40);
+    });
   }
 
   function showLessonCelebration(gainedXp) {
     const subject = subjects[currentSubject];
-    if (!subject) return;
-    const result = document.querySelector(subject.result);
+    const result = subject ? document.querySelector(subject.result) : null;
     const panel = result?.querySelector('.result-panel');
     if (!panel) return;
 
@@ -295,36 +261,30 @@
       if (score) score.insertAdjacentElement('afterend', summary);
       else panel.prepend(summary);
     }
-    summary.innerHTML = `
-      <div class="adventure-xp-pop">+${gainedXp} XP</div>
-      <div class="adventure-result-stats">
-        <span>🔥 <strong>${game.streakDays}</strong> días</span>
-        <span>🏅 Nivel <strong>${levelFromXp(game.xp)}</strong></span>
-        <span>🎯 Hoy <strong>${Math.min(game.dailyLessons, DAILY_GOAL)}/${DAILY_GOAL}</strong></span>
-      </div>
-      <div class="level-progress" aria-label="Progreso hacia el siguiente nivel"><i style="width:${percentToNextLevel(game.xp)}%"></i></div>
-    `;
+
+    summary.innerHTML = englishPage
+      ? `<div class="adventure-xp-pop">+${gainedXp} XP</div><div class="adventure-result-stats"><span>🔥 <strong>${game.streakDays}</strong> days</span><span>🏅 Level <strong>${levelFromXp(game.xp)}</strong></span><span>🎯 Today <strong>${Math.min(game.dailyLessons, DAILY_GOAL)}/${DAILY_GOAL}</strong></span></div><div class="level-progress" aria-label="Progress to next level"><i style="width:${percentToNextLevel(game.xp)}%"></i></div>`
+      : `<div class="adventure-xp-pop">+${gainedXp} XP</div><div class="adventure-result-stats"><span>🔥 <strong>${game.streakDays}</strong> días</span><span>🏅 Nivel <strong>${levelFromXp(game.xp)}</strong></span><span>🎯 Hoy <strong>${Math.min(game.dailyLessons, DAILY_GOAL)}/${DAILY_GOAL}</strong></span></div><div class="level-progress" aria-label="Progreso hacia el siguiente nivel"><i style="width:${percentToNextLevel(game.xp)}%"></i></div>`;
     launchConfetti();
   }
 
   function launchConfetti() {
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const existing = document.querySelector('.adventure-confetti');
-    if (existing) existing.remove();
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelector('.adventure-confetti')?.remove();
     const layer = document.createElement('div');
     layer.className = 'adventure-confetti';
     layer.setAttribute('aria-hidden', 'true');
     const symbols = ['⭐', '✨', '◆', '●'];
-    for (let index = 0; index < 18; index += 1) {
+    for (let index = 0; index < 12; index += 1) {
       const piece = document.createElement('span');
       piece.textContent = symbols[index % symbols.length];
-      piece.style.setProperty('--x', `${8 + ((index * 17) % 84)}vw`);
-      piece.style.setProperty('--delay', `${(index % 6) * 35}ms`);
-      piece.style.setProperty('--spin', `${180 + index * 23}deg`);
+      piece.style.setProperty('--x', `${8 + ((index * 23) % 84)}vw`);
+      piece.style.setProperty('--delay', `${(index % 4) * 35}ms`);
+      piece.style.setProperty('--spin', `${180 + index * 29}deg`);
       layer.appendChild(piece);
     }
     document.body.appendChild(layer);
-    setTimeout(() => layer.remove(), 1500);
+    setTimeout(() => layer.remove(), 1200);
   }
 
   function observeCounter(selector, onIncrease) {
@@ -356,12 +316,10 @@
   renderGameProgress();
   decoratePath();
   initSubjectObservers();
-  setTimeout(decoratePath, 0);
 
   window.addEventListener('storage', event => {
     if (event.key !== STORAGE_KEY) return;
-    const fresh = loadGameProgress();
-    Object.assign(game, fresh);
+    Object.assign(game, loadGameProgress());
     renderGameProgress();
   });
 })();
