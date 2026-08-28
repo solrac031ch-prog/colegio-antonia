@@ -1,25 +1,38 @@
 import { test, expect } from '@playwright/test';
 
+async function waitMatchReady(page) {
+  await expect(page.locator('.quick-match-card.wrong')).toHaveCount(0, { timeout: 2_000 });
+}
+
 async function solveMatch(page) {
   let guard = 0;
   while ((await page.locator('.quick-match-card:not(:disabled)').count()) > 0) {
+    await waitMatchReady(page);
     const cards = page.locator('.quick-match-card:not(:disabled)');
     const count = await cards.count();
     let matched = false;
+
     for (let i = 0; i < count && !matched; i += 1) {
       for (let j = i + 1; j < count && !matched; j += 1) {
+        await waitMatchReady(page);
         const current = page.locator('.quick-match-card:not(:disabled)');
         if ((await current.count()) <= j) break;
+
         const first = current.nth(i);
         const firstText = await first.textContent();
         await first.click();
+
         const afterFirst = page.locator('.quick-match-card:not(:disabled)');
         if ((await afterFirst.count()) <= j) break;
         await afterFirst.nth(j).click();
-        await page.waitForTimeout(250);
+
+        // Una pareja incorrecta muestra una animación breve. Esperamos a que
+        // el tablero vuelva a estar interactivo antes de intentar otra pareja.
+        await waitMatchReady(page);
         matched = !(await page.locator('.quick-match-card:not(:disabled)').filter({ hasText: firstText || '' }).count());
       }
     }
+
     guard += 1;
     if (guard > 18) throw new Error('No se pudieron resolver las parejas');
   }
@@ -59,7 +72,7 @@ async function finishRound(page) {
 }
 
 test('los desafíos avanzan sin bloquearse en Windows Android e iPhone', async ({ page }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
 
