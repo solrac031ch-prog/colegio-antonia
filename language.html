@@ -7,27 +7,27 @@
   <meta name="color-scheme" content="light" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Colegio Antonia" />
+  <meta name="apple-mobile-web-app-title" content="3° Básico" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
-  <meta name="description" content="Colegio de Antonia: práctica complementaria de Lenguaje 3° Básico, Proyecto Valientes." />
-  <link rel="manifest" href="manifest.webmanifest?v=16" />
-  <link rel="icon" href="logo-antonia.svg?v=16" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="logo-antonia.svg?v=16" />
-  <link rel="stylesheet" href="styles.css?v=16" />
-  <link rel="stylesheet" href="english.css?v=16" />
-  <link rel="stylesheet" href="platform.css?v=16" />
-  <title>Lenguaje · Colegio de Antonia</title>
+  <meta name="description" content="Práctica complementaria de Lenguaje para 3° Básico, Proyecto Valientes." />
+  <link rel="manifest" href="manifest.webmanifest?v=17" />
+  <link rel="icon" href="logo-3basico.svg?v=17" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="logo-3basico.svg?v=17" />
+  <link rel="stylesheet" href="styles.css?v=17" />
+  <link rel="stylesheet" href="english.css?v=17" />
+  <link rel="stylesheet" href="platform.css?v=17" />
+  <title>Lenguaje · Aprende 3° Básico</title>
 </head>
 <body>
   <main class="app-shell">
-    <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Volver a la pantalla anterior">← Atrás</button></div>
+    <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Volver a materias">← Materias</button></div>
     <header class="hero english-hero">
-      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-antonia.svg?v=16" alt="Logo Colegio de Antonia" /><p class="eyebrow">Colegio de Antonia · 3er grado</p></div><h1>Lenguaje</h1><p class="subtitle">Lectura, palabras y escritura con prácticas cortas y claras.</p></div>
+      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=17" alt="Logo Aprende 3° Básico" /><p class="eyebrow">Aprende 3° Básico</p></div><h1>Lenguaje</h1><p class="subtitle">Lectura, palabras y escritura con prácticas cortas y claras.</p></div>
       <div class="score-card" aria-label="Progreso de Lenguaje"><span>⭐ Estrellas</span><strong id="languageStars">0</strong></div>
     </header>
     <nav class="subject-switcher" aria-label="Asignaturas">
-      <a class="subject-link" href="index.html?v=16">🧮 Matemáticas</a><a class="subject-link" href="english.html?v=16">🇬🇧 Inglés</a><span class="subject-link active" aria-current="page">📚 Lenguaje</span><a class="subject-link" href="science.html?v=16">🔬 Ciencias</a><a class="subject-link" href="history.html?v=16">🌎 Historia</a>
+      <a class="subject-link" href="math.html?v=17">🧮 Matemáticas</a><a class="subject-link" href="english.html?v=17">🇬🇧 Inglés</a><span class="subject-link active" aria-current="page">📚 Lenguaje</span><a class="subject-link" href="science.html?v=17">🔬 Ciencias</a><a class="subject-link" href="history.html?v=17">🌎 Historia</a>
     </nav>
     <section id="languageHome" class="english-view active">
       <div class="panel book-card"><div class="book-icon" aria-hidden="true">📚</div><div><p class="section-kicker">Texto de referencia</p><h2>Lenguaje 3° Básico · Proyecto Valientes</h2><p class="muted">Editorial SM · Pack ISBN 978-956-403-514-7</p><p class="book-note">Usamos el nivel como guía para crear ejercicios propios. No copiamos páginas ni actividades del libro.</p></div></div>
@@ -37,6 +37,6 @@
     <section id="languageQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="languageBackButton" class="ghost-button" type="button">← Lenguaje</button><span id="languageModeLabel" class="pill">Comprensión</span><span id="languageCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="languagePrompt" class="prompt">Lee y responde.</p><div id="languageQuestion" class="english-question">Texto</div><div id="languageAnswers" class="answers"></div><div id="languageFeedback" class="feedback" role="status" aria-live="polite"></div><button id="languageNextButton" class="primary-button hidden" type="button">Siguiente →</button></div><div class="streak-box">🔥 Racha: <strong id="languageStreak">0</strong></div></section>
     <section id="languageResult" class="english-view"><div class="panel result-panel"><div id="languageResultEmoji" class="result-emoji">🌟</div><h2 id="languageResultTitle">¡Muy bien!</h2><p id="languageResultText"></p><div class="result-score"><span id="languageFinalScore">0</span>/10</div><button id="languageAgainButton" class="primary-button" type="button">Practicar otra vez</button><button id="languageHomeButton" class="secondary-button" type="button">Volver a Lenguaje</button></div></section>
   </main>
-  <script src="language.js?v=16"></script><script src="progress-controls.js?v=16"></script>
+  <script src="language.js?v=17"></script><script src="feedback-enhancer.js?v=17"></script><script src="progress-controls.js?v=17"></script>
 </body>
 </html>
