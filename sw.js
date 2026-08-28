@@ -1,4 +1,4 @@
-const CACHE = 'aprende-3-basico-v21';
+const CACHE = 'aprende-3-basico-v22';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -31,13 +31,8 @@ const CORE_ASSETS = [
 ];
 
 const OFFLINE_PAGES = new Set([
-  'index.html',
-  'math.html',
-  'english.html',
-  'language.html',
-  'science.html',
-  'history.html',
-  'games.html'
+  'index.html', 'math.html', 'english.html', 'language.html',
+  'science.html', 'history.html', 'games.html'
 ]);
 
 self.addEventListener('install', event => {
@@ -77,27 +72,30 @@ async function cacheResponse(request, response) {
 async function offlineNavigationFallback(request) {
   const cached = await cachedResponse(request);
   if (cached) return cached;
-
   const pathname = new URL(request.url).pathname;
   const filename = pathname.split('/').pop() || 'index.html';
   if (OFFLINE_PAGES.has(filename)) {
     const samePage = await caches.match(`./${filename}`);
     if (samePage) return samePage;
   }
-
   return caches.match('./index.html');
 }
 
-async function networkFirst(request) {
-  try {
-    const response = await fetch(request, { cache: 'no-store' });
-    return cacheResponse(request, response);
-  } catch {
-    if (request.mode === 'navigate') return offlineNavigationFallback(request);
-    const cached = await cachedResponse(request);
-    if (cached) return cached;
-    throw new Error('offline-and-not-cached');
+async function staleWhileRevalidate(request, event) {
+  const cached = await cachedResponse(request);
+  const refresh = fetch(request, { cache: 'no-store' })
+    .then(response => cacheResponse(request, response))
+    .catch(() => null);
+
+  if (cached) {
+    event.waitUntil(refresh);
+    return cached;
   }
+
+  const fresh = await refresh;
+  if (fresh) return fresh;
+  if (request.mode === 'navigate') return offlineNavigationFallback(request);
+  throw new Error('offline-and-not-cached');
 }
 
 async function cacheFirst(request) {
@@ -108,17 +106,15 @@ async function cacheFirst(request) {
 }
 
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-
-  const url = new URL(event.request.url);
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
   const pathname = url.pathname;
-  const freshAsset = event.request.mode === 'navigate' ||
-    pathname.endsWith('.html') ||
-    pathname.endsWith('.js') ||
-    pathname.endsWith('.css') ||
-    pathname.endsWith('.webmanifest');
+  const appShellAsset = request.mode === 'navigate' ||
+    pathname.endsWith('.html') || pathname.endsWith('.js') ||
+    pathname.endsWith('.css') || pathname.endsWith('.webmanifest');
 
-  event.respondWith(freshAsset ? networkFirst(event.request) : cacheFirst(event.request));
+  event.respondWith(appShellAsset ? staleWhileRevalidate(request, event) : cacheFirst(request));
 });
