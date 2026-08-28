@@ -5,8 +5,16 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#fff7ed",
-  "theme_color": "#fff7ed",
+  "background_color": "#F5F3FF",
+  "theme_color": "#7C3AED",
   "lang": "es-CL",
-  "categories": ["education", "kids"]
+  "categories": ["education", "kids"],
+  "icons": [
+    {
+      "src": "logo-antonia.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
