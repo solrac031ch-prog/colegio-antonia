@@ -38,9 +38,29 @@ async function finishCurrentQuestion(page, subject) {
   await expect(next).toBeVisible();
 }
 
-test('portada organiza las cinco materias', async ({ page }) => {
+async function answerEnglishCorrectly(page) {
+  const next = page.locator('#englishNextButton');
+  const first = page.locator('#englishAnswers .answer-button:not(:disabled)').first();
+  await first.click();
+  if (await next.isVisible()) return;
+
+  const hint = page.locator('#englishFeedback .english-feedback-answer');
+  await expect(hint).toBeVisible();
+  const hintText = (await hint.textContent() || '').replace(/^Busca:\s*/, '').trim();
+  const correctButton = page.locator('#englishAnswers .answer-button:not(:disabled)').filter({ hasText: hintText }).first();
+  await expect(correctButton).toBeVisible();
+  await correctButton.click();
+  await expect(next).toBeVisible();
+}
+
+test('portada muestra dashboard de aventura y cinco materias', async ({ page }) => {
   await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
-  await expect(page.getByRole('heading', { name: '¿Qué vamos a estudiar?', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '¡Sigue aprendiendo!', exact: true })).toBeVisible();
+  await expect(page.locator('.dashboard-game-panel')).toBeVisible();
+  await expect(page.locator('[data-game-xp]').first()).toBeVisible();
+  await expect(page.locator('[data-game-streak]').first()).toBeVisible();
+  await expect(page.locator('[data-game-level]').first()).toBeVisible();
+  await expect(page.locator('[data-game-continue]')).toHaveAttribute('href', /math\.html/);
   await expect(page.locator('.subject-dashboard-grid .subject-card')).toHaveCount(5);
   await expect(page.getByRole('link', { name: /Matemáticas/ })).toHaveAttribute('href', /math\.html/);
   await expect(page.getByRole('link', { name: /Ciencias Naturales/ })).toBeVisible();
@@ -51,7 +71,7 @@ test('portada organiza las cinco materias', async ({ page }) => {
 });
 
 for (const subject of subjects) {
-  test(`${subject.name}: abre, responde y avanza sin errores`, async ({ page }) => {
+  test(`${subject.name}: camino, juego y preguntas funcionan`, async ({ page }) => {
     const pageErrors = [];
     page.on('pageerror', error => pageErrors.push(error.message));
 
@@ -61,6 +81,9 @@ for (const subject of subjects) {
     await expect(page.locator('.subject-switcher .subject-link')).toHaveCount(5);
     await expect(page.locator('[data-app-back]')).toBeVisible();
     await expect(page.locator('[data-reset-progress]')).toBeVisible();
+    await expect(page.locator('.game-strip')).toBeVisible();
+    await expect(page.locator(subject.cards).first()).toHaveClass(/adventure-current|adventure-completed/);
+    await expect(page.locator(`${subject.cards} .adventure-step`).first()).toBeVisible();
     await expect(page.locator('body')).not.toContainText('Colegio de Antonia');
 
     const noPageOverflow = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2);
@@ -70,14 +93,24 @@ for (const subject of subjects) {
     await expect(page.locator(subject.counter)).toContainText('1 / 10');
     await finishCurrentQuestion(page, subject);
     if (subject.enhanced) await expect(page.locator('.learning-explanation')).toBeVisible();
+    await expect(page.locator('body')).not.toContainText('Antonia');
     await page.locator(subject.next).click();
     await expect(page.locator(subject.counter)).toContainText('2 / 10');
     expect(pageErrors).toEqual([]);
   });
 }
 
-test('todos los módulos activos completan una sesión entera', async ({ page }, testInfo) => {
-  test.setTimeout(240000);
+test('una respuesta correcta entrega XP', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'windows-chromium', 'La prueba de XP corre una vez en Chromium.');
+  await page.goto('/english.html', { waitUntil: 'domcontentloaded' });
+  await openTopic(page, subjects[1], 0);
+  await expect(page.locator('.game-strip [data-game-xp]')).toHaveText('0');
+  await answerEnglishCorrectly(page);
+  await expect(page.locator('.game-strip [data-game-xp]')).toHaveText('10');
+});
+
+test('todos los módulos activos completan una sesión y celebran', async ({ page }, testInfo) => {
+  test.setTimeout(300000);
   test.skip(testInfo.project.name !== 'windows-chromium', 'La prueba exhaustiva corre una vez en Chromium.');
 
   for (const subject of subjects) {
@@ -96,6 +129,8 @@ test('todos los módulos activos completan una sesión entera', async ({ page },
       }
 
       await expect(page.locator(subject.result)).toHaveClass(/active/);
+      await expect(page.locator(`${subject.result} [data-adventure-result]`)).toBeVisible();
+      await expect(page.locator(`${subject.result} .adventure-xp-pop`)).toContainText('XP');
     }
   }
 });
@@ -113,12 +148,13 @@ test('Ciencias conserva su pantalla al recargar sin conexión', async ({ page, c
   try {
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: 'Ciencias Naturales', exact: true })).toBeVisible();
+    await expect(page.locator('.game-strip')).toBeVisible();
   } finally {
     await context.setOffline(false);
   }
 });
 
-test('manifest y service worker usan identidad genérica', async ({ request }) => {
+test('manifest y service worker usan identidad genérica y aventura v18', async ({ request }) => {
   const manifest = await request.get('/manifest.webmanifest');
   expect(manifest.ok()).toBeTruthy();
   const data = await manifest.json();
@@ -129,4 +165,8 @@ test('manifest y service worker usan identidad genérica', async ({ request }) =
 
   const serviceWorker = await request.get('/sw.js');
   expect(serviceWorker.ok()).toBeTruthy();
+  const swText = await serviceWorker.text();
+  expect(swText).toContain('aprende-3-basico-v18');
+  expect(swText).toContain('./game-progress.js');
+  expect(swText).toContain('./adventure.css');
 });
