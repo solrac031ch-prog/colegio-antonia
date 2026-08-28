@@ -1,20 +1,37 @@
 {
+  "id": "./",
   "name": "Colegio de Antonia",
   "short_name": "Antonia",
-  "description": "App educativa de Antonia para 3er grado.",
+  "description": "App educativa de 3er grado con Matemáticas, Inglés, Lenguaje, Ciencias e Historia.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#F5F3FF",
   "theme_color": "#7C3AED",
   "lang": "es-CL",
-  "categories": ["education", "kids"],
+  "dir": "ltr",
+  "categories": ["education"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "logo-antonia.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "logo-antonia.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
+  ],
+  "shortcuts": [
+    { "name": "Matemáticas", "url": "./index.html" },
+    { "name": "Inglés", "url": "./english.html" },
+    { "name": "Lenguaje", "url": "./language.html" },
+    { "name": "Ciencias", "url": "./science.html" },
+    { "name": "Historia", "url": "./history.html" }
   ]
 }
