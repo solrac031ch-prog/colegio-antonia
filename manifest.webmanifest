@@ -14,21 +14,12 @@
   "categories": ["education"],
   "prefer_related_applications": false,
   "icons": [
-    {
-      "src": "logo-3basico.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "logo-3basico.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
-    }
+    { "src": "logo-3basico.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "logo-3basico.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ],
   "shortcuts": [
     { "name": "Materias", "url": "./index.html" },
+    { "name": "Desafío rápido", "url": "./games.html?subject=math" },
     { "name": "Matemáticas", "url": "./math.html" },
     { "name": "Inglés", "url": "./english.html" },
     { "name": "Lenguaje", "url": "./language.html" },
