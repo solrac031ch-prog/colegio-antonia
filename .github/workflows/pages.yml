@@ -46,14 +46,17 @@ jobs:
           test -f english.css
           test -f manifest.webmanifest
           test -f logo-antonia.svg
-          grep -q 'app.js?v=13' index.html
-          grep -q 'english.js?v=13' english.html
-          grep -q 'language.js?v=13' language.html
-          grep -q 'progress-controls.js?v=13' index.html
-          grep -q 'progress-controls.js?v=13' english.html
-          grep -q 'progress-controls.js?v=13' language.html
-          grep -q 'language.html?v=13' index.html
-          grep -q 'language.html?v=13' english.html
+          grep -q 'app.js?v=14' index.html
+          grep -q 'english.js?v=14' english.html
+          grep -q 'language.js?v=14' language.html
+          grep -q 'progress-controls.js?v=14' index.html
+          grep -q 'progress-controls.js?v=14' english.html
+          grep -q 'progress-controls.js?v=14' language.html
+          grep -q 'language.html?v=14' index.html
+          grep -q 'language.html?v=14' english.html
+          grep -q 'data-app-back' index.html
+          grep -q 'data-app-back' english.html
+          grep -q 'data-app-back' language.html
           ! grep -q 'hotfix.js\|quiz-sync.js' index.html
           ! grep -q 'hotfix.js\|quiz-sync.js' sw.js
 
