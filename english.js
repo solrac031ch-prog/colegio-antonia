@@ -1,10 +1,10 @@
 'use strict';
 
-const ENGLISH_APP_VERSION = '13.0.0';
+const ENGLISH_APP_VERSION = '14.0.0';
 const ENGLISH_SESSION_LENGTH = 10;
 
 const englishState = {
-  topic: 'vocabulary',
+  topic: 'starter',
   questionIndex: 0,
   currentQuestionId: null,
   score: 0,
@@ -16,12 +16,13 @@ const englishState = {
 };
 
 const englishTopics = [
-  { key: 'vocabulary', icon: '🧠', title: 'Vocabulary', subtitle: 'Everyday words and pictures' },
-  { key: 'grammar', icon: '🧩', title: 'Grammar', subtitle: 'Do, does, is, are, have and more' },
-  { key: 'reading', icon: '📖', title: 'Reading', subtitle: 'Read and understand short texts' },
-  { key: 'conversation', icon: '💬', title: 'Conversation', subtitle: 'Simple questions and answers' },
-  { key: 'writing', icon: '✏️', title: 'Writing', subtitle: 'Choose clear, correct sentences' },
-  { key: 'review', icon: '🌟', title: 'Mixed review', subtitle: 'A little bit of everything' },
+  { key: 'starter', icon: '👋', title: 'Starter', subtitle: 'Personal info, clothes, colours, days & numbers' },
+  { key: 'unit1', icon: '⚽', title: 'Unit 1 · Sports', subtitle: 'Sports, places and Do you…?' },
+  { key: 'unit2', icon: '🦚', title: 'Unit 2 · Animals', subtitle: 'Animals, body parts and has got' },
+  { key: 'unit3', icon: '💻', title: 'Unit 3 · Technology', subtitle: 'Digital activities and can / can’t' },
+  { key: 'unit4', icon: '🍓', title: 'Unit 4 · Food', subtitle: 'Food, likes and do / does' },
+  { key: 'unit5', icon: '⏰', title: 'Unit 5 · Routines', subtitle: 'Daily routines and telling the time' },
+  { key: 'unit6', icon: '🏖️', title: 'Unit 6 · Beach', subtitle: 'Beach words and present continuous' },
 ];
 
 const els = {
@@ -105,90 +106,116 @@ function nextEnglishQuestionId() {
   return `eq-${Date.now()}-${englishQuestionSerial}`;
 }
 
-function q(prompt, display, correct, options, explanation, reading = false) {
-  return { prompt, display, correct, options, explanation, reading };
+function q(prompt, display, correct, options, explanation, reading = false, hint = '') {
+  return { prompt, display, correct, options, explanation, reading, hint };
 }
 
 const questionBanks = {
-  vocabulary: [
-    q('Which word means the first meal of the day?', '🍞🥛 Morning meal', 'breakfast', ['breakfast', 'lunch', 'dinner', 'school'], 'Breakfast is the meal you eat in the morning.'),
-    q('Where can you borrow books?', '📚 A place full of books', 'library', ['library', 'kitchen', 'playground', 'shop'], 'A library is a place where people can read or borrow books.'),
-    q('Who teaches a class?', '👩‍🏫', 'teacher', ['teacher', 'doctor', 'friend', 'neighbour'], 'A teacher helps students learn.'),
-    q('How do you feel when you need food?', '😋 I need something to eat.', 'hungry', ['hungry', 'sleepy', 'happy', 'fast'], 'Hungry means that your body wants food.'),
-    q('Where do children often play at school?', '🛝⚽', 'playground', ['playground', 'bedroom', 'bathroom', 'cafeteria'], 'A playground is an area made for playing.'),
-    q('Choose the correct word.', '🐱', 'cat', ['cat', 'dog', 'bird', 'fish'], 'This animal is a cat.'),
-    q('Choose the correct word.', '💧', 'water', ['water', 'milk', 'juice', 'bread'], 'This picture shows water.'),
-    q('Choose the correct word.', '👧👧 Two girls in the same family', 'sister', ['sister', 'brother', 'mother', 'friend'], 'A sister is a female sibling.'),
-    q('Choose the action word.', '🏃', 'run', ['run', 'read', 'sleep', 'draw'], 'Run is the action shown in the picture.'),
-    q('Choose the correct word.', '👟👟', 'shoes', ['shoes', 'shirt', 'hat', 'socks'], 'These are shoes.'),
-    q('Which word names the part of the day after lunch?', '☀️ 2:00 p.m.', 'afternoon', ['afternoon', 'morning', 'night', 'week'], 'Afternoon is the part of the day between midday and evening.'),
-    q('Which word can describe something very pretty?', '🌈✨', 'beautiful', ['beautiful', 'small', 'noisy', 'cold'], 'Beautiful means very attractive or lovely.'),
+  starter: [
+    q('Choose the correct answer.', 'What’s your name?', 'My name is Antonia.', ['My name is Antonia.', 'I’m nine years old.', 'I live in Chile.', 'It’s Monday.'], 'Use “My name is…” to answer a question about your name.', false, 'The question asks WHO you are.'),
+    q('Choose the correct answer.', 'How old are you?', 'I’m nine.', ['I’m nine.', 'My name is nine.', 'I have purple.', 'On Tuesday.'], 'Use “I’m…” to say your age.', false, 'The question asks about AGE.'),
+    q('Choose the correct answer.', 'Where do you live?', 'I live in Chile.', ['I live in Chile.', 'I’m wearing jeans.', 'I’m nine.', 'My name is Antonia.'], '“Where” asks about a place.', false, 'Think about a PLACE.'),
+    q('Choose the correct question.', 'You want to know the letters in a name.', 'How do you spell your name?', ['How do you spell your name?', 'How old are you?', 'What colour is it?', 'Where is Monday?'], 'Use “How do you spell…?” to ask for the letters in a word or name.', false, 'Think about saying letters one by one.'),
+    q('Choose the correct word.', '👕 A blue piece of clothing for your upper body', 'T-shirt', ['T-shirt', 'jeans', 'shoes', 'socks'], 'A T-shirt is worn on your upper body.', false, 'It starts with T.'),
+    q('Choose the correct colour.', '🟣', 'purple', ['purple', 'orange', 'green', 'yellow'], 'The colour shown is purple.', false, 'Think of the colour of grapes.'),
+    q('What comes after Monday?', 'Monday → ___', 'Tuesday', ['Tuesday', 'Sunday', 'Friday', 'Saturday'], 'Tuesday comes after Monday.', false, 'Think of the school week.'),
+    q('Choose the number word.', '44', 'forty-four', ['forty-four', 'twenty-four', 'sixty-four', 'ninety-four'], '44 is written “forty-four”.', false, 'It is 40 + 4.'),
+    q('Choose the correct family word.', 'My mum’s son is my…', 'brother', ['brother', 'sister', 'aunt', 'grandma'], 'A male sibling is your brother.', false, 'Boy + same parents.'),
+    q('Complete the sentence.', 'I’m wearing blue ___. 👖', 'jeans', ['jeans', 'shirt', 'jumper', 'hat'], 'Jeans are trousers, usually made of denim.', false, 'Look at the trouser emoji.'),
+    q('Choose the correct letter.', 'Which letter comes after M?', 'N', ['N', 'L', 'O', 'P'], 'N comes after M in the alphabet.', false, 'Say the alphabet around M.'),
+    q('Choose the correct sentence.', 'Favourite colour: pink', 'My favourite colour is pink.', ['My favourite colour is pink.', 'I favourite pink colour.', 'My colour favourite pink.', 'Pink is I favourite.'], 'This is the natural sentence pattern for favourites.', false, 'Start with “My favourite…”'),
   ],
-  grammar: [
-    q('Complete the sentence.', 'She ___ like apples.', "doesn't", ["doesn't", "don't", 'is', 'do'], 'With she, use doesn’t: She doesn’t like apples.'),
-    q('Complete the question.', '___ he like football?', 'Does', ['Does', 'Do', 'Is', 'Are'], 'With he, use Does: Does he like football?'),
-    q('Complete the question.', '___ they play tennis?', 'Do', ['Do', 'Does', 'Is', 'Has'], 'With they, use Do: Do they play tennis?'),
-    q('Complete the sentence.', 'I ___ like coffee.', "don't", ["don't", "doesn't", 'not', 'isn’t'], 'With I, use don’t: I don’t like coffee.'),
-    q('Complete the sentence.', 'He ___ a blue backpack.', 'has', ['has', 'have', 'is', 'do'], 'With he, use has.'),
-    q('Complete the sentence.', 'They ___ two dogs.', 'have', ['have', 'has', 'does', 'are'], 'With they, use have.'),
-    q('Complete the sentence.', 'She ___ happy.', 'is', ['is', 'are', 'am', 'do'], 'With she, use is.'),
-    q('Complete the sentence.', 'We ___ at school.', 'are', ['are', 'is', 'am', 'does'], 'With we, use are.'),
-    q('Complete the sentence.', 'I ___ swim.', 'can', ['can', 'does', 'has', 'am'], 'Can tells us about an ability: I can swim.'),
-    q('Choose the correct question.', 'Ask about her pet.', 'Does she have a pet?', ['Does she have a pet?', 'Do she has a pet?', 'She does have a pet?', 'Does she has a pet?'], 'After does, use the base verb: have.'),
-    q('Complete the sentence.', 'There ___ a book on the table.', 'is', ['is', 'are', 'have', 'do'], 'Use There is for one thing.'),
-    q('Complete the sentence.', 'There ___ three pencils.', 'are', ['are', 'is', 'has', 'does'], 'Use There are for more than one thing.'),
+
+  unit1: [
+    q('Choose the correct sport.', '🥋', 'do judo', ['do judo', 'play tennis', 'go swimming', 'play baseball'], 'We say “do judo”.', false, 'Judo is a martial art.'),
+    q('Choose the correct sport.', '🏸', 'play badminton', ['play badminton', 'do gymnastics', 'go running', 'play hockey'], 'We say “play badminton”.', false, 'It uses a racket and shuttlecock.'),
+    q('Where do people swim?', '🏊', 'swimming pool', ['swimming pool', 'football pitch', 'running track', 'basketball court'], 'People swim in a swimming pool.', false, 'It is full of water.'),
+    q('Where do people play football?', '⚽', 'football pitch', ['football pitch', 'swimming pool', 'running track', 'sports bag'], 'Football is played on a football pitch.', false, 'It is a large grass field.'),
+    q('Where do people run races?', '🏃‍♀️🏃', 'running track', ['running track', 'basketball court', 'swimming pool', 'football pitch'], 'A running track is made for running races.', false, 'Think of an oval track.'),
+    q('Complete the sentence.', 'I ___ football on Friday.', 'play', ['play', 'do', 'go', 'plays'], 'Use “play” with football.', false, 'Football uses PLAY.'),
+    q('Complete the sentence.', 'We ___ judo on Wednesday.', 'do', ['do', 'play', 'go', 'does'], 'Use “do” with judo.', false, 'Judo uses DO.'),
+    q('Choose the correct negative sentence.', 'We / baseball / negative', 'We don’t play baseball.', ['We don’t play baseball.', 'We doesn’t play baseball.', 'We don’t plays baseball.', 'We not play baseball.'], 'With “we”, use “don’t” + base verb.', false, 'WE goes with DON’T.'),
+    q('Complete the question.', '___ you play hockey?', 'Do', ['Do', 'Does', 'Are', 'Is'], 'With “you”, use “Do”.', false, 'YOU goes with DO.'),
+    q('Choose the best answer.', 'Do you go swimming?', 'Yes, I do.', ['Yes, I do.', 'Yes, I am.', 'Yes, she does.', 'Yes, I can do.'], 'Answer “Do you…?” with “Yes, I do” or “No, I don’t”.', false, 'Repeat the helper verb from the question.'),
+    q('Choose the correct place.', '🏀 A place for basketball', 'basketball court', ['basketball court', 'football pitch', 'running track', 'swimming pool'], 'Basketball is played on a court.', false, 'Basketball uses a COURT.'),
+    q('Choose the correct sentence.', 'Saturday + tennis', 'I play tennis on Saturday.', ['I play tennis on Saturday.', 'I do tennis in Saturday.', 'I plays tennis at Saturday.', 'I play tennis Saturday on.'], 'Use “play tennis” and “on” before a day.', false, 'Use ON before days.'),
   ],
-  reading: [
-    q('Read and answer: What pet does Mia have?', 'Mia is nine. She has a small brown dog. His name is Coco. Mia plays with Coco after school.', 'a dog', ['a dog', 'a cat', 'a bird', 'a fish'], 'The text says: She has a small brown dog.', true),
-    q('Read and answer: When does Tom play football?', 'Tom likes football. He plays with his friends on Saturday morning. On Sunday, he visits his grandma.', 'Saturday morning', ['Saturday morning', 'Sunday morning', 'Monday afternoon', 'Friday night'], 'The text says he plays on Saturday morning.', true),
-    q('Read and answer: What does Lucy like for breakfast?', 'Lucy gets up at seven o’clock. For breakfast, she likes milk and toast. Then she goes to school.', 'milk and toast', ['milk and toast', 'juice and rice', 'water and pasta', 'tea and soup'], 'The text says she likes milk and toast.', true),
-    q('Read and answer: Where is the book?', 'The book is on the desk. The pencil is under the chair. The backpack is next to the door.', 'on the desk', ['on the desk', 'under the chair', 'next to the door', 'in the bag'], 'The first sentence says: The book is on the desk.', true),
-    q('Read and answer: How many siblings does Ben have?', 'Ben has one brother and two sisters. They live in a house near the park.', 'three', ['three', 'one', 'two', 'four'], 'One brother plus two sisters makes three siblings.', true),
-    q('Read and answer: Which animal can fly?', 'The penguin can swim, but it cannot fly. The parrot can fly and it can talk a little.', 'the parrot', ['the parrot', 'the penguin', 'both animals', 'neither animal'], 'The text says: The parrot can fly.', true),
-    q('Read and answer: What is the weather like?', 'It is cold and rainy today. Emma wears her coat and takes an umbrella.', 'cold and rainy', ['cold and rainy', 'hot and sunny', 'warm and windy', 'snowy and hot'], 'The text says: It is cold and rainy today.', true),
-    q('Read and answer: What does Leo do first after school?', 'After school, Leo does his homework. Then he rides his bike in the park.', 'he does his homework', ['he does his homework', 'he rides his bike', 'he goes to bed', 'he eats breakfast'], 'First, Leo does his homework.'),
-    q('Read and answer: What colour is Sara’s bike?', 'Sara has a purple bike and a red helmet. She rides her bike with her dad on Sundays.', 'purple', ['purple', 'red', 'blue', 'green'], 'The text says: Sara has a purple bike.', true),
-    q('Read and answer: Where does Max eat lunch?', 'Max goes to school at eight. At lunchtime, he eats in the school cafeteria with his friends.', 'in the school cafeteria', ['in the school cafeteria', 'at home', 'in the park', 'at the library'], 'The text says he eats in the school cafeteria.', true),
-    q('Read and answer: What does Amy take to the park?', 'Amy goes to the park with her dad. She takes a ball and a bottle of water.', 'a ball and water', ['a ball and water', 'a book and milk', 'a bike and juice', 'a hat and bread'], 'The text tells us that Amy takes a ball and a bottle of water.', true),
-    q('Read and answer: What time does Noah go to bed?', 'Noah brushes his teeth at eight thirty. He reads for twenty minutes and goes to bed at nine.', 'nine o’clock', ['nine o’clock', 'eight o’clock', 'eight thirty', 'ten o’clock'], 'The text says he goes to bed at nine.', true),
+
+  unit2: [
+    q('Choose the animal.', '🦚', 'peacock', ['peacock', 'snake', 'leopard', 'raccoon'], 'A peacock is famous for its colourful feathers.', false, 'It has a large colourful tail.'),
+    q('Choose the animal.', '🐍', 'snake', ['snake', 'tortoise', 'peacock', 'leopard'], 'This animal is a snake.', false, 'Long body, no legs.'),
+    q('What covers many birds?', '🪶', 'feathers', ['feathers', 'fur', 'scales', 'shell'], 'Birds have feathers.', false, 'Birds use them for flight and warmth.'),
+    q('What covers a snake’s body?', '🐍', 'scales', ['scales', 'fur', 'feathers', 'hair'], 'Snakes have scales.', false, 'Think of reptile skin.'),
+    q('What can protect a tortoise?', '🐢', 'shell', ['shell', 'fur', 'feathers', 'wings'], 'A tortoise has a hard shell.', false, 'It is a hard protective covering.'),
+    q('Complete the sentence.', 'The raccoon has got a long ___.', 'tail', ['tail', 'shell', 'beak', 'fin'], 'A tail is at the back of an animal’s body.', false, 'Think of the part behind the animal.'),
+    q('Choose the correct question.', 'Ask about feathers.', 'Has it got feathers?', ['Has it got feathers?', 'Have it feathers?', 'Does it got feathers?', 'Is it got feathers?'], 'Use “Has it got…?” to ask about one animal.', false, 'One animal → HAS it got…?'),
+    q('Choose the best answer.', 'Has the peacock got feathers?', 'Yes, it has.', ['Yes, it has.', 'Yes, it does.', 'Yes, it is.', 'Yes, it have.'], 'Answer “Has it got…?” with “Yes, it has” or “No, it hasn’t”.', false, 'Repeat HAS in the answer.'),
+    q('Choose the correct sentence.', 'Snake + no fur', 'It hasn’t got fur.', ['It hasn’t got fur.', 'It don’t got fur.', 'It hasn’t fur got.', 'It not has fur.'], 'Use “hasn’t got” for a negative with one animal.', false, 'Negative of HAS GOT = HASN’T GOT.'),
+    q('Choose the correct sentence.', 'Leopard + fur', 'It has got fur.', ['It has got fur.', 'It have got fur.', 'It got has fur.', 'It does got fur.'], 'Use “has got” with “it”.', false, 'IT goes with HAS GOT.'),
+    q('Which body part helps animals bite?', '🦷', 'teeth', ['teeth', 'tail', 'fur', 'feathers'], 'Animals use teeth to bite and chew.', false, 'They are inside the mouth.'),
+    q('Read and answer.', 'A colourful bird has feathers and a long tail. It can open its tail like a fan.', 'peacock', ['peacock', 'snake', 'tortoise', 'leopard'], 'A peacock has colourful feathers and a large tail.', true, 'Look for the colourful bird clue.'),
   ],
-  conversation: [
-    q('Choose the best answer.', 'Do you like pizza?', 'Yes, I do.', ['Yes, I do.', 'Yes, I am.', 'Yes, she does.', 'No, I can.'], 'A natural answer to Do you…? is Yes, I do.'),
-    q('Choose the best answer.', 'Does she like cats?', "No, she doesn't.", ["No, she doesn't.", "No, she don't.", 'No, she isn’t.', 'No, I do.'], 'With Does she…?, answer No, she doesn’t.'),
-    q('Choose the best answer.', 'How old are you?', "I'm nine.", ["I'm nine.", 'I have nine.', 'It is nine.', 'Yes, I am.'], 'Use I’m nine to say your age.'),
-    q('Choose the best answer.', 'What is your name?', 'My name is Anna.', ['My name is Anna.', 'I am fine.', 'I like Anna.', 'It is Monday.'], 'My name is… answers the question naturally.'),
-    q('Choose the best answer.', 'Can you swim?', 'Yes, I can.', ['Yes, I can.', 'Yes, I do.', 'Yes, I am.', 'Yes, she can.'], 'A natural answer to Can you…? is Yes, I can.'),
-    q('Choose the best answer.', 'Where is the pencil?', 'It is on the desk.', ['It is on the desk.', 'It is blue.', 'It is Monday.', 'I like pencils.'], 'Where asks about a place.'),
-    q('Choose the best answer.', 'What is your favourite colour?', 'Purple.', ['Purple.', 'Nine years old.', 'At school.', 'Yes, I do.'], 'The question asks for a colour.'),
-    q('Choose the best answer.', 'How are you?', "I'm fine, thanks.", ["I'm fine, thanks.", 'I am nine.', 'I have a dog.', 'It is sunny.'], 'How are you? asks how you feel.'),
-    q('Choose the best answer.', 'What time is it?', "It's three o'clock.", ["It's three o'clock.", 'It is a cat.', 'I am three.', 'On Monday.'], 'What time is it? asks for the time.'),
-    q('Choose the best answer.', 'What do you do after school?', 'I do my homework.', ['I do my homework.', 'I am homework.', 'She does school.', 'Yes, I do.'], 'The question asks about an activity.'),
-    q('Choose the best answer.', 'What is the weather like?', 'It is sunny.', ['It is sunny.', 'It is Tuesday.', 'I am sunny.', 'At school.'], 'The question asks about the weather.'),
-    q('Choose the best answer.', 'Who is your teacher?', 'Ms Brown.', ['Ms Brown.', 'In the classroom.', 'At eight.', 'Blue.'], 'Who asks for a person.'),
+
+  unit3: [
+    q('Choose the activity.', '📸', 'take a photo', ['take a photo', 'write a story', 'play chess', 'read a book'], 'We “take a photo” with a camera or phone.', false, 'Think of a camera.'),
+    q('Choose the activity.', '🎧🎵', 'listen to music', ['listen to music', 'chat to friends', 'do my homework', 'learn a language'], 'Headphones are often used to listen to music.', false, 'You use your ears.'),
+    q('Choose the activity.', '🎮', 'play a video game', ['play a video game', 'take a photo', 'write a story', 'read a book'], 'A controller is used to play a video game.', false, 'Think of a game controller.'),
+    q('Choose the activity.', '💬👫', 'chat to friends', ['chat to friends', 'learn a language', 'play chess', 'do my homework'], 'Chat means talk or message with friends.', false, 'Think messages and conversation.'),
+    q('Choose the activity.', '📚✏️ School task', 'do my homework', ['do my homework', 'watch TV', 'play a video game', 'take a photo'], 'Homework is school work done outside class.', false, 'School task after class.'),
+    q('Complete the sentence.', 'I ___ take a photo with this tablet.', 'can', ['can', 'does', 'has', 'am'], 'Use “can” to talk about an ability.', false, 'Ability → CAN.'),
+    q('Choose the correct negative sentence.', 'This old camera / video calls / negative', 'It can’t make video calls.', ['It can’t make video calls.', 'It doesn’t can make video calls.', 'It can’t makes video calls.', 'It no can video calls.'], 'Use “can’t” + base verb.', false, 'CAN’T is followed by the base verb.'),
+    q('Complete the question.', '___ you play chess online?', 'Can', ['Can', 'Do can', 'Are', 'Has'], 'Use “Can you…?” to ask about an ability.', false, 'Question about ability.'),
+    q('Choose the best answer.', 'Can you learn a language online?', 'Yes, I can.', ['Yes, I can.', 'Yes, I do.', 'Yes, I am.', 'Yes, I has.'], 'Answer “Can you…?” with “Yes, I can” or “No, I can’t”.', false, 'Repeat CAN.'),
+    q('Choose the correct sentence.', 'She / write a story / ability', 'She can write a story.', ['She can write a story.', 'She can writes a story.', 'She does can write a story.', 'She can writing a story.'], 'After “can”, use the base verb.', false, 'CAN + WRITE, not writes.'),
+    q('Which activity uses a book?', '📖', 'read a book', ['read a book', 'take a photo', 'chat to friends', 'watch TV'], 'Reading a book uses printed or digital text.', false, 'The picture is a book.'),
+    q('Read and answer.', 'Leo uses his tablet to practise English words and hear their pronunciation.', 'learn a language', ['learn a language', 'play chess', 'take a photo', 'watch TV'], 'Practising English is learning a language.', true, 'English is a language.'),
   ],
-  writing: [
-    q('Choose the correct sentence.', 'A girl has a dog.', 'She has a dog.', ['She has a dog.', 'She have a dog.', 'Has she a dog.', 'She dog has.'], 'With she, use has.'),
-    q('Choose the correct sentence.', 'A boy does not like carrots.', "He doesn't like carrots.", ["He doesn't like carrots.", "He don't likes carrots.", 'He not like carrots.', "He doesn't likes carrots."], 'After doesn’t, use like without -s.'),
-    q('Choose the correct question.', 'Ask a friend about ice cream.', 'Do you like ice cream?', ['Do you like ice cream?', 'Does you like ice cream?', 'You do like ice cream?', 'Do you likes ice cream?'], 'With you, use Do and the base verb like.'),
-    q('Choose the correct sentence.', 'Two books are on the table.', 'There are two books.', ['There are two books.', 'There is two books.', 'There two books are.', 'They are two book.'], 'Use There are for more than one thing.'),
-    q('Choose the correct sentence.', 'A girl can dance.', 'She can dance.', ['She can dance.', 'She can dances.', 'She does can dance.', 'Can she dances.'], 'After can, use the base verb: dance.'),
-    q('Choose the sentence with correct punctuation.', 'hello my name is leo', 'Hello, my name is Leo.', ['Hello, my name is Leo.', 'hello my name is leo', 'Hello my name is leo', 'hello, My name is Leo.'], 'Start with a capital letter, use a comma, and finish with a period.'),
-    q('Choose the correct sentence.', 'One pencil is in the bag.', 'There is a pencil in the bag.', ['There is a pencil in the bag.', 'There are a pencil in the bag.', 'There pencil is in bag.', 'A pencil there are.'], 'Use There is for one thing.'),
-    q('Choose the correct sentence.', 'Two children own bikes.', 'They have bikes.', ['They have bikes.', 'They has bikes.', 'They does bikes.', 'They having bikes.'], 'With they, use have.'),
-    q('Choose the correct sentence.', 'A girl likes music.', 'She likes music.', ['She likes music.', 'She like music.', 'She does likes music.', 'She liking music.'], 'In an affirmative sentence with she, add -s to the verb.'),
-    q('Choose the correct question.', 'Ask about his favourite food.', 'What is his favourite food?', ['What is his favourite food?', 'What his favourite food is?', 'Does his favourite food?', 'What are his favourite food?'], 'Use What is…? to ask for one favourite thing.'),
-    q('Choose the correct sentence.', 'A boy is not tired.', "He isn't tired.", ["He isn't tired.", "He don't tired.", 'He not is tired.', "He doesn't tired."], 'Use isn’t with he when the verb is be.'),
-    q('Choose the correct sentence.', 'The children are at school.', 'They are at school.', ['They are at school.', 'They is at school.', 'They am at school.', 'They does at school.'], 'With they, use are.'),
+
+  unit4: [
+    q('Choose the food.', '🐟 Food from a can or fish counter', 'tuna', ['tuna', 'honey', 'lentils', 'yoghurt'], 'Tuna is a type of fish.', false, 'It comes from the sea.'),
+    q('Choose the food.', '🍯', 'honey', ['honey', 'olives', 'lentils', 'tuna'], 'Honey is made by bees.', false, 'Bees make it.'),
+    q('Choose the food.', '🫒', 'olives', ['olives', 'nuts', 'yoghurt', 'chicken'], 'These are olives.', false, 'Small green or black fruit.'),
+    q('Choose the food.', '🥜', 'nuts', ['nuts', 'fruit', 'lentils', 'tuna'], 'Peanuts, almonds and walnuts are nuts.', false, 'Think peanuts and almonds.'),
+    q('Complete the sentence.', 'I ___ pasta.', 'like', ['like', 'likes', 'does', 'am'], 'With “I”, use “like”.', false, 'I + LIKE.'),
+    q('Complete the sentence.', 'She ___ fruit.', 'likes', ['likes', 'like', 'do', 'don’t'], 'In an affirmative sentence with “she”, use “likes”.', false, 'SHE adds -S.'),
+    q('Complete the sentence.', 'He ___ like tuna.', 'doesn’t', ['doesn’t', 'don’t', 'isn’t', 'hasn’t'], 'With “he”, use “doesn’t” + base verb.', false, 'HE goes with DOESN’T.'),
+    q('Complete the sentence.', 'I ___ like lentils.', 'don’t', ['don’t', 'doesn’t', 'isn’t', 'can’t'], 'With “I”, use “don’t”.', false, 'I goes with DON’T.'),
+    q('Complete the question.', '___ she like chocolate?', 'Does', ['Does', 'Do', 'Is', 'Has'], 'With “she”, use “Does”.', false, 'SHE → DOES.'),
+    q('Complete the question.', '___ you like yoghurt?', 'Do', ['Do', 'Does', 'Are', 'Is'], 'With “you”, use “Do”.', false, 'YOU → DO.'),
+    q('Choose the best answer.', 'Does he like nuts?', 'Yes, he does.', ['Yes, he does.', 'Yes, he do.', 'Yes, he is.', 'Yes, he likes does.'], 'Answer a “Does he…?” question with “Yes, he does”.', false, 'Repeat DOES.'),
+    q('Choose the correct sentence.', 'Ana likes chicken but not olives.', 'She likes chicken, but she doesn’t like olives.', ['She likes chicken, but she doesn’t like olives.', 'She like chicken, but she don’t like olives.', 'She likes chicken, but she doesn’t likes olives.', 'She does like chicken, but no olives.'], 'Use “likes” in the affirmative and “doesn’t like” in the negative.', true, 'Positive SHE = likes; negative SHE = doesn’t like.'),
+  ],
+
+  unit5: [
+    q('Choose the routine.', '⏰🛏️➡️🙂', 'get up', ['get up', 'go to bed', 'have a shower', 'go home'], '“Get up” means leave your bed after sleeping.', false, 'It happens in the morning.'),
+    q('Choose the routine.', '🪥😁', 'clean your teeth', ['clean your teeth', 'get dressed', 'feed the dog', 'have breakfast'], 'You clean your teeth with a toothbrush.', false, 'Think toothbrush.'),
+    q('Choose the routine.', '🍞🥛 7:30 a.m.', 'have breakfast', ['have breakfast', 'go to bed', 'go home', 'have a shower'], 'Breakfast is the morning meal.', false, 'Morning meal.'),
+    q('Choose the routine.', '🐶🥣', 'feed the dog', ['feed the dog', 'play with friends', 'get dressed', 'go to school'], 'To feed the dog means give the dog food.', false, 'The dog is getting food.'),
+    q('Choose the routine.', '🚿', 'have a shower', ['have a shower', 'go home', 'get up', 'have breakfast'], 'You have a shower to wash your body.', false, 'Water + bathroom.'),
+    q('Complete the sentence.', 'He ___ up at seven o’clock.', 'gets', ['gets', 'get', 'getting', 'does get up'], 'With “he” in the present simple, “get” becomes “gets”.', false, 'HE usually adds -S.'),
+    q('Complete the sentence.', 'She ___ home at two o’clock.', 'goes', ['goes', 'go', 'going', 'gos'], 'With “she”, “go” becomes “goes”.', false, 'GO changes to GOES.'),
+    q('Complete the sentence.', 'He ___ breakfast in the morning.', 'has', ['has', 'have', 'haves', 'is'], 'With “he”, use “has”.', false, 'HE + HAS.'),
+    q('Choose the time.', '🕣', 'half past eight', ['half past eight', 'eight o’clock', 'half past seven', 'quarter past eight'], '8:30 is “half past eight”.', false, '30 minutes after eight.'),
+    q('Choose the correct sentence.', '9:30 p.m. + bedtime', 'She goes to bed at half past nine.', ['She goes to bed at half past nine.', 'She go to bed at half nine past.', 'She goes bed in nine thirty.', 'She going to bed at nine half.'], 'Use “goes to bed” and “at” before a clock time.', false, 'SHE → GOES; clock time → AT.'),
+    q('Read and answer.', 'Tom gets up at seven. He has breakfast at half past seven and goes to school at eight.', 'half past seven', ['half past seven', 'seven o’clock', 'eight o’clock', 'half past eight'], 'The text says Tom has breakfast at half past seven.', true, 'Look for “has breakfast”.'),
+    q('Choose the correct order.', 'Morning routine', 'get up → get dressed → have breakfast → go to school', ['get up → get dressed → have breakfast → go to school', 'go to bed → have breakfast → get up → go home', 'go home → get dressed → go to school → get up', 'have breakfast → go to bed → go home → get up'], 'This is a natural morning sequence.', true, 'Start by leaving the bed.'),
+  ],
+
+  unit6: [
+    q('Choose the beach item.', '🕶️', 'sunglasses', ['sunglasses', 'goggles', 'beach towel', 'sun cream'], 'Sunglasses protect your eyes from bright sunlight.', false, 'You wear them over your eyes.'),
+    q('Choose the beach item.', '🧴☀️', 'sun cream', ['sun cream', 'beach umbrella', 'goggles', 'shells'], 'Sun cream helps protect skin from the sun.', false, 'It goes on your skin.'),
+    q('Choose the activity.', '🏰 made of sand', 'make a sandcastle', ['make a sandcastle', 'look for shells', 'play bat and ball', 'wear goggles'], 'A sandcastle is built with sand.', false, 'Castle + sand.'),
+    q('Choose the activity.', '🐚🔎', 'look for shells', ['look for shells', 'put on sun cream', 'make a sandcastle', 'wear swimming shorts'], 'People can look for shells on the beach.', false, 'The picture shows shells and searching.'),
+    q('Choose the correct item.', 'A large cloth you lie on at the beach', 'beach towel', ['beach towel', 'beach umbrella', 'swimming costume', 'goggles'], 'A beach towel is used for drying off or lying on the sand.', false, 'It is a towel.'),
+    q('Complete the sentence.', 'She ___ wearing sunglasses.', 'is', ['is', 'are', 'am', 'does'], 'With “she” in the present continuous, use “is”.', false, 'SHE → IS.'),
+    q('Complete the sentence.', 'They ___ looking for shells.', 'are', ['are', 'is', 'am', 'does'], 'With “they”, use “are”.', false, 'THEY → ARE.'),
+    q('Choose the correct sentence.', 'Boy + sandcastle now', 'He is making a sandcastle.', ['He is making a sandcastle.', 'He making a sandcastle.', 'He makes a sandcastle now.', 'He are making a sandcastle.'], 'Use “is + verb-ing” for an action happening now.', false, 'HE → IS + ING.'),
+    q('Choose the correct question.', 'Ask about a girl putting on sun cream now.', 'Is she putting on sun cream?', ['Is she putting on sun cream?', 'Does she putting on sun cream?', 'Are she put on sun cream?', 'She is putting on sun cream?'], 'Use “Is she + verb-ing…?”', false, 'Start with IS SHE.'),
+    q('Choose the best answer.', 'Are they eating ice cream?', 'Yes, they are.', ['Yes, they are.', 'Yes, they do.', 'Yes, they is.', 'Yes, they eating.'], 'Answer “Are they…?” with “Yes, they are” or “No, they aren’t”.', false, 'Repeat ARE.'),
+    q('Choose the correct negative sentence.', 'He / wear a hat / negative now', 'He isn’t wearing a hat.', ['He isn’t wearing a hat.', 'He doesn’t wearing a hat.', 'He aren’t wearing a hat.', 'He not wears a hat.'], 'Use “isn’t + verb-ing” with “he”.', false, 'HE → ISN’T + ING.'),
+    q('Read and answer.', 'Mia is on the beach. She is wearing sunglasses and she is looking for shells.', 'She is looking for shells.', ['She is looking for shells.', 'She is playing hockey.', 'She is doing homework.', 'She is feeding the dog.'], 'The text says Mia is looking for shells.', true, 'Look at the second action.'),
   ],
 };
-
-questionBanks.review = [
-  questionBanks.vocabulary[0], questionBanks.vocabulary[5],
-  questionBanks.grammar[0], questionBanks.grammar[1], questionBanks.grammar[9],
-  questionBanks.reading[0], questionBanks.reading[6],
-  questionBanks.conversation[0], questionBanks.conversation[4],
-  questionBanks.writing[0], questionBanks.writing[5], questionBanks.writing[8],
-];
 
 function topicByKey(key) {
   return englishTopics.find(topic => topic.key === key) || englishTopics[0];
@@ -211,11 +238,12 @@ function buildEnglishTopics() {
     button.className = 'english-topic-card topic-active';
     button.dataset.topic = topic.key;
     button.setAttribute('aria-label', `Open ${topic.title}`);
+    const completed = Number(englishProgress.byTopic[topic.key]) || 0;
     button.innerHTML = `
       <span class="english-topic-number">${index + 1}</span>
       <span class="english-topic-icon" aria-hidden="true">${topic.icon}</span>
       <span class="english-topic-copy"><strong>${topic.title}</strong><small>${topic.subtitle}</small></span>
-      <span class="english-topic-status">Practice →</span>
+      <span class="english-topic-status">${completed ? `✓ ${completed} round${completed === 1 ? '' : 's'}` : 'Practice →'}</span>
     `;
     button.addEventListener('click', () => startEnglishSession(topic.key));
     els.grid.appendChild(button);
@@ -232,7 +260,8 @@ function startEnglishSession(topicKey) {
   englishState.attempts = 0;
   englishState.answered = false;
   englishState.processing = false;
-  englishState.questions = shuffle(questionBanks[topic.key]).slice(0, ENGLISH_SESSION_LENGTH).map(makeQuestion);
+  const bank = questionBanks[topic.key] || questionBanks.starter;
+  englishState.questions = shuffle(bank).slice(0, ENGLISH_SESSION_LENGTH).map(makeQuestion);
   els.modeLabel.textContent = topic.title;
   showEnglishView(els.quiz);
   renderEnglishQuestion();
@@ -321,7 +350,8 @@ function answerEnglishQuestion(questionId, value, selectedButton) {
 
   if (englishState.attempts === 0) {
     englishState.attempts = 1;
-    setEnglishFeedback('hint', '💡 Try once more', 'Look carefully at the sentence, picture, or text.', `Look for: ${current.correct}`);
+    const hint = current.hint || 'Look carefully at the sentence, picture, or text.';
+    setEnglishFeedback('hint', '💡 Try once more', hint);
     englishState.processing = false;
     return;
   }
@@ -338,6 +368,7 @@ function finishEnglishSession() {
   englishProgress.sessions += 1;
   englishProgress.byTopic[topic.key] = (Number(englishProgress.byTopic[topic.key]) || 0) + 1;
   saveEnglishProgress();
+  buildEnglishTopics();
 
   els.finalScore.textContent = String(englishState.score);
   if (englishState.score >= 9) {
