@@ -85,7 +85,7 @@ jobs:
           grep -q 'voice.js?v=23' games.html
           grep -q 'voice.css?v=23' games.html
           grep -q 'games.css?v=25' games.html
-          grep -q 'games.js?v=25' games.html
+          grep -q 'games.js?v=26' games.html
           grep -q 'progress-controls.js?v=22' games.html
           grep -q "type:'listen'" games.js
           grep -q "type:'order'" games.js
@@ -121,7 +121,7 @@ jobs:
 
           ! grep -q 'registration.update()' progress-controls.js
           grep -q 'requestIdleCallback' progress-controls.js
-          grep -q 'performance-v25' sw.js
+          grep -q 'performance-v26' sw.js
           grep -q 'networkFirst' sw.js
           grep -q "./voice.js" sw.js
           grep -q "./voice.css" sw.js
