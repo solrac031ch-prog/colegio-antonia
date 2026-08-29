@@ -26,8 +26,6 @@ async function solveMatch(page) {
         if ((await afterFirst.count()) <= j) break;
         await afterFirst.nth(j).click();
 
-        // Una pareja incorrecta muestra una animación breve. Esperamos a que
-        // el tablero vuelva a estar interactivo antes de intentar otra pareja.
         await waitMatchReady(page);
         matched = !(await page.locator('.quick-match-card:not(:disabled)').filter({ hasText: firstText || '' }).count());
       }
@@ -66,9 +64,19 @@ async function finishRound(page) {
     return expect(next).toBeVisible();
   }
 
-  await page.locator('.quick-choice:not(:disabled)').first().click();
-  if (!(await next.isVisible())) await page.locator('.quick-choice:not(:disabled)').first().click();
+  const choices = page.locator('.quick-choice:not(:disabled)');
+  await expect(choices.first()).toBeVisible();
+  await choices.first().click();
+  if (!(await next.isVisible())) {
+    await expect(choices.first()).toBeVisible();
+    await choices.first().click();
+  }
   await expect(next).toBeVisible();
+}
+
+async function advanceToNextRound(page, expectedCounter) {
+  await page.locator('[data-quick-next]').click();
+  await expect(page.locator('[data-quick-counter]')).toHaveText(expectedCounter);
 }
 
 test('los desafíos avanzan sin bloquearse en Windows Android e iPhone', async ({ page }) => {
@@ -78,10 +86,15 @@ test('los desafíos avanzan sin bloquearse en Windows Android e iPhone', async (
 
   await page.goto('/games.html?subject=math', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-quick-challenge-number]')).toHaveText('Desafío 1');
+  await expect(page.locator('[data-quick-counter]')).toHaveText('1 / 5');
 
   for (let round = 0; round < 5; round += 1) {
     await finishRound(page);
-    await page.locator('[data-quick-next]').click();
+    if (round < 4) {
+      await advanceToNextRound(page, `${round + 2} / 5`);
+    } else {
+      await page.locator('[data-quick-next]').click();
+    }
   }
 
   await expect(page.locator('[data-quick-result]')).toBeVisible();
