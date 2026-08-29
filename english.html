@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="Grade 3" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="format-detection" content="telephone=no" />
-  <meta name="description" content="English practice for Grade 3, aligned with the level of Curious Kids 3." />
+  <meta name="description" content="English practice for Grade 3, organised around the Curious Kids 3 learning sequence." />
   <link rel="manifest" href="manifest.webmanifest?v=22" />
   <link rel="icon" href="logo-3basico.svg?v=22" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="logo-3basico.svg?v=22" />
@@ -26,7 +26,7 @@
   <main class="app-shell">
     <div class="app-back-row"><button class="app-back-button" type="button" data-app-back data-fallback="index.html" aria-label="Back to subjects">← Subjects</button></div>
     <header class="hero english-hero">
-      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=22" alt="Learn Grade 3 logo" /><p class="eyebrow">Learn Grade 3 · Adventure mode</p></div><h1>English</h1><p class="subtitle">Build vocabulary, grammar, reading, conversation and writing skills while earning XP.</p></div>
+      <div class="hero-copy"><div class="brand-line"><img class="brand-logo" src="logo-3basico.svg?v=22" alt="Learn Grade 3 logo" /><p class="eyebrow">Learn Grade 3 · Adventure mode</p></div><h1>English</h1><p class="subtitle">Practise the same themes and grammar Antonia meets in Curious Kids 3, with short original challenges made for mobile.</p></div>
       <div class="score-card" aria-label="English progress"><span>⭐ Stars</span><strong id="englishStars">0</strong></div>
     </header>
     <nav class="subject-switcher" aria-label="Subjects">
@@ -34,14 +34,14 @@
     </nav>
     <a class="quick-game-banner" href="games.html?subject=english"><span class="quick-banner-icon" aria-hidden="true">🔊</span><span><strong>English quick challenge</strong><small>Listen, order sentences, match pairs, complete words and answer.</small></span><span aria-hidden="true">→</span></a>
     <section id="englishHome" class="english-view active">
-      <div class="panel book-card"><div class="book-icon" aria-hidden="true">📘</div><div><p class="section-kicker">Reference books</p><h2>Curious Kids 3</h2><p class="muted">Pupil’s Book + Activity Book · Macmillan</p><p class="book-note">We use the level and learning approach as a guide to create original practice. We do not copy pages or activities from the books.</p></div></div>
-      <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">English learning path</p><h2>Your learning journey</h2></div><span class="english-badge">6 stations</span></div><p class="muted">Complete stations to mark your progress. You can open any station whenever you want to practise.</p><div id="englishTopicGrid" class="english-topic-grid"></div></div>
+      <div class="panel book-card"><div class="book-icon" aria-hidden="true">📘</div><div><p class="section-kicker">School reference</p><h2>Curious Kids 3</h2><p class="muted">Pupil’s Book + Activity Book · Macmillan · Level 3</p><p class="book-note">Activity Book ISBN 9781035124336. The app follows the book’s topic progression with original exercises; it does not reproduce book pages.</p></div></div>
+      <div class="panel english-menu-panel"><div class="section-heading"><div><p class="section-kicker">Book-aligned English path</p><h2>Starter + Units 1–6</h2></div><span class="english-badge">7 stations</span></div><p class="muted">Choose the unit Antonia is studying at school. Each round has 10 short questions, two attempts and a helpful clue.</p><div id="englishTopicGrid" class="english-topic-grid"></div></div>
       <div class="panel compact english-progress-panel"><div class="progress-row"><span>English sessions</span><strong id="englishSessions">0</strong></div><div class="progress-row"><span>Best answer streak</span><strong id="englishBestStreak">0</strong></div><div class="progress-reset-row"><button class="reset-progress-button" type="button" data-reset-progress data-storage-key="antoniaEnglishProgress" data-subject-name="English">🔄 Reset English progress</button></div></div>
     </section>
-    <section id="englishQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="englishBackButton" class="ghost-button" type="button">← Path</button><span id="englishModeLabel" class="pill">Vocabulary</span><span id="englishCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="englishPrompt" class="prompt">Choose the correct answer.</p><div id="englishQuestion" class="english-question">apple</div><div id="englishAnswers" class="answers"></div><div id="englishFeedback" class="feedback" role="status" aria-live="polite"></div><button id="englishNextButton" class="primary-button hidden" type="button">Next →</button></div><div class="streak-box">🔥 Answer streak: <strong id="englishStreak">0</strong></div></section>
+    <section id="englishQuiz" class="english-view" aria-live="polite"><div class="quiz-topbar"><button id="englishBackButton" class="ghost-button" type="button">← Path</button><span id="englishModeLabel" class="pill">Starter</span><span id="englishCounter">1 / 10</span></div><div class="quiz-card english-quiz-card"><p id="englishPrompt" class="prompt">Choose the correct answer.</p><div id="englishQuestion" class="english-question">Hello!</div><div id="englishAnswers" class="answers"></div><div id="englishFeedback" class="feedback" role="status" aria-live="polite"></div><button id="englishNextButton" class="primary-button hidden" type="button">Next →</button></div><div class="streak-box">🔥 Answer streak: <strong id="englishStreak">0</strong></div></section>
     <section id="englishResult" class="english-view"><div class="panel result-panel"><div id="englishResultEmoji" class="result-emoji">🌟</div><h2 id="englishResultTitle">Great job!</h2><p id="englishResultText"></p><div class="result-score"><span id="englishFinalScore">0</span>/10</div><button id="englishAgainButton" class="primary-button" type="button">Practice again</button><button id="englishHomeButton" class="secondary-button" type="button">Back to the path</button></div></section>
   </main>
-  <script src="english.js?v=22"></script>
+  <script src="english.js?v=24"></script>
   <script src="game-progress.js?v=22"></script>
   <script src="voice.js?v=23"></script>
   <script src="progress-controls.js?v=22"></script>
