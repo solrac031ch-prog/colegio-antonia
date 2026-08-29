@@ -60,13 +60,15 @@ jobs:
 
           grep -q '<html lang="en">' english.html
           grep -q 'Learn Grade 3' english.html
-          grep -q 'english.js?v=22' english.html
+          grep -q 'english.js?v=24' english.html
           grep -q 'game-progress.js?v=22' english.html
           grep -q 'voice.js?v=23' english.html
           grep -q 'progress-controls.js?v=22' english.html
           grep -q 'voice.css?v=23' english.html
           grep -q 'Reset English progress' english.html
           grep -q 'English quick challenge' english.html
+          grep -q 'Starter + Units 1–6' english.html
+          grep -q 'Curious Kids 3' english.html
           ! grep -Eq '← Materias|Modo aventura|⭐ Estrellas|Sesiones de Inglés|Mejor racha|Reiniciar progreso|Camino de Inglés|Tu ruta de aprendizaje|6 estaciones|Elige la mejor|Lee y responde' english.html
           ! grep -Eq '¿|¡|significa|Con she|Con he|Con they|Con we|Completa la oración|Elige la|Lee y responde|pregunta cómo|respuesta natural' english.js
 
